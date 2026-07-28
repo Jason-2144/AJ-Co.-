@@ -30,6 +30,7 @@ export default function Sidebar({ collapsed, setCollapsed, activeTab, setActiveT
     { id: 'crm', label: 'CRM', icon: Users, permission: 'view:crm' },
     { id: 'projects', label: 'Projects', icon: FolderGit2 },
     { id: 'tasks', label: 'Tasks', icon: CheckSquare },
+    { id: 'campaigns', label: 'Campaigns', icon: FolderGit2 },
     { id: 'outreach', label: 'AI Outreach', icon: Sparkles, permission: 'outreach:view' },
     { id: 'billing', label: 'Billing', icon: DollarSign, permission: 'view:billing' },
     { id: 'websites', label: 'Websites', icon: Globe },

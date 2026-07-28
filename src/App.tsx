@@ -45,7 +45,7 @@ function AppContent() {
           <Route path="/terms-of-service" element={<TermsOfService />} />
           
           {/* Protected Staff Portal Routes */}
-          <Route path="/staff/login" element={<Navigate to="/staff" replace />} />
+          <Route path="/staff/login" element={<Login />} />
           <Route path="/staff/*" element={<Dashboard />} />
         </Routes>
       </main>

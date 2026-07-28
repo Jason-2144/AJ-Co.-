@@ -1,12 +1,14 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { User } from '@supabase/supabase-js';
-import { UserProfile } from '../services/auth';
+import { supabase } from '../lib/supabase';
+import { authService, UserProfile } from '../services/auth';
 
 interface AuthContextType {
   user: User | null;
   profile: UserProfile | null;
   loading: boolean;
   hasPermission: (permission: string) => boolean;
+  signIn: (email: string, password: string) => Promise<any>;
   signOut: () => Promise<void>;
   refreshProfile: () => Promise<void>;
 }
@@ -14,42 +16,112 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [user, setUser] = useState<User | null>({
-    id: '7e092dad-93ae-4953-a0bf-572b72fdfae8',
-    email: 'jsnashish@gmail.com'
-  } as any);
+  const [user, setUser] = useState<User | null>(null);
+  const [profile, setProfile] = useState<UserProfile | null>(null);
+  const [loading, setLoading] = useState<boolean>(true);
 
-  const [profile, setProfile] = useState<UserProfile | null>({
-    id: '7e092dad-93ae-4953-a0bf-572b72fdfae8',
-    first_name: 'Jason',
-    last_name: 'Ashish',
-    email: 'jsnashish@gmail.com',
-    role_id: 'dcb44b34-2d3d-47d3-9413-daa4dcacc098',
-    status: 'active',
-    roles: { id: 'dcb44b34-2d3d-47d3-9413-daa4dcacc098', name: 'owner' }
-  } as any);
-
-  const [loading, setLoading] = useState<boolean>(false);
-
-  const refreshProfile = async () => {
-    // No-op in bypass mode
+  const fetchProfile = async (userId: string) => {
+    try {
+      const userProfile = await authService.getProfile(userId);
+      setProfile(userProfile);
+    } catch (error) {
+      console.error('Failed to load profile for user:', userId, error);
+      setProfile(null);
+    }
   };
 
-  useEffect(() => {
-    setLoading(false);
-  }, []);
+  const refreshProfile = async () => {
+    if (user) {
+      await fetchProfile(user.id);
+    }
+  };
 
-  const hasPermission = (permission: string): boolean => {
-    // Owner role has unrestricted access to all permissions
-    return true;
+  const signIn = async (email: string, password: string) => {
+    const data = await authService.signIn(email, password);
+    return data;
   };
 
   const signOut = async () => {
-    console.log('Bypass active: Sign Out is disabled.');
+    await authService.signOut();
+    setUser(null);
+    setProfile(null);
   };
 
+  const hasPermission = (permission: string): boolean => {
+    if (!profile) return false;
+    
+    // Unrestricted owner bypass
+    if (profile.roles?.name === 'owner') return true;
+
+    // Check individual linked permissions
+    const permissions = profile.roles?.role_permissions?.map(
+      (rp) => rp.permissions?.name
+    ) || [];
+    
+    return permissions.includes(permission);
+  };
+
+  useEffect(() => {
+    let mounted = true;
+
+    // 1. Check active session on initial load
+    const initializeAuth = async () => {
+      try {
+        const session = await authService.getSession();
+        if (mounted) {
+          if (session?.user) {
+            setUser(session.user);
+            await fetchProfile(session.user.id);
+          } else {
+            setUser(null);
+            setProfile(null);
+          }
+        }
+      } catch (error) {
+        console.error('Auth initialization error:', error);
+      } finally {
+        if (mounted) {
+          setLoading(false);
+        }
+      }
+    };
+
+    initializeAuth();
+
+    // 2. Set up auth state change listener to sync login/logout triggers
+    const { data: authListener } = supabase.auth.onAuthStateChange(
+      async (event, session) => {
+        if (!mounted) return;
+        
+        if (session?.user) {
+          setUser(session.user);
+          await fetchProfile(session.user.id);
+        } else {
+          setUser(null);
+          setProfile(null);
+        }
+        setLoading(false);
+      }
+    );
+
+    return () => {
+      mounted = false;
+      authListener.subscription.unsubscribe();
+    };
+  }, []);
+
   return (
-    <AuthContext.Provider value={{ user, profile, loading, hasPermission, signOut, refreshProfile }}>
+    <AuthContext.Provider
+      value={{
+        user,
+        profile,
+        loading,
+        hasPermission,
+        signIn,
+        signOut,
+        refreshProfile,
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );

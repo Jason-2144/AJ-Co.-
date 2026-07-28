@@ -14,6 +14,8 @@ import { projectsService } from '../../services/projects';
 import { tasksService } from '../../services/tasks';
 import { invoicesService } from '../../services/invoices';
 import { usersService, AuditLog } from '../../services/users';
+import { campaignService } from '../../services/campaign/CampaignService';
+import { queueStore } from '../../services/queue/QueueStore';
 
 export default function DashboardOverview({ setActiveTab }: { setActiveTab: (val: string) => void }) {
   const { profile } = useAuth();
@@ -24,15 +26,26 @@ export default function DashboardOverview({ setActiveTab }: { setActiveTab: (val
   const [revenue, setRevenue] = useState(0);
   const [activities, setActivities] = useState<AuditLog[]>([]);
   const [notifications, setNotifications] = useState<any[]>([]);
+  
+  const [campaignStats, setCampaignStats] = useState({
+    totalCampaigns: 0,
+    activeCampaigns: 0,
+    completedCampaigns: 0,
+    companiesInQueue: 0,
+    successRate: 0,
+    avgCompletionTime: 0
+  });
 
   useEffect(() => {
     async function loadMetrics() {
       try {
-        const [projs, tsks, invs, logs] = await Promise.all([
+        const [projs, tsks, invs, logs, campaignsList] = await Promise.all([
           projectsService.getProjects(),
           tasksService.getTasks(),
           invoicesService.getInvoices(),
-          usersService.getAuditLogs()
+          usersService.getAuditLogs(),
+          campaignService.list(),
+          queueStore.loadFromSupabase()
         ]);
 
         setProjectCount(projs.length);
@@ -50,6 +63,34 @@ export default function DashboardOverview({ setActiveTab }: { setActiveTab: (val
           .filter(i => i.status === 'paid')
           .reduce((sum, item) => sum + Number(item.total), 0);
         setRevenue(totalRev);
+
+        // Calculate Campaigns analytics
+        const activeCamps = campaignsList.filter(c => c.status === 'Active').length;
+        const completedCamps = campaignsList.filter(c => c.status === 'Completed').length;
+        
+        let totalProspects = 0;
+        let successfulDrafts = 0;
+        campaignsList.forEach(c => {
+          totalProspects += c.totalProspects;
+          successfulDrafts += c.draftsCreated;
+        });
+        const campaignSuccessRate = totalProspects > 0 ? Math.round((successfulDrafts / totalProspects) * 100) : 0;
+
+        // Average processing time for completed prospects
+        const queueItems = queueStore.getItems();
+        const completedItems = queueItems.filter(i => i.status === 'completed' && i.startedAt && i.finishedAt);
+        const avgTime = completedItems.length > 0
+          ? completedItems.reduce((acc, curr) => acc + (curr.finishedAt! - curr.startedAt!), 0) / completedItems.length / 1000
+          : 0;
+
+        setCampaignStats({
+          totalCampaigns: campaignsList.length,
+          activeCampaigns: activeCamps,
+          completedCampaigns: completedCamps,
+          companiesInQueue: queueItems.length,
+          successRate: campaignSuccessRate,
+          avgCompletionTime: avgTime
+        });
 
         setActivities(logs.slice(0, 5));
 
@@ -142,6 +183,37 @@ export default function DashboardOverview({ setActiveTab }: { setActiveTab: (val
           </div>
           <div className="w-12 h-12 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 flex items-center justify-center">
             <Activity className="w-6 h-6" />
+          </div>
+        </div>
+      </div>
+
+      {/* Campaign Metrics Section */}
+      <div className="space-y-4">
+        <h3 className="font-syne font-bold text-lg text-white">AI Outreach Campaigns Summary</h3>
+        <div className="grid grid-cols-2 md:grid-cols-6 gap-4">
+          <div className="bg-[#121212] border border-white/5 p-4 rounded-xl text-center">
+            <span className="text-[10px] font-mono text-gray-500 uppercase block">Total Campaigns</span>
+            <p className="text-xl font-bold text-gray-300 mt-1 font-mono">{campaignStats.totalCampaigns}</p>
+          </div>
+          <div className="bg-[#121212] border border-white/5 p-4 rounded-xl text-center">
+            <span className="text-[10px] font-mono text-gray-500 uppercase block">Active Campaigns</span>
+            <p className="text-xl font-bold text-emerald-400 mt-1 font-mono">{campaignStats.activeCampaigns}</p>
+          </div>
+          <div className="bg-[#121212] border border-white/5 p-4 rounded-xl text-center">
+            <span className="text-[10px] font-mono text-gray-500 uppercase block">Completed Campaigns</span>
+            <p className="text-xl font-bold text-blue-400 mt-1 font-mono">{campaignStats.completedCampaigns}</p>
+          </div>
+          <div className="bg-[#121212] border border-white/5 p-4 rounded-xl text-center">
+            <span className="text-[10px] font-mono text-gray-500 uppercase block">Companies in Queue</span>
+            <p className="text-xl font-bold text-purple-400 mt-1 font-mono">{campaignStats.companiesInQueue}</p>
+          </div>
+          <div className="bg-[#121212] border border-white/5 p-4 rounded-xl text-center">
+            <span className="text-[10px] font-mono text-gray-500 uppercase block">Success Rate</span>
+            <p className="text-xl font-bold text-amber-400 mt-1 font-mono">{campaignStats.successRate}%</p>
+          </div>
+          <div className="bg-[#121212] border border-white/5 p-4 rounded-xl text-center">
+            <span className="text-[10px] font-mono text-gray-500 uppercase block">Avg Processing Time</span>
+            <p className="text-xl font-bold text-emerald-400 mt-1 font-mono">{campaignStats.avgCompletionTime.toFixed(1)}s</p>
           </div>
         </div>
       </div>
