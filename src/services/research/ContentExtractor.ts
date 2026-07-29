@@ -8,19 +8,16 @@ export class ContentExtractor {
    */
   static async extractCleanContent(page: Page): Promise<string> {
     return await page.evaluate((maxSize) => {
-      // 1. Tags to purge entirely
-      const excludeTags = ['script', 'style', 'noscript', 'svg', 'iframe', 'header', 'footer', 'nav', 'aside'];
+      // 1. Tags to purge (keep header/footer to avoid stripping hero content)
+      const excludeTags = ['script', 'style', 'noscript', 'svg', 'iframe'];
       excludeTags.forEach((tag) => {
         document.querySelectorAll(tag).forEach((el) => el.remove());
       });
 
-      // 2. Class/ID keywords representing boilerplate, menus, cookies, widgets
-      const boilerplateKeywords = [
-        'menu', 'nav', 'header', 'footer', 'cookie', 'consent', 'gdpr', 'banner', 
-        'privacy-policy', 'terms', 'social', 'widget', 'sidebar', 'popup', 'modal'
-      ];
+      // 2. Class/ID keywords representing cookies/modals
+      const boilerplateKeywords = ['cookie', 'consent', 'gdpr', 'popup', 'modal'];
       
-      document.querySelectorAll('div, section, dialog, ul, ol').forEach((el: any) => {
+      document.querySelectorAll('div, section, dialog').forEach((el: any) => {
         try {
           const idOrClass = (el.id + ' ' + el.className).toLowerCase();
           if (boilerplateKeywords.some((kw) => idOrClass.includes(kw))) {
@@ -31,26 +28,11 @@ export class ContentExtractor {
         }
       });
 
-      // 3. Purge hidden nodes
-      document.querySelectorAll('*').forEach((el: any) => {
-        try {
-          const style = window.getComputedStyle(el);
-          if (
-            style.display === 'none' ||
-            style.visibility === 'hidden' ||
-            style.opacity === '0' ||
-            el.offsetWidth === 0 ||
-            el.offsetHeight === 0
-          ) {
-            el.remove();
-          }
-        } catch (e) {
-          // ignore computing style errors
-        }
-      });
-
-      // 4. Extract visible body text
-      const rawText = document.body.innerText || document.body.textContent || '';
+      // 3. Extract visible text with fallback
+      let rawText = document.body ? (document.body.innerText || document.body.textContent || '') : '';
+      if (!rawText || rawText.trim().length < 20) {
+        rawText = document.documentElement.innerText || document.documentElement.textContent || '';
+      }
       
       // 5. Clean excess whitespace layout formats
       const cleanText = rawText

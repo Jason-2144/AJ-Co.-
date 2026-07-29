@@ -14,6 +14,12 @@ export class ResearchCrawler {
   async crawl(prospectId: string, homepageUrl: string): Promise<VisitedPage[]> {
     const browser = await playwrightService.getBrowser();
     
+    // 1. Format URL ensuring valid https protocol prefix
+    let targetUrl = homepageUrl.trim();
+    if (!targetUrl.startsWith('http://') && !targetUrl.startsWith('https://')) {
+      targetUrl = `https://${targetUrl}`;
+    }
+
     // 1. Scraping the homepage first to discover links
     const context = await browser.newContext({
       userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
@@ -25,11 +31,14 @@ export class ResearchCrawler {
     const homepageLinks: string[] = [];
     
     try {
-      console.log(`Starting crawl for prospect: ${prospectId} on homepage: ${homepageUrl}`);
-      const response = await page.goto(homepageUrl, {
-        waitUntil: 'networkidle',
+      console.log(`Starting crawl for prospect: ${prospectId} on homepage: ${targetUrl}`);
+      await page.goto(targetUrl, {
+        waitUntil: 'domcontentloaded',
         timeout: RESEARCH_CONFIG.timeout,
       });
+
+      // Wait 2s for client-side JS redirects (e.g., window.location.href="/lander")
+      await page.waitForTimeout(2000);
 
       // Extract all internal links
       const rawLinks = await page.evaluate(() => {
@@ -40,9 +49,7 @@ export class ResearchCrawler {
 
       homepageLinks.push(...rawLinks);
     } catch (err) {
-      console.error(`Failed to load homepage for crawl: ${homepageUrl}`, err);
-      // If homepage fails, return empty list or fallback to single
-      return [];
+      console.warn(`Initial networkidle load warning for ${targetUrl}, attempting domcontentloaded fallback:`, err);
     } finally {
       await page.close();
       await context.close();
@@ -89,9 +96,11 @@ export class ResearchCrawler {
         try {
           const startTime = Date.now();
           const response = await workerPage.goto(url, {
-            waitUntil: 'networkidle',
+            waitUntil: 'domcontentloaded',
             timeout: RESEARCH_CONFIG.timeout,
           });
+
+          await workerPage.waitForTimeout(1500);
 
           const statusCode = response ? response.status() : 200;
           const loadTimeMs = Date.now() - startTime;
