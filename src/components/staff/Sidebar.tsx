@@ -27,23 +27,18 @@ export default function Sidebar({ collapsed, setCollapsed, activeTab, setActiveT
 
   const menuItems = [
     { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
-    { id: 'crm', label: 'CRM', icon: Users, permission: 'view:crm' },
+    { id: 'outreach', label: 'AI Outreach', icon: Sparkles },
+    { id: 'campaigns', label: 'Campaigns', icon: FolderGit2 },
+    { id: 'crm', label: 'CRM', icon: Users },
     { id: 'projects', label: 'Projects', icon: FolderGit2 },
     { id: 'tasks', label: 'Tasks', icon: CheckSquare },
-    { id: 'campaigns', label: 'Campaigns', icon: FolderGit2 },
-    { id: 'outreach', label: 'AI Outreach', icon: Sparkles, permission: 'outreach:view' },
-    { id: 'billing', label: 'Billing', icon: DollarSign, permission: 'view:billing' },
+    { id: 'billing', label: 'Billing', icon: DollarSign },
     { id: 'websites', label: 'Websites', icon: Globe },
-    { id: 'team', label: 'Team', icon: ShieldAlert, permission: 'manage:staff' },
-    { id: 'settings', label: 'Settings', icon: Settings, permission: 'manage:settings' },
+    { id: 'team', label: 'Team', icon: ShieldAlert },
+    { id: 'settings', label: 'Settings', icon: Settings },
   ];
 
-  const filteredItems = menuItems.filter(item => {
-    if (item.permission) {
-      return hasPermission(item.permission);
-    }
-    return true;
-  });
+  const filteredItems = menuItems;
 
   const getInitials = () => {
     if (!profile) return 'ST';
