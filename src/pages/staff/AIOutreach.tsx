@@ -10,6 +10,7 @@ import { researchStore } from '../../services/research/ResearchStore';
 import { analysisStore } from '../../services/analysis/AnalysisStore';
 import { emailStore } from '../../services/email/EmailStore';
 import { gmailStore } from '../../services/gmail/GmailStore';
+import { gmailService } from '../../services/gmail/GmailService';
 import { ParsingError, ParseResult } from '../../types/prospect';
 
 export default function AIOutreach() {
@@ -130,12 +131,28 @@ export default function AIOutreach() {
             Persisted workspace with secure Google OAuth connections and local Ollama pipelines.
           </p>
         </div>
-        {queueItems.length > 0 && (
-          <div className="text-xs font-mono text-gray-500 bg-white/[0.02] border border-white/5 px-3 py-1.5 rounded-xl self-start md:self-auto flex items-center gap-2">
-            <FileText className="w-3.5 h-3.5 text-gray-400" />
-            <span>Active Source: <strong className="text-white font-medium">{sourceName}</strong></span>
-          </div>
-        )}
+        <div className="flex items-center gap-3">
+          <button
+            onClick={async () => {
+              try {
+                const url = await gmailService.getAuthUrl();
+                window.location.href = url;
+              } catch (e) {
+                console.error(e);
+              }
+            }}
+            className="bg-emerald-500 hover:bg-emerald-400 text-black text-xs font-bold px-4 py-2 rounded-xl transition-all shadow-lg shadow-emerald-500/10 flex items-center gap-2 cursor-pointer"
+          >
+            <Sparkles className="w-4 h-4" />
+            Connect Google Workspace / Gmail
+          </button>
+          {queueItems.length > 0 && (
+            <div className="text-xs font-mono text-gray-500 bg-white/[0.02] border border-white/5 px-3 py-1.5 rounded-xl flex items-center gap-2">
+              <FileText className="w-3.5 h-3.5 text-gray-400" />
+              <span>Active Source: <strong className="text-white font-medium">{sourceName}</strong></span>
+            </div>
+          )}
+        </div>
       </div>
 
       {/* Global Error Banner */}
