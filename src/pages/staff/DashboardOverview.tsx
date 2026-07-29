@@ -14,7 +14,6 @@ import { projectsService } from '../../services/projects';
 import { tasksService } from '../../services/tasks';
 import { invoicesService } from '../../services/invoices';
 import { usersService, AuditLog } from '../../services/users';
-import { campaignService } from '../../services/campaign/CampaignService';
 import { queueStore } from '../../services/queue/QueueStore';
 
 export default function DashboardOverview({ setActiveTab }: { setActiveTab: (val: string) => void }) {
@@ -39,14 +38,18 @@ export default function DashboardOverview({ setActiveTab }: { setActiveTab: (val
   useEffect(() => {
     async function loadMetrics() {
       try {
-        const [projs, tsks, invs, logs, campaignsList] = await Promise.all([
+        const [projsRes, tsksRes, invsRes, logsRes] = await Promise.allSettled([
           projectsService.getProjects(),
           tasksService.getTasks(),
           invoicesService.getInvoices(),
           usersService.getAuditLogs(),
-          campaignService.list(),
           queueStore.loadFromSupabase()
         ]);
+
+        const projs = projsRes.status === 'fulfilled' ? projsRes.value : [];
+        const tsks = tsksRes.status === 'fulfilled' ? tsksRes.value : [];
+        const invs = invsRes.status === 'fulfilled' ? invsRes.value : [];
+        const logs = logsRes.status === 'fulfilled' ? logsRes.value : [];
 
         setProjectCount(projs.length);
         
@@ -64,31 +67,23 @@ export default function DashboardOverview({ setActiveTab }: { setActiveTab: (val
           .reduce((sum, item) => sum + Number(item.total), 0);
         setRevenue(totalRev);
 
-        // Calculate Campaigns analytics
-        const activeCamps = campaignsList.filter(c => c.status === 'Active').length;
-        const completedCamps = campaignsList.filter(c => c.status === 'Completed').length;
-        
-        let totalProspects = 0;
-        let successfulDrafts = 0;
-        campaignsList.forEach(c => {
-          totalProspects += c.totalProspects;
-          successfulDrafts += c.draftsCreated;
-        });
-        const campaignSuccessRate = totalProspects > 0 ? Math.round((successfulDrafts / totalProspects) * 100) : 0;
-
-        // Average processing time for completed prospects
+        // Calculate queue analytics
         const queueItems = queueStore.getItems();
         const completedItems = queueItems.filter(i => i.status === 'completed' && i.startedAt && i.finishedAt);
         const avgTime = completedItems.length > 0
           ? completedItems.reduce((acc, curr) => acc + (curr.finishedAt! - curr.startedAt!), 0) / completedItems.length / 1000
           : 0;
 
+        const totalProspects = queueItems.length;
+        const completedCount = completedItems.length;
+        const successRate = totalProspects > 0 ? Math.round((completedCount / totalProspects) * 100) : 0;
+
         setCampaignStats({
-          totalCampaigns: campaignsList.length,
-          activeCampaigns: activeCamps,
-          completedCampaigns: completedCamps,
+          totalCampaigns: 0,
+          activeCampaigns: 0,
+          completedCampaigns: 0,
           companiesInQueue: queueItems.length,
-          successRate: campaignSuccessRate,
+          successRate,
           avgCompletionTime: avgTime
         });
 

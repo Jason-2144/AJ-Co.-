@@ -50,11 +50,10 @@ export default function Dashboard() {
       {/* Primary content pane */}
       <main className="flex-grow p-6 md:p-10 overflow-y-auto h-screen max-w-7xl mx-auto space-y-8">
         {activeTab === 'dashboard' && <DashboardOverview setActiveTab={setActiveTab} />}
+        {activeTab === 'outreach' && <AIOutreach />}
         {activeTab === 'crm' && <CRM />}
         {activeTab === 'projects' && <Projects />}
         {activeTab === 'tasks' && <Tasks />}
-        {activeTab === 'campaigns' && <Campaigns />}
-        {activeTab === 'outreach' && <AIOutreach />}
         {activeTab === 'billing' && <Invoices />}
         {activeTab === 'websites' && <Websites />}
         {activeTab === 'team' && <Team />}
