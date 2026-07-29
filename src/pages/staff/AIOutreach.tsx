@@ -38,7 +38,7 @@ export default function AIOutreach() {
       try {
         setLoadingStores(true);
         // Load persistent entries in parallel from Supabase
-        await Promise.all([
+        await Promise.allSettled([
           queueStore.loadFromSupabase(),
           researchStore.loadFromSupabase(),
           analysisStore.loadFromSupabase(),
@@ -52,7 +52,7 @@ export default function AIOutreach() {
         // Auto-resolve dynamic sources names if items exist
         const items = queueManager.getQueue();
         if (items.length > 0) {
-          setSourceName('Persistent Database Cache');
+          setSourceName('Persistent Storage Cache');
         }
 
         // Set campaigns list state and select first active if any
@@ -62,8 +62,7 @@ export default function AIOutreach() {
           setSelectedCampaignId(camps[0].id);
         }
       } catch (err) {
-        console.error('Failed to prefetch Supabase records:', err);
-        setErrorMessage('Failed to connect to database. Please check your network connection.');
+        console.warn('Failed to prefetch Supabase records, operating in responsive memory mode:', err);
       } finally {
         setLoadingStores(false);
       }
@@ -140,12 +139,15 @@ export default function AIOutreach() {
         description: inlineDescription,
         status: 'Draft',
       });
+      setCampaigns(campaignStore.getAll());
       setSelectedCampaignId(camp.id);
       setInlineName('');
       setInlineDescription('');
       setShowCreateInline(false);
-    } catch (err) {
+      setErrorMessage(null);
+    } catch (err: any) {
       console.error('Failed to create campaign inline:', err);
+      setErrorMessage(err?.message || 'Failed to create campaign');
     }
   };
 

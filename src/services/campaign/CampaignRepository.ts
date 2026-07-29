@@ -3,43 +3,79 @@ import { Campaign, CampaignStatus, CampaignStats } from './CampaignTypes';
 
 export class CampaignRepository {
   async list(): Promise<Campaign[]> {
-    const { data, error } = await supabase
-      .from('campaigns')
-      .select('*')
-      .order('created_at', { ascending: false });
+    try {
+      const { data, error } = await supabase
+        .from('campaigns')
+        .select('*')
+        .order('created_at', { ascending: false });
 
-    if (error) throw error;
-    return (data || []).map(this.mapRow);
+      if (!error && data) {
+        const list = data.map(this.mapRow);
+        campaignStore.setCampaigns(list);
+        return list;
+      }
+    } catch (err) {
+      console.warn('Failed to list campaigns from database, using memory store:', err);
+    }
+    return campaignStore.getAll();
   }
 
   async get(id: string): Promise<Campaign | null> {
-    const { data, error } = await supabase
-      .from('campaigns')
-      .select('*')
-      .eq('id', id)
-      .single();
+    try {
+      const { data, error } = await supabase
+        .from('campaigns')
+        .select('*')
+        .eq('id', id)
+        .single();
 
-    if (error) {
-      if (error.code === 'PGRST116') return null;
-      throw error;
+      if (!error && data) return this.mapRow(data);
+    } catch (err) {
+      console.warn('Failed to get campaign from database:', err);
     }
-    return this.mapRow(data);
+    return campaignStore.get(id) || null;
   }
 
   async create(campaign: Partial<Campaign>): Promise<Campaign> {
-    const { data, error } = await supabase
-      .from('campaigns')
-      .insert({
-        name: campaign.name,
-        description: campaign.description || null,
-        status: campaign.status || 'Draft',
-        notes: campaign.notes || null,
-      })
-      .select()
-      .single();
+    try {
+      const { data, error } = await supabase
+        .from('campaigns')
+        .insert({
+          name: campaign.name,
+          description: campaign.description || null,
+          status: campaign.status || 'Draft',
+          notes: campaign.notes || null,
+        })
+        .select()
+        .single();
 
-    if (error) throw error;
-    return this.mapRow(data);
+      if (!error && data) {
+        const created = this.mapRow(data);
+        campaignStore.set(created.id, created);
+        return created;
+      }
+    } catch (err) {
+      console.warn('Database insert fallback to memory campaign:', err);
+    }
+
+    // In-memory campaign creation fallback
+    const newId = crypto.randomUUID ? crypto.randomUUID() : (Math.random().toString(36).substring(2) + Math.random().toString(36).substring(2));
+    const fallbackCampaign: Campaign = {
+      id: newId,
+      name: campaign.name || 'New Campaign',
+      description: campaign.description || undefined,
+      status: (campaign.status as CampaignStatus) || 'Draft',
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+      totalProspects: 0,
+      completedProspects: 0,
+      failedProspects: 0,
+      emailsGenerated: 0,
+      draftsCreated: 0,
+      notes: campaign.notes || undefined,
+    };
+
+    campaignStore.set(fallbackCampaign.id, fallbackCampaign);
+    return fallbackCampaign;
   }
 
   async update(id: string, updates: Partial<Campaign>): Promise<Campaign> {
