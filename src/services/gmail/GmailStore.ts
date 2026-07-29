@@ -4,12 +4,14 @@ import { supabase } from '../../lib/supabase';
 export class GmailStore {
   private drafts: Map<string, GmailDraftRecord> = new Map();
   private listeners: Set<() => void> = new Set();
-  private autoDraftSetting: boolean = false;
+  private autoDraftSetting: boolean = true;
 
   constructor() {
     const saved = localStorage.getItem('aj_co_auto_draft');
     if (saved !== null) {
       this.autoDraftSetting = saved === 'true';
+    } else {
+      localStorage.setItem('aj_co_auto_draft', 'true');
     }
   }
 
