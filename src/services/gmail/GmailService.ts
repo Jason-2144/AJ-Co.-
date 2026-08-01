@@ -2,6 +2,7 @@ import { Prospect } from '../../types/prospect';
 import { GeneratedEmail } from '../email/EmailTypes';
 import { GmailDraftRecord } from './GmailTypes';
 import { gmailStore } from './GmailStore';
+import { DraftFormatter } from './DraftFormatter';
 
 export class GmailService {
   /**
@@ -17,23 +18,28 @@ export class GmailService {
   }
 
   async getStatus(): Promise<{ isAuthenticated: boolean; mockMode?: boolean; email?: string }> {
+    const token = localStorage.getItem('aj_co_gmail_token');
+    const userEmail = localStorage.getItem('aj_co_gmail_user_email');
+    if (token) {
+      return {
+        isAuthenticated: true,
+        email: userEmail || 'team.ajandco@gmail.com',
+        mockMode: false,
+      };
+    }
     try {
       const res = await fetch('/api/gmail/status');
       if (res.ok) {
         return await res.json();
       }
-    } catch (e) {
-      console.warn('Backend gmail status check offline:', e);
-    }
+    } catch (e) {}
     return {
-      isAuthenticated: true,
-      email: 'team.ajandco@gmail.com',
-      mockMode: false,
+      isAuthenticated: false,
     };
   }
 
   /**
-   * Invokes backend to create a Gmail draft and updates GmailStore.
+   * Invokes backend or direct Google Gmail API to create an authentic Gmail draft.
    */
   async createDraft(prospect: Prospect, email: GeneratedEmail): Promise<GmailDraftRecord> {
     const prospectId = prospect.id;
@@ -44,6 +50,7 @@ export class GmailService {
       status: 'pending',
     });
 
+    // 1. Try server backend endpoint first
     try {
       const response = await fetch('/api/gmail/draft', {
         method: 'POST',
@@ -66,20 +73,65 @@ export class GmailService {
         return record;
       }
     } catch (error: any) {
-      console.warn('Gmail API draft creation fallback:', error);
+      console.warn('Backend draft API unavailable, attempting client Google OAuth:', error);
     }
 
-    // Local fallback draft record
-    const fallbackRecord: GmailDraftRecord = {
-      prospectId,
-      draftId: `local_draft_${Math.random().toString(36).substring(2, 10)}`,
-      threadId: `local_thread_${Math.random().toString(36).substring(2, 10)}`,
-      createdTime: Date.now(),
-      status: 'created',
-    };
+    // 2. Direct browser Google Gmail API using authenticated token
+    const token = localStorage.getItem('aj_co_gmail_token');
+    if (token) {
+      try {
+        const recipient = prospect.emails?.[0] || `contact@${(prospect.website || 'client.com').replace(/^https?:\/\//, '').replace(/\/.*$/, '')}`;
+        const subject = email.subject || `AI Process Automation Opportunities for ${prospect.companyName}`;
+        const plainText = DraftFormatter.formatPlainText(email.opening, email.body, email.opportunities || [], email.cta, email.signature);
+        const htmlText = DraftFormatter.formatHtmlBody(email.opening, email.body, email.opportunities || [], email.cta, email.signature);
+        const rawMime = DraftFormatter.buildMimeBase64(recipient, subject, plainText, htmlText);
 
-    gmailStore.setDraft(prospectId, fallbackRecord);
-    return fallbackRecord;
+        const res = await fetch('https://gmail.googleapis.com/gmail/v1/users/me/drafts', {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            message: { raw: rawMime }
+          })
+        });
+
+        if (res.ok) {
+          const data = await res.json();
+          const record: GmailDraftRecord = {
+            prospectId,
+            draftId: data.id,
+            threadId: data.message?.threadId,
+            createdTime: Date.now(),
+            status: 'created',
+          };
+          gmailStore.setDraft(prospectId, record);
+          return record;
+        } else {
+          const errData = await res.json();
+          console.error('Google Gmail API Error:', errData);
+          throw new Error(errData?.error?.message || 'Google Gmail API failed to create draft.');
+        }
+      } catch (err: any) {
+        const record: GmailDraftRecord = {
+          prospectId,
+          status: 'failed',
+          error: err?.message || 'Failed to create Gmail draft.'
+        };
+        gmailStore.setDraft(prospectId, record);
+        throw err;
+      }
+    }
+
+    // 3. No authentication token found
+    const record: GmailDraftRecord = {
+      prospectId,
+      status: 'failed',
+      error: 'Google Workspace not connected. Please connect your Google Account.'
+    };
+    gmailStore.setDraft(prospectId, record);
+    throw new Error('Google Workspace not connected. Please connect your Google Account.');
   }
 }
 
