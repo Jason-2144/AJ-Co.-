@@ -308,49 +308,6 @@ export default function QueueDashboard({ items, errors, onClear, isRunning, isPa
 
   return (
     <div className="space-y-6">
-      {/* Google Authentication Link Card */}
-      {gmailStatus && (
-        <div className={`p-4 rounded-2xl border flex flex-wrap items-center justify-between gap-4 shadow-sm transition-colors duration-300 ${
-          gmailStatus.isAuthenticated 
-            ? 'bg-emerald-500/[0.02] border-emerald-500/20' 
-            : 'bg-amber-500/[0.02] border-amber-500/20'
-        }`}>
-          <div className="flex items-center gap-3">
-            {gmailStatus.isAuthenticated ? (
-              <div className="p-2 bg-emerald-500/10 rounded-xl text-emerald-400">
-                <Link2 className="w-5 h-5" />
-              </div>
-            ) : (
-              <div className="p-2 bg-amber-500/10 rounded-xl text-amber-400">
-                <AlertOctagon className="w-5 h-5" />
-              </div>
-            )}
-            <div>
-              <p className="font-semibold text-xs text-white">
-                {gmailStatus.isAuthenticated ? 'Google Gmail Integration Linked' : 'Gmail Integration: Optional Account Link'}
-                {gmailStatus.mockMode && <span className="ml-1.5 px-1.5 py-0.2 bg-white/5 border border-white/5 rounded text-[8px] font-mono text-gray-500 uppercase">Mock Connected</span>}
-              </p>
-              <p className="text-[10px] text-gray-500 mt-0.5">
-                {gmailStatus.isAuthenticated 
-                  ? `Authorized sender account: ${gmailStatus.email}` 
-                  : 'Link team.ajandco@gmail.com via OAuth 2.0 to auto-generate draft emails in your Gmail inbox.'
-                }
-              </p>
-            </div>
-          </div>
-          
-          {!gmailStatus.isAuthenticated && (
-            <button
-              onClick={handleConnectGmail}
-              className="bg-amber-500 border-amber-500 hover:bg-amber-400 text-black px-4 py-2 rounded-xl text-xs font-semibold flex items-center gap-1.5 transition-all cursor-pointer"
-            >
-              <Link className="w-3.5 h-3.5" />
-              Link Gmail Account
-            </button>
-          )}
-        </div>
-      )}
-
       {/* 1. Statistics Cards (Queue, Scraper, AI Analysis, AI Email, Gmail Drafts) */}
       <div className="space-y-4">
         {/* Core Queue Stats */}

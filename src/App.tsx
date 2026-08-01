@@ -23,10 +23,11 @@ import TermsOfService from './pages/TermsOfService';
 // Staff Portal Pages
 import Login from './pages/staff/Login';
 import Dashboard from './pages/staff/Dashboard';
+import GmailCallback from './pages/staff/GmailCallback';
 
 function AppContent() {
   const location = useLocation();
-  const isStaffRoute = location.pathname.startsWith('/staff');
+  const isStaffRoute = location.pathname.startsWith('/staff') || location.pathname.includes('/gmail/callback');
 
   return (
     <div className="font-sans min-h-screen bg-[#0A0A0A] text-white flex flex-col">
@@ -44,7 +45,9 @@ function AppContent() {
           <Route path="/privacy-policy" element={<PrivacyPolicy />} />
           <Route path="/terms-of-service" element={<TermsOfService />} />
           
-          {/* Protected Staff Portal Routes */}
+          {/* Protected Staff Portal Routes & OAuth Callbacks */}
+          <Route path="/api/gmail/callback" element={<GmailCallback />} />
+          <Route path="/gmail/callback" element={<GmailCallback />} />
           <Route path="/staff/login" element={<Login />} />
           <Route path="/staff" element={<Dashboard />} />
           <Route path="/staff/*" element={<Dashboard />} />
