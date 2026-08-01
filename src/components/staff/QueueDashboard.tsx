@@ -339,17 +339,15 @@ export default function QueueDashboard({ items, errors, onClear, isRunning, isPa
             </div>
           </div>
           
-          <button
-            onClick={handleConnectGmail}
-            className={`px-4 py-2 rounded-xl text-xs font-semibold flex items-center gap-1.5 transition-all cursor-pointer border ${
-              gmailStatus.isAuthenticated
-                ? 'bg-white/5 border-white/10 hover:bg-white/10 text-white'
-                : 'bg-amber-500 border-amber-500 hover:bg-amber-400 text-black'
-            }`}
-          >
-            <Link className="w-3.5 h-3.5" />
-            {gmailStatus.isAuthenticated ? 'Reconnect Google Account' : 'Connect Google Workspace'}
-          </button>
+          {!gmailStatus.isAuthenticated && (
+            <button
+              onClick={handleConnectGmail}
+              className="bg-amber-500 border-amber-500 hover:bg-amber-400 text-black px-4 py-2 rounded-xl text-xs font-semibold flex items-center gap-1.5 transition-all cursor-pointer"
+            >
+              <Link className="w-3.5 h-3.5" />
+              Connect Google Workspace
+            </button>
+          )}
         </div>
       )}
 

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Sparkles, FileText, AlertCircle, Loader, RefreshCw } from 'lucide-react';
+import { Sparkles, FileText, AlertCircle, Loader, RefreshCw, Check } from 'lucide-react';
 import UploadZone from '../../components/staff/UploadZone';
 import PasteInput from '../../components/staff/PasteInput';
 import QueueDashboard from '../../components/staff/QueueDashboard';
@@ -22,6 +22,8 @@ export default function AIOutreach() {
   const [isRunning, setIsRunning] = useState(false);
   const [isPaused, setIsPaused] = useState(false);
   const [loadingStores, setLoadingStores] = useState(true);
+  const [gmailConnected, setGmailConnected] = useState(false);
+  const [gmailEmail, setGmailEmail] = useState('');
 
   // Sync state with the queue store and queue manager singleton
   useEffect(() => {
@@ -29,13 +31,19 @@ export default function AIOutreach() {
       try {
         setLoadingStores(true);
         // Load persistent entries in parallel from Supabase
-        await Promise.allSettled([
+        const [statusRes] = await Promise.allSettled([
           queueStore.loadFromSupabase(),
           researchStore.loadFromSupabase(),
           analysisStore.loadFromSupabase(),
           emailStore.loadFromSupabase(),
           gmailStore.loadFromSupabase(),
         ]);
+
+        try {
+          const gStatus = await gmailService.getStatus();
+          setGmailConnected(!!gStatus.isAuthenticated);
+          if (gStatus.email) setGmailEmail(gStatus.email);
+        } catch (e) {}
         
         setQueueItems(queueManager.getQueue());
         
@@ -132,20 +140,27 @@ export default function AIOutreach() {
           </p>
         </div>
         <div className="flex items-center gap-3">
-          <button
-            onClick={async () => {
-              try {
-                const url = await gmailService.getAuthUrl();
-                window.location.href = url;
-              } catch (e) {
-                console.error(e);
-              }
-            }}
-            className="bg-emerald-500 hover:bg-emerald-400 text-black text-xs font-bold px-4 py-2 rounded-xl transition-all shadow-lg shadow-emerald-500/10 flex items-center gap-2 cursor-pointer"
-          >
-            <Sparkles className="w-4 h-4" />
-            Connect Google Workspace / Gmail
-          </button>
+          {!gmailConnected ? (
+            <button
+              onClick={async () => {
+                try {
+                  const url = await gmailService.getAuthUrl();
+                  window.location.href = url;
+                } catch (e) {
+                  console.error(e);
+                }
+              }}
+              className="bg-emerald-500 hover:bg-emerald-400 text-black text-xs font-bold px-4 py-2 rounded-xl transition-all shadow-lg shadow-emerald-500/10 flex items-center gap-2 cursor-pointer"
+            >
+              <Sparkles className="w-4 h-4" />
+              Connect Google Workspace / Gmail
+            </button>
+          ) : (
+            <div className="bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-mono px-3 py-1.5 rounded-xl flex items-center gap-2">
+              <Check className="w-3.5 h-3.5" />
+              <span>Gmail Connected: <strong className="text-white font-medium">{gmailEmail || 'Google Workspace'}</strong></span>
+            </div>
+          )}
           {queueItems.length > 0 && (
             <div className="text-xs font-mono text-gray-500 bg-white/[0.02] border border-white/5 px-3 py-1.5 rounded-xl flex items-center gap-2">
               <FileText className="w-3.5 h-3.5 text-gray-400" />
