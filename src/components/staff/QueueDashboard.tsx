@@ -1521,17 +1521,16 @@ export default function QueueDashboard({ items, errors, onClear, isRunning, isPa
                 Compiled: {new Date(selectedEmail.generatedAt).toLocaleString()}
               </span>
               <div className="flex gap-2">
-                {/* Manual Draft creation inside modal */}
-                {(!gmailStore.getDraft(selectedEmail.prospectId) || gmailStore.getDraft(selectedEmail.prospectId)?.status === 'failed') && (
-                  <button
-                    onClick={() => handleCreateDraftManually(selectedEmail.prospectId)}
-                    disabled={draftingId === selectedEmail.prospectId || !gmailStatus?.isAuthenticated}
-                    className="bg-emerald-500 hover:bg-emerald-400 disabled:opacity-50 text-black font-semibold px-4 py-2 rounded-xl text-xs transition-colors cursor-pointer flex items-center gap-1"
-                  >
-                    <Send className={`w-3.5 h-3.5 ${draftingId === selectedEmail.prospectId ? 'animate-spin' : ''}`} />
-                    {draftingId === selectedEmail.prospectId ? 'Drafting...' : 'Create Gmail Draft'}
-                  </button>
-                )}
+                {/* 1-Click Open Draft in Gmail button */}
+                <a
+                  href={gmailStore.getDraft(selectedEmail.prospectId)?.composeUrl || `https://mail.google.com/mail/?view=cm&fs=1&to=contact@client.com&su=${encodeURIComponent(selectedEmail.subject)}&body=${encodeURIComponent(selectedEmail.opening + '\n\n' + selectedEmail.body + '\n\n' + selectedEmail.cta + '\n\n' + selectedEmail.signature)}`}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="bg-emerald-500 hover:bg-emerald-400 text-black font-bold px-4 py-2 rounded-xl text-xs transition-all flex items-center gap-1.5 shadow-lg shadow-emerald-500/10 cursor-pointer"
+                >
+                  <ExternalLink className="w-3.5 h-3.5" />
+                  Open Draft in Gmail
+                </a>
 
                 {/* Regenerate Button */}
                 <button

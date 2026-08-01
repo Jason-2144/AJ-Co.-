@@ -5,6 +5,7 @@ export interface GmailDraftRecord {
   createdTime?: number;
   status: 'pending' | 'created' | 'failed';
   lastError?: string;
+  composeUrl?: string;
 }
 
 export interface GmailAuthConfig {
