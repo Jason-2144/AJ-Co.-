@@ -61,7 +61,7 @@ export default function GmailCallback() {
 
           setStatus('success');
           setTimeout(() => {
-            navigate('/staff/outreach');
+            navigate('/staff');
           }, 1000);
         } else {
           throw new Error('No access token returned from Google.');
@@ -91,7 +91,7 @@ export default function GmailCallback() {
           <>
             <CheckCircle className="w-10 h-10 text-emerald-400 mx-auto" />
             <h2 className="text-xl font-bold text-white">Gmail Connected Successfully!</h2>
-            <p className="text-xs text-gray-400">Redirecting to AI Outreach Dashboard...</p>
+            <p className="text-xs text-gray-400">Redirecting to Staff Dashboard...</p>
           </>
         )}
 
@@ -101,10 +101,10 @@ export default function GmailCallback() {
             <h2 className="text-xl font-bold text-white">Connection Failed</h2>
             <p className="text-xs text-red-400">{errorMsg}</p>
             <button
-              onClick={() => navigate('/staff/outreach')}
+              onClick={() => navigate('/staff')}
               className="mt-4 px-4 py-2 bg-white/10 hover:bg-white/20 text-white rounded-xl text-xs font-semibold cursor-pointer"
             >
-              Return to Outreach Dashboard
+              Return to Staff Dashboard
             </button>
           </>
         )}
