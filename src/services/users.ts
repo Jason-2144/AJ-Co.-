@@ -163,9 +163,9 @@ export const usersService = {
     return local[0] || {
       company_name: 'AJ & Co.',
       invoice_prefix: 'INV-',
-      currency: 'USD',
-      tax_rate: 20,
-      timezone: 'Europe/London'
+      currency: 'INR',
+      tax_rate: 18,
+      timezone: 'Asia/Kolkata'
     };
   },
 

@@ -225,10 +225,26 @@ export default function Tasks() {
     setSelectedAssignees([]);
   };
 
-  const filteredTasks = tasks.filter(t => 
-    t.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    (t.description && t.description.toLowerCase().includes(searchQuery.toLowerCase()))
-  );
+  const [viewFilter, setViewFilter] = useState<'all' | 'my'>('all');
+
+  const myProfileId = profile?.id;
+  const filteredTasks = tasks.filter(t => {
+    const matchesSearch = t.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      (t.description && t.description.toLowerCase().includes(searchQuery.toLowerCase()));
+    
+    if (!matchesSearch) return false;
+
+    if (viewFilter === 'my') {
+      if (!myProfileId && !profile?.email) return true;
+      const isAssigned = t.task_assignees?.some((a: any) => 
+        a.profiles?.id === myProfileId || 
+        a.profiles?.email === profile?.email ||
+        (a.profiles?.first_name && profile?.first_name && a.profiles.first_name.toLowerCase() === profile.first_name.toLowerCase())
+      );
+      return isAssigned;
+    }
+    return true;
+  });
 
   const columns = [
     { id: 'todo', name: 'To Do', color: 'bg-gray-500/10 text-gray-400' },
@@ -246,6 +262,12 @@ export default function Tasks() {
     );
   }
 
+  const myTaskCount = tasks.filter(t => t.task_assignees?.some((a: any) => 
+    a.profiles?.id === myProfileId || 
+    a.profiles?.email === profile?.email ||
+    (a.profiles?.first_name && profile?.first_name && a.profiles.first_name.toLowerCase() === profile.first_name.toLowerCase())
+  )).length;
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
@@ -258,6 +280,27 @@ export default function Tasks() {
           className="bg-emerald-500 hover:bg-emerald-400 text-black px-4 py-2.5 rounded-xl font-semibold transition-colors flex items-center gap-2 text-sm"
         >
           <Plus className="w-4 h-4" /> Create Task
+        </button>
+      </div>
+
+      {/* Subtab View Filters */}
+      <div className="flex items-center gap-3 border-b border-white/5 pb-3">
+        <button
+          onClick={() => setViewFilter('all')}
+          className={`px-4 py-2 rounded-xl text-xs font-semibold tracking-wider transition-colors ${
+            viewFilter === 'all' ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' : 'text-gray-400 hover:text-white'
+          }`}
+        >
+          All Tasks ({tasks.length})
+        </button>
+        <button
+          onClick={() => setViewFilter('my')}
+          className={`px-4 py-2 rounded-xl text-xs font-semibold tracking-wider transition-colors flex items-center gap-2 ${
+            viewFilter === 'my' ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' : 'text-gray-400 hover:text-white'
+          }`}
+        >
+          <User className="w-3.5 h-3.5" />
+          My Assigned Tasks ({myTaskCount})
         </button>
       </div>
 

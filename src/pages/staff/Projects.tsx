@@ -291,7 +291,7 @@ export default function Projects() {
                         {proj.status}
                       </span>
                     </td>
-                    <td className="py-4 font-semibold text-white">${Number(proj.budget).toLocaleString()}</td>
+                    <td className="py-4 font-semibold text-white">₹{Number(proj.budget).toLocaleString()}</td>
                     <td className="py-4 text-right" onClick={(e) => e.stopPropagation()}>
                       <button
                         onClick={() => handleDeleteProject(proj.id!, proj.name)}

@@ -356,7 +356,7 @@ export default function CRM() {
                         </span>
                       </div>
                       <span className="text-sm font-semibold text-white">
-                        ${Number(lead.value).toLocaleString()}
+                        ₹{Number(lead.value).toLocaleString()}
                       </span>
                     </div>
                   ))}

@@ -199,13 +199,13 @@ export default function Invoices() {
   };
 
   const handleDeleteInvoice = async (id: string, num: string) => {
-    if (!profile?.id || !window.confirm(`Are you sure you want to archive invoice #${num}?`)) return;
+    if (!window.confirm(`Are you sure you want to delete invoice #${num}?`)) return;
     try {
-      await invoicesService.softDeleteInvoice(id, profile.id);
+      await invoicesService.softDeleteInvoice(id, profile?.id || 'owner');
       
       // Write log
       await usersService.writeAuditLog({
-        user_id: profile.id,
+        user_id: profile?.id || null,
         action: `archived invoice #${num}`,
         module: 'Billing'
       });
@@ -258,15 +258,20 @@ export default function Invoices() {
 
   return (
     <div className="space-y-6 print:bg-white print:text-black print:min-h-screen">
-      {/* Printable template view when invoice selected (hidden from screen unless print triggered) */}
+      {/* Printable template view when invoice selected */}
       <div className="hidden print:block space-y-6">
         {selectedInvoice && (
           <div className="p-8 space-y-8 text-black bg-white">
             <div className="flex justify-between items-start">
-              <div>
-                <h1 className="font-bold text-3xl font-syne">{companySettings?.company_name || 'AJ & Co.'}</h1>
-                <p className="text-sm text-gray-500 mt-1">{companySettings?.address || 'London, UK'}</p>
-                <p className="text-sm text-gray-500">{companySettings?.email}</p>
+              <div className="flex items-center gap-3">
+                <div className="w-12 h-12 bg-black text-white rounded-xl flex items-center justify-center font-serif text-xl font-bold tracking-tighter">
+                  AJ
+                </div>
+                <div>
+                  <h1 className="font-bold text-3xl font-serif text-black">{companySettings?.company_name || 'AJ & Co.'}</h1>
+                  <p className="text-xs text-gray-500 font-sans tracking-widest uppercase">AI PRODUCT STUDIO</p>
+                  <p className="text-xs text-gray-500 mt-1">{companySettings?.address || 'India'}</p>
+                </div>
               </div>
               <div className="text-right">
                 <h2 className="font-bold text-lg text-emerald-600 uppercase tracking-widest">Invoice</h2>
@@ -304,8 +309,8 @@ export default function Invoices() {
                   <tr key={idx} className="text-gray-700">
                     <td className="py-4 font-semibold">{item.description}</td>
                     <td className="py-4 text-center">{item.quantity}</td>
-                    <td className="py-4 text-right">${Number(item.unit_price).toFixed(2)}</td>
-                    <td className="py-4 text-right font-semibold">${Number(item.amount).toFixed(2)}</td>
+                    <td className="py-4 text-right">₹{Number(item.unit_price).toFixed(2)}</td>
+                    <td className="py-4 text-right font-semibold">₹{Number(item.amount).toFixed(2)}</td>
                   </tr>
                 ))}
               </tbody>
@@ -315,21 +320,21 @@ export default function Invoices() {
               <div className="w-64 space-y-2 text-sm text-gray-600">
                 <div className="flex justify-between">
                   <span>Subtotal:</span>
-                  <span>${Number(selectedInvoice.subtotal).toFixed(2)}</span>
+                  <span>₹{Number(selectedInvoice.subtotal).toFixed(2)}</span>
                 </div>
                 <div className="flex justify-between">
                   <span>Tax ({selectedInvoice.tax > 0 ? taxRate : 0}%):</span>
-                  <span>${Number(selectedInvoice.tax).toFixed(2)}</span>
+                  <span>₹{Number(selectedInvoice.tax).toFixed(2)}</span>
                 </div>
                 {selectedInvoice.discount > 0 && (
                   <div className="flex justify-between text-red-500">
                     <span>Discount:</span>
-                    <span>-${Number(selectedInvoice.discount).toFixed(2)}</span>
+                    <span>-₹{Number(selectedInvoice.discount).toFixed(2)}</span>
                   </div>
                 )}
                 <div className="flex justify-between border-t border-gray-200 pt-2 text-base font-bold text-black">
                   <span>Total Due:</span>
-                  <span>${Number(selectedInvoice.total).toFixed(2)}</span>
+                  <span>₹{Number(selectedInvoice.total).toFixed(2)}</span>
                 </div>
               </div>
             </div>
@@ -340,9 +345,14 @@ export default function Invoices() {
       {/* Screen Display Container */}
       <div className="space-y-6 print:hidden">
         <div className="flex items-center justify-between">
-          <div>
-            <h2 className="font-syne font-bold text-2xl text-white">Billing & Financial Ledger</h2>
-            <p className="text-gray-500 text-sm mt-1">Manage project quotes, estimates, and invoices pipeline.</p>
+          <div className="flex items-center gap-4">
+            <div className="w-12 h-12 bg-white/5 border border-white/10 rounded-2xl flex items-center justify-center font-serif text-xl font-bold text-white tracking-tighter">
+              AJ
+            </div>
+            <div>
+              <h2 className="font-syne font-bold text-2xl text-white">Billing & Financial Ledger</h2>
+              <p className="text-gray-500 text-sm mt-1">Manage project quotes, estimates, and invoices pipeline (INR ₹).</p>
+            </div>
           </div>
           <div className="flex gap-2">
             <button
@@ -422,7 +432,7 @@ export default function Invoices() {
                           <option value="overdue">Overdue</option>
                         </select>
                       </td>
-                      <td className="py-4 font-semibold text-white">${Number(inv.total).toLocaleString()}</td>
+                      <td className="py-4 font-semibold text-white">₹{Number(inv.total).toLocaleString()}</td>
                       <td className="py-4 text-right" onClick={(e) => e.stopPropagation()}>
                         <div className="flex gap-2 justify-end">
                           <button
@@ -471,7 +481,7 @@ export default function Invoices() {
                           {quote.status}
                         </span>
                       </td>
-                      <td className="py-4 font-semibold text-white">${Number(quote.total).toLocaleString()}</td>
+                      <td className="py-4 font-semibold text-white">₹{Number(quote.total).toLocaleString()}</td>
                       <td className="py-4 text-right">
                         {quote.status !== 'invoiced' && (
                           <button
