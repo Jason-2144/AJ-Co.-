@@ -50,6 +50,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const signIn = async (email: string, password: string) => {
     const data = await authService.signIn(email, password);
+    if (data?.user) {
+      setUser(data.user);
+      await fetchProfile(data.user.id);
+    }
     return data;
   };
 

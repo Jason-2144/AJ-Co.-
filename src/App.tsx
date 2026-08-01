@@ -46,7 +46,9 @@ function AppContent() {
           
           {/* Protected Staff Portal Routes */}
           <Route path="/staff/login" element={<Login />} />
+          <Route path="/staff" element={<Dashboard />} />
           <Route path="/staff/*" element={<Dashboard />} />
+          <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </main>
       {!isStaffRoute && <Footer />}
