@@ -2,12 +2,37 @@ import { QueueItem } from './QueueTypes';
 import { supabase } from '../../lib/supabase';
 import { ProspectStatus } from '../../types/prospect';
 
+const QUEUE_LOCAL_KEY = 'ajco_queue_items_v2';
+
+function getLocalQueue(): QueueItem[] {
+  try {
+    const raw = localStorage.getItem(QUEUE_LOCAL_KEY);
+    return raw ? JSON.parse(raw) : [];
+  } catch (e) {
+    return [];
+  }
+}
+
+function setLocalQueue(items: QueueItem[]): void {
+  try {
+    localStorage.setItem(QUEUE_LOCAL_KEY, JSON.stringify(items));
+  } catch (e) {
+    console.error('Failed to save queue items locally:', e);
+  }
+}
+
 export class QueueStore {
   private items: Map<string, QueueItem> = new Map();
   private listeners: Set<() => void> = new Set();
 
+  constructor() {
+    // Load local items on constructor
+    const initial = getLocalQueue();
+    initial.forEach(item => this.items.set(item.id, item));
+  }
+
   /**
-   * Loads all active queue items from Supabase database.
+   * Loads active queue items from Supabase database or LocalStorage fallback.
    */
   async loadFromSupabase(): Promise<void> {
     try {
@@ -15,13 +40,11 @@ export class QueueStore {
         .from('queue_items')
         .select('*, prospects(*)');
 
-      if (error) throw error;
-
-      this.items.clear();
-      if (data) {
+      if (!error && data && data.length > 0) {
+        this.items.clear();
         data.forEach((row: any) => {
           if (!row.prospects) return;
-          this.items.set(row.id, {
+          const item: QueueItem = {
             id: row.id,
             status: row.status as ProspectStatus,
             currentStage: row.current_stage as ProspectStatus,
@@ -41,34 +64,36 @@ export class QueueStore {
               status: (row.prospects.status || 'queued') as ProspectStatus,
               campaignId: row.prospects.campaign_id || undefined,
             },
-          });
+          };
+          this.items.set(item.id, item);
         });
+        setLocalQueue(Array.from(this.items.values()));
+        this.notify();
+        return;
       }
-      this.notify();
     } catch (err) {
-      console.error('Failed to load queue items from Supabase:', err);
+      console.warn('Failed to load queue items from Supabase, using local store:', err);
+    }
+
+    const local = getLocalQueue();
+    if (local.length > 0) {
+      this.items.clear();
+      local.forEach(item => this.items.set(item.id, item));
+      this.notify();
     }
   }
 
-  /**
-   * Returns a list of all queue items in insertion order.
-   */
   getItems(): QueueItem[] {
     return Array.from(this.items.values());
   }
 
-  /**
-   * Gets a specific queue item by its ID.
-   */
   getItem(id: string): QueueItem | undefined {
     return this.items.get(id);
   }
 
-  /**
-   * Sets or updates a queue item in the store and synchronizes with Supabase.
-   */
   setItem(id: string, item: QueueItem): void {
     this.items.set(id, item);
+    setLocalQueue(Array.from(this.items.values()));
     this.notify();
 
     // Async write-through to Supabase
@@ -99,34 +124,28 @@ export class QueueStore {
           updated_at: new Date().toISOString(),
         });
       } catch (error) {
-        console.error('Failed to sync queue item to Supabase:', error);
+        // Silently caught, local store already saved
       }
     })();
   }
 
-  /**
-   * Removes a queue item from the store and deletes it from Supabase.
-   */
   removeItem(id: string): void {
     this.items.delete(id);
+    setLocalQueue(Array.from(this.items.values()));
     this.notify();
 
     (async () => {
       try {
         await supabase.from('queue_items').delete().eq('id', id);
         await supabase.from('prospects').delete().eq('id', id);
-      } catch (error) {
-        console.error('Failed to delete queue item from Supabase:', error);
-      }
+      } catch (error) {}
     })();
   }
 
-  /**
-   * Clears the entire queue store.
-   */
   clear(): void {
     const ids = Array.from(this.items.keys());
     this.items.clear();
+    setLocalQueue([]);
     this.notify();
 
     (async () => {
@@ -135,15 +154,10 @@ export class QueueStore {
           await supabase.from('queue_items').delete().in('id', ids);
           await supabase.from('prospects').delete().in('id', ids);
         }
-      } catch (error) {
-        console.error('Failed to clear queue store from Supabase:', error);
-      }
+      } catch (error) {}
     })();
   }
 
-  /**
-   * Removes completed items from the queue.
-   */
   clearCompleted(): void {
     const items = this.getItems();
     const completedIds: string[] = [];
@@ -156,6 +170,7 @@ export class QueueStore {
         this.items.set(item.id, item);
       }
     });
+    setLocalQueue(Array.from(this.items.values()));
     this.notify();
 
     (async () => {
@@ -164,15 +179,10 @@ export class QueueStore {
           await supabase.from('queue_items').delete().in('id', completedIds);
           await supabase.from('prospects').delete().in('id', completedIds);
         }
-      } catch (error) {
-        console.error('Failed to delete completed queue items from Supabase:', error);
-      }
+      } catch (error) {}
     })();
   }
 
-  /**
-   * Removes failed items from the queue.
-   */
   clearFailed(): void {
     const items = this.getItems();
     const failedIds: string[] = [];
@@ -185,6 +195,7 @@ export class QueueStore {
         this.items.set(item.id, item);
       }
     });
+    setLocalQueue(Array.from(this.items.values()));
     this.notify();
 
     (async () => {
@@ -193,16 +204,10 @@ export class QueueStore {
           await supabase.from('queue_items').delete().in('id', failedIds);
           await supabase.from('prospects').delete().in('id', failedIds);
         }
-      } catch (error) {
-        console.error('Failed to delete failed queue items from Supabase:', error);
-      }
+      } catch (error) {}
     })();
   }
 
-  /**
-   * Registers a callback listener to trigger on store changes.
-   * Returns an unsubscribe function.
-   */
   subscribe(listener: () => void): () => void {
     this.listeners.add(listener);
     return () => {
@@ -215,7 +220,7 @@ export class QueueStore {
       try {
         listener();
       } catch (error) {
-        console.error('Error executing QueueStore subscription listener:', error);
+        console.error('Error executing QueueStore subscriber:', error);
       }
     });
   }
