@@ -173,13 +173,13 @@ export default function Projects() {
   };
 
   const handleDeleteProject = async (id: string, name: string) => {
-    if (!profile?.id || !window.confirm(`Are you sure you want to archive project ${name}?`)) return;
+    if (!window.confirm(`Are you sure you want to delete project "${name}"?`)) return;
     try {
-      await projectsService.softDeleteProject(id, profile.id);
+      await projectsService.softDeleteProject(id, profile?.id || 'owner');
       
       // Write log
       await usersService.writeAuditLog({
-        user_id: profile.id,
+        user_id: profile?.id || null,
         action: `archived project "${name}"`,
         module: 'Projects'
       });

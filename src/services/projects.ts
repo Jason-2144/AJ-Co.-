@@ -14,7 +14,18 @@ export interface Project {
   clients?: Client;
 }
 
+export interface Milestone {
+  id?: string;
+  project_id: string;
+  name: string;
+  description?: string;
+  due_date?: string;
+  status: 'pending' | 'completed';
+  created_at?: string;
+}
+
 const PROJECTS_STORAGE_KEY = 'ajco_crm_projects';
+const MILESTONES_STORAGE_KEY = 'ajco_crm_milestones';
 
 function getLocalStore<T>(key: string): T[] {
   try {
@@ -125,5 +136,50 @@ export const projectsService = {
     const local = getLocalStore<Project>(PROJECTS_STORAGE_KEY);
     const updated = local.filter(p => p.id !== id);
     setLocalStore(PROJECTS_STORAGE_KEY, updated);
+  },
+
+  async softDeleteProject(id: string, _userId?: string): Promise<void> {
+    return this.deleteProject(id);
+  },
+
+  async getMilestones(projectId: string): Promise<Milestone[]> {
+    try {
+      const { data, error } = await supabase
+        .from('project_milestones')
+        .select('*')
+        .eq('project_id', projectId)
+        .order('created_at', { ascending: true });
+      if (!error && data) return data;
+    } catch (err) {}
+    return getLocalStore<Milestone>(MILESTONES_STORAGE_KEY).filter(m => m.project_id === projectId);
+  },
+
+  async createMilestone(milestone: Omit<Milestone, 'id' | 'created_at'>): Promise<Milestone> {
+    const newM: Milestone = { ...milestone, id: 'm_' + Date.now(), created_at: new Date().toISOString() };
+    try {
+      const { data, error } = await supabase.from('project_milestones').insert(milestone).select().single();
+      if (!error && data) return data;
+    } catch (err) {}
+    const local = getLocalStore<Milestone>(MILESTONES_STORAGE_KEY);
+    setLocalStore(MILESTONES_STORAGE_KEY, [newM, ...local]);
+    return newM;
+  },
+
+  async updateMilestone(id: string, milestone: Partial<Milestone>): Promise<Milestone> {
+    try {
+      const { data, error } = await supabase.from('project_milestones').update(milestone).eq('id', id).select().single();
+      if (!error && data) return data;
+    } catch (err) {}
+    const local = getLocalStore<Milestone>(MILESTONES_STORAGE_KEY);
+    let updatedM: Milestone = { project_id: '', name: '', status: 'pending' };
+    const updated = local.map(m => {
+      if (m.id === id) {
+        updatedM = { ...m, ...milestone };
+        return updatedM;
+      }
+      return m;
+    });
+    setLocalStore(MILESTONES_STORAGE_KEY, updated);
+    return updatedM;
   }
 };

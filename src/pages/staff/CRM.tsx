@@ -161,13 +161,13 @@ export default function CRM() {
   };
 
   const handleDeleteClient = async (id: string, name: string) => {
-    if (!profile?.id || !window.confirm(`Are you sure you want to archive client ${name}?`)) return;
+    if (!window.confirm(`Are you sure you want to delete client "${name}"?`)) return;
     try {
-      await clientsService.softDeleteClient(id, profile.id);
+      await clientsService.softDeleteClient(id, profile?.id || 'owner');
       
       // Write log
       await usersService.writeAuditLog({
-        user_id: profile.id,
+        user_id: profile?.id || null,
         action: `archived client profile "${name}"`,
         module: 'CRM'
       });
