@@ -327,13 +327,13 @@ export default function QueueDashboard({ items, errors, onClear, isRunning, isPa
             )}
             <div>
               <p className="font-semibold text-xs text-white">
-                {gmailStatus.isAuthenticated ? 'Google Gmail Connected' : 'Google Account Connection Required'}
+                {gmailStatus.isAuthenticated ? 'Google Gmail Integration Linked' : 'Gmail Integration: Optional Account Link'}
                 {gmailStatus.mockMode && <span className="ml-1.5 px-1.5 py-0.2 bg-white/5 border border-white/5 rounded text-[8px] font-mono text-gray-500 uppercase">Mock Connected</span>}
               </p>
               <p className="text-[10px] text-gray-500 mt-0.5">
                 {gmailStatus.isAuthenticated 
                   ? `Authorized sender account: ${gmailStatus.email}` 
-                  : 'To write drafts automatically, authenticate your Google account via secure OAuth 2.0.'
+                  : 'Link team.ajandco@gmail.com via OAuth 2.0 to auto-generate draft emails in your Gmail inbox.'
                 }
               </p>
             </div>
@@ -345,7 +345,7 @@ export default function QueueDashboard({ items, errors, onClear, isRunning, isPa
               className="bg-amber-500 border-amber-500 hover:bg-amber-400 text-black px-4 py-2 rounded-xl text-xs font-semibold flex items-center gap-1.5 transition-all cursor-pointer"
             >
               <Link className="w-3.5 h-3.5" />
-              Connect Google Workspace
+              Link Gmail Account
             </button>
           )}
         </div>
