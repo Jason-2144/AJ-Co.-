@@ -42,11 +42,15 @@ export class EmailService {
       opportunities: [
         {
           title: 'Automated Outreach & Lead Research',
-          description: 'Deploy AI tools to automatically research target domains, score opportunities, and generate personalized communication.',
+          problem: 'Manual prospect research and domain data extraction consumes hours of team bandwidth.',
+          solution: 'Deploy autonomous AI tools to automatically research target domains, score opportunities, and draft personalized outreach.',
+          benefit: '90%+ reduction in manual research time and 3x faster lead engagement.',
         },
         {
           title: 'Internal Process Acceleration',
-          description: 'Eliminate repetitive manual tasks by introducing intelligent task routing and document processing.',
+          problem: 'Repetitive manual data entry and workflow handoffs slow down operational velocity.',
+          solution: 'Integrate intelligent task routing, document parsing, and automated CRM pipeline updates.',
+          benefit: 'Streamlined cross-team operations with zero manual data entry errors.',
         }
       ],
       cta: `Would you be open to a brief 10-minute introduction call next Tuesday to discuss how this could fit into ${companyName}'s growth strategy?`,

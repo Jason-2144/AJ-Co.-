@@ -5,31 +5,36 @@ export class DraftFormatter {
   static formatHtmlBody(
     opening: string,
     body: string,
-    opportunities: { title: string; problem: string; solution: string; benefit: string }[],
+    opportunities: any[],
     cta: string,
     signature: string
   ): string {
-    const opportunitiesHtml = opportunities
-      .map(
-        (op, idx) => `
-        <div style="margin-bottom: 16px; padding: 12px; background-color: #f9f9f9; border-left: 4px solid #10b981; border-radius: 4px; font-family: Arial, sans-serif;">
-          <div style="font-weight: bold; color: #111827; font-size: 14px; margin-bottom: 4px;">
-            ${idx + 1}. ${op.title}
+    const opportunitiesHtml = (opportunities || [])
+      .map((op, idx) => {
+        const title = op.title || `Opportunity ${idx + 1}`;
+        const problem = op.problem || 'Manual operational bottlenecks and workflow delays.';
+        const solution = op.solution || op.description || 'Custom AI pipeline integration for automated workflow execution.';
+        const benefit = op.benefit || op.impact || 'Streamlined turnaround times and operational cost reduction.';
+
+        return `
+        <div style="margin-bottom: 16px; padding: 14px; background-color: #f9fafb; border-left: 4px solid #10b981; border-radius: 6px; font-family: Arial, sans-serif;">
+          <div style="font-weight: bold; color: #111827; font-size: 14px; margin-bottom: 6px;">
+            ${idx + 1}. ${title}
           </div>
-          <div style="font-size: 12px; color: #4b5563; margin-bottom: 2px;">
-            <strong>Problem:</strong> ${op.problem}
+          <div style="font-size: 12px; color: #4b5563; margin-bottom: 4px;">
+            <strong>Problem:</strong> ${problem}
           </div>
-          <div style="font-size: 12px; color: #4b5563; margin-bottom: 2px;">
-            <strong>Suggested Automation:</strong> ${op.solution}
+          <div style="font-size: 12px; color: #4b5563; margin-bottom: 4px;">
+            <strong>Suggested Automation:</strong> ${solution}
           </div>
-          <div style="font-size: 12px; color: #047857;">
-            <strong>Business Benefit:</strong> ${op.benefit}
+          <div style="font-size: 12px; color: #047857; font-weight: 500;">
+            <strong>Business Benefit:</strong> ${benefit}
           </div>
-        </div>`
-      )
+        </div>`;
+      })
       .join('');
 
-    const formattedSignature = signature.replace(/\n/g, '<br />');
+    const formattedSignature = (signature || '').replace(/\n/g, '<br />');
 
     return `
 <!DOCTYPE html>
@@ -37,14 +42,14 @@ export class DraftFormatter {
   <head>
     <meta charset="utf-8">
   </head>
-  <body style="font-family: Arial, sans-serif; font-size: 14px; line-height: 1.5; color: #333333; margin: 0; padding: 20px;">
-    <p>${opening}</p>
-    <p>${body}</p>
+  <body style="font-family: Arial, sans-serif; font-size: 14px; line-height: 1.6; color: #1f2937; margin: 0; padding: 20px;">
+    <p style="margin-bottom: 16px;">${opening}</p>
+    <p style="margin-bottom: 20px;">${body}</p>
     <div style="margin: 20px 0;">
       ${opportunitiesHtml}
     </div>
-    <p>${cta}</p>
-    <p>${formattedSignature}</p>
+    <p style="margin-bottom: 20px;">${cta}</p>
+    <p style="margin-top: 24px; color: #4b5563;">${formattedSignature}</p>
   </body>
 </html>
 `.trim();
@@ -56,15 +61,18 @@ export class DraftFormatter {
   static formatPlainText(
     opening: string,
     body: string,
-    opportunities: { title: string; problem: string; solution: string; benefit: string }[],
+    opportunities: any[],
     cta: string,
     signature: string
   ): string {
-    const oppsText = opportunities
-      .map(
-        (op, idx) =>
-          `${idx + 1}. ${op.title}\n   Problem: ${op.problem}\n   Solution: ${op.solution}\n   Benefit: ${op.benefit}`
-      )
+    const oppsText = (opportunities || [])
+      .map((op, idx) => {
+        const title = op.title || `Opportunity ${idx + 1}`;
+        const problem = op.problem || 'Manual operational bottlenecks and workflow delays.';
+        const solution = op.solution || op.description || 'Custom AI pipeline integration for automated workflow execution.';
+        const benefit = op.benefit || op.impact || 'Streamlined turnaround times and operational cost reduction.';
+        return `${idx + 1}. ${title}\n   Problem: ${problem}\n   Suggested Automation: ${solution}\n   Business Benefit: ${benefit}`;
+      })
       .join('\n\n');
 
     return `${opening}\n\n${body}\n\n${oppsText}\n\n${cta}\n\n${signature}`.trim();
