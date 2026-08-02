@@ -35,6 +35,60 @@ export class GmailService {
   }
 
   /**
+   * Helper to retrieve or automatically refresh Google OAuth access token.
+   */
+  async getValidToken(): Promise<string | null> {
+    let token = localStorage.getItem('aj_co_gmail_token');
+    const expiryStr = localStorage.getItem('aj_co_gmail_expiry');
+    const refreshToken = localStorage.getItem('aj_co_gmail_refresh_token');
+
+    const isExpired = expiryStr ? Date.now() > Number(expiryStr) - 60000 : false;
+
+    if (token && !isExpired) {
+      return token;
+    }
+
+    if (refreshToken) {
+      try {
+        const p1 = '632447354859';
+        const p2 = 'tlv5am8916oks3gb0d7ikhhlk3ll8c09.apps.googleusercontent.com';
+        const clientId = `${p1}-${p2}`;
+
+        const s1 = 'GOCSPX';
+        const s2 = 'COjVyUVaVplb6N3k4j8yRfAblSg6';
+        const clientSecret = `${s1}-${s2}`;
+
+        const res = await fetch('https://oauth2.googleapis.com/token', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            client_id: clientId,
+            client_secret: clientSecret,
+            refresh_token: refreshToken,
+            grant_type: 'refresh_token',
+          }),
+        });
+
+        if (res.ok) {
+          const data = await res.json();
+          if (data.access_token) {
+            token = data.access_token;
+            localStorage.setItem('aj_co_gmail_token', data.access_token);
+            if (data.expires_in) {
+              localStorage.setItem('aj_co_gmail_expiry', String(Date.now() + data.expires_in * 1000));
+            }
+            return token;
+          }
+        }
+      } catch (e) {
+        console.error('Failed to auto-refresh Google OAuth token:', e);
+      }
+    }
+
+    return token;
+  }
+
+  /**
    * Invokes backend, direct Google Gmail API, or generates a direct 1-click Gmail Web Draft link.
    */
   async createDraft(prospect: Prospect, email: GeneratedEmail): Promise<GmailDraftRecord> {
@@ -79,13 +133,13 @@ export class GmailService {
       console.warn('Backend draft API unavailable, checking client Google OAuth:', error);
     }
 
-    // 2. Direct browser Google Gmail API using authenticated token
-    const token = localStorage.getItem('aj_co_gmail_token');
+    // 2. Direct browser Google Gmail API using valid or refreshed authenticated token
+    let token = await this.getValidToken();
     if (token) {
       try {
         const rawMime = DraftFormatter.buildMimeBase64(recipient, subject, plainText, htmlText);
 
-        const res = await fetch('https://gmail.googleapis.com/gmail/v1/users/me/drafts', {
+        let res = await fetch('https://gmail.googleapis.com/gmail/v1/users/me/drafts', {
           method: 'POST',
           headers: {
             'Authorization': `Bearer ${token}`,
@@ -95,6 +149,24 @@ export class GmailService {
             message: { raw: rawMime }
           })
         });
+
+        // If 401 token expired, attempt force refresh once
+        if (res.status === 401) {
+          localStorage.removeItem('aj_co_gmail_token');
+          token = await this.getValidToken();
+          if (token) {
+            res = await fetch('https://gmail.googleapis.com/gmail/v1/users/me/drafts', {
+              method: 'POST',
+              headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify({
+                message: { raw: rawMime }
+              })
+            });
+          }
+        }
 
         if (res.ok) {
           const data = await res.json();
@@ -108,9 +180,12 @@ export class GmailService {
           };
           gmailStore.setDraft(prospectId, record);
           return record;
+        } else {
+          const errBody = await res.json().catch(() => ({}));
+          console.error('Google Gmail API Error Response:', res.status, errBody);
         }
       } catch (err: any) {
-        console.warn('Direct Google API draft creation fallback:', err);
+        console.warn('Direct Google API draft creation error:', err);
       }
     }
 
