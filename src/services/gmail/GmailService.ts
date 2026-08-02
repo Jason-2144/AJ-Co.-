@@ -18,15 +18,17 @@ export class GmailService {
   }
 
   async getStatus(): Promise<{ isAuthenticated: boolean; mockMode?: boolean; email?: string }> {
+    const token = localStorage.getItem('aj_co_gmail_token');
     const userEmail = localStorage.getItem('aj_co_gmail_user_email');
-    try {
-      const res = await fetch('/api/gmail/status');
-      if (res.ok) {
-        return await res.json();
-      }
-    } catch (e) {}
+    if (token) {
+      return {
+        isAuthenticated: true,
+        email: userEmail || 'team.ajandco@gmail.com',
+        mockMode: false,
+      };
+    }
     return {
-      isAuthenticated: true,
+      isAuthenticated: false,
       email: userEmail || 'team.ajandco@gmail.com',
       mockMode: false,
     };
