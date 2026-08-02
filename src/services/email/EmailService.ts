@@ -35,27 +35,33 @@ export class EmailService {
     const companyName = prospect.company || 'there';
     const fallbackEmail: GeneratedEmail = {
       prospectId,
-      subject: `Exploring AI Workflow Automation for ${companyName}`,
-      preview: `Tailored AI solutions to streamline client operations and scale outreach.`,
-      opening: `Hi ${companyName} Team,`,
-      body: `I came across ${companyName}'s work and wanted to reach out regarding automating your client onboarding and operational workflows. We help technology and service leaders integrate custom AI pipelines to streamline manual processes, cut turnaround times, and scale operations effortlessly.`,
+      subject: `${companyName} — AI workflow automation ideas`,
+      preview: `I'm Amaan, I run AJ & Co, an AI automation agency.`,
+      opening: `Hey ${companyName} team,`,
+      body: `I'm Amaan, I run AJ & Co, an AI automation agency (ajandco.site). I was looking into ${companyName}'s growth model and identified 3 high-impact areas where custom AI pipelines can eliminate manual operational friction:`,
       opportunities: [
         {
-          title: 'Automated Outreach & Lead Research',
-          problem: 'Manual prospect research and domain data extraction consumes hours of team bandwidth.',
-          solution: 'Deploy autonomous AI tools to automatically research target domains, score opportunities, and draft personalized outreach.',
-          benefit: '90%+ reduction in manual research time and 3x faster lead engagement.',
+          title: 'Automated Prospect Research & Qualification',
+          problem: 'Manual lead domain research and data extraction consumes hours of team bandwidth.',
+          solution: 'Deploy autonomous AI agents to research target accounts, extract tech stacks, and pre-draft tailored outreach.',
+          benefit: '90%+ reduction in research overhead and 3x faster client acquisition.',
         },
         {
-          title: 'Internal Process Acceleration',
-          problem: 'Repetitive manual data entry and workflow handoffs slow down operational velocity.',
-          solution: 'Integrate intelligent task routing, document parsing, and automated CRM pipeline updates.',
-          benefit: 'Streamlined cross-team operations with zero manual data entry errors.',
+          title: 'Client Onboarding & Intake Automation',
+          problem: 'Manual data handoffs and friction during onboarding slow down revenue activation.',
+          solution: 'Integrate intelligent document parsing, automated CRM pipeline updates, and client workflow triggers.',
+          benefit: 'Zero manual data entry errors and faster time-to-revenue.',
+        },
+        {
+          title: 'Internal Knowledge & Operational Copilot',
+          problem: 'Support reps and account managers spend hours searching internal wikis and documents for client answers.',
+          solution: 'Build a private vector RAG copilot connected directly to your internal docs and workflow systems.',
+          benefit: 'Instant resolution for client queries and 60% drop in internal escalation tickets.',
         }
       ],
-      cta: `Would you be open to a brief 10-minute introduction call next Tuesday to discuss how this could fit into ${companyName}'s growth strategy?`,
-      signature: `Best regards,\nAJ & Co. Operations Team\nhttps://ajandco.site`,
-      confidence: 90,
+      cta: `Let me know if any of these sound interesting, happy to walk through it in more detail over a quick 15 minute call.`,
+      signature: `Best,\nAmaan / AJ & Co. (ajandco.site)`,
+      confidence: 95,
       generatedAt: new Date().toISOString(),
       duration: 1200,
     };
