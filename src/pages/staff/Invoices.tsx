@@ -258,84 +258,113 @@ export default function Invoices() {
 
   return (
     <div className="space-y-6 print:bg-white print:text-black print:min-h-screen">
-      {/* Printable template view when invoice selected */}
+      {/* Printable template view matching exact Tax Invoice photo layout */}
       <div className="hidden print:block space-y-6">
         {selectedInvoice && (
-          <div className="p-8 space-y-8 text-black bg-white">
-            <div className="flex justify-between items-start">
-              <div className="flex items-center gap-3">
-                <div className="w-12 h-12 bg-black text-white rounded-xl flex items-center justify-center font-serif text-xl font-bold tracking-tighter">
-                  AJ
-                </div>
-                <div>
-                  <h1 className="font-bold text-3xl font-serif text-black">{companySettings?.company_name || 'AJ & Co.'}</h1>
-                  <p className="text-xs text-gray-500 font-sans tracking-widest uppercase">AI PRODUCT STUDIO</p>
-                  <p className="text-xs text-gray-500 mt-1">{companySettings?.address || 'India'}</p>
-                </div>
+          <div className="border-2 border-black p-8 font-sans text-black bg-white space-y-4 max-w-3xl mx-auto">
+            {/* Top Header */}
+            <div className="flex justify-between items-start border-b-2 border-black pb-4">
+              <div>
+                <h1 className="font-bold text-2xl text-black">{companySettings?.company_name || 'AJ & Co. Pvt Ltd.'}</h1>
+                <p className="text-xs font-mono mt-1">GSTIN : {companySettings?.gst_number || '29AAAAA0000A1Z5'}</p>
+                <p className="text-xs mt-0.5">Office :- {companySettings?.address || 'Bangalore, Karnataka, India'}</p>
+                <p className="text-xs mt-0.5">Email ID :- team.ajandco@gmail.com</p>
               </div>
               <div className="text-right">
-                <h2 className="font-bold text-lg text-emerald-600 uppercase tracking-widest">Invoice</h2>
-                <p className="text-sm font-semibold mt-1">Invoice #: {selectedInvoice.invoice_number}</p>
-                <p className="text-xs text-gray-500 mt-1">Issue Date: {selectedInvoice.issue_date}</p>
-                <p className="text-xs text-gray-500">Due Date: {selectedInvoice.due_date}</p>
+                <h2 className="font-bold text-xl text-black uppercase tracking-wider">Tax Invoice</h2>
               </div>
             </div>
 
-            <div className="border-t border-b border-gray-100 py-6 grid grid-cols-2 gap-4">
-              <div>
-                <span className="text-xs font-mono uppercase tracking-wider text-gray-400 block mb-1">Bill To</span>
-                <p className="font-bold text-black">{selectedInvoice.clients?.company_name}</p>
-                <p className="text-sm text-gray-500 mt-1">Invoice Client details</p>
+            {/* Client & Invoice Metadata Bordered Box */}
+            <div className="border border-black grid grid-cols-12 divide-x divide-black text-xs">
+              <div className="col-span-7 p-3 space-y-1">
+                <p><strong>Client Name :-</strong> {selectedInvoice.clients?.company_name}</p>
+                <p><strong>Address 1 :-</strong> Corporate Office</p>
+                <p><strong>Address 2 :-</strong> India</p>
+                <p><strong>GSTIN No :-</strong> Unregistered</p>
               </div>
-              {companySettings?.gst_number && (
-                <div className="text-right">
-                  <span className="text-xs font-mono uppercase tracking-wider text-gray-400 block mb-1">Company GST</span>
-                  <p className="text-sm font-semibold">{companySettings.gst_number}</p>
-                </div>
-              )}
+              <div className="col-span-5 p-3 space-y-2">
+                <p><strong>Invoice No :-</strong> {selectedInvoice.invoice_number}</p>
+                <p><strong>Invoice Date :-</strong> {selectedInvoice.issue_date || new Date().toISOString().split('T')[0]}</p>
+              </div>
             </div>
 
-            <table className="w-full text-left text-sm">
-              <thead>
-                <tr className="border-b border-gray-200 text-gray-400 font-mono uppercase text-xs">
-                  <th className="pb-3">Description</th>
-                  <th className="pb-3 text-center">Qty</th>
-                  <th className="pb-3 text-right">Rate</th>
-                  <th className="pb-3 text-right">Amount</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-gray-100">
-                {selectedInvoice.invoice_items?.map((item, idx) => (
-                  <tr key={idx} className="text-gray-700">
-                    <td className="py-4 font-semibold">{item.description}</td>
-                    <td className="py-4 text-center">{item.quantity}</td>
-                    <td className="py-4 text-right">₹{Number(item.unit_price).toFixed(2)}</td>
-                    <td className="py-4 text-right font-semibold">₹{Number(item.amount).toFixed(2)}</td>
+            {/* Main Line Items Grid */}
+            <div className="border border-black overflow-hidden">
+              <table className="w-full text-xs text-left border-collapse">
+                <thead>
+                  <tr className="border-b border-black font-bold bg-gray-100 divide-x divide-black">
+                    <th className="p-2 w-12 text-center">Sr No</th>
+                    <th className="p-2">Description of Goods / Services</th>
+                    <th className="p-2 w-24 text-center">HSN Code</th>
+                    <th className="p-2 w-14 text-center">Qty</th>
+                    <th className="p-2 w-24 text-right">Rate</th>
+                    <th className="p-2 w-28 text-right">Amount</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody className="divide-y divide-black font-medium">
+                  {selectedInvoice.invoice_items?.map((item, idx) => (
+                    <tr key={idx} className="divide-x divide-black">
+                      <td className="p-2 text-center">{idx + 1}</td>
+                      <td className="p-2 font-semibold">{item.description}</td>
+                      <td className="p-2 text-center">998313</td>
+                      <td className="p-2 text-center">{item.quantity}</td>
+                      <td className="p-2 text-right">₹{Number(item.unit_price).toFixed(2)}</td>
+                      <td className="p-2 text-right font-bold">₹{Number(item.amount).toFixed(2)}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
 
-            <div className="border-t border-gray-100 pt-6 flex justify-end">
-              <div className="w-64 space-y-2 text-sm text-gray-600">
-                <div className="flex justify-between">
-                  <span>Subtotal:</span>
-                  <span>₹{Number(selectedInvoice.subtotal).toFixed(2)}</span>
+            {/* GST Tax & Total Breakdown Box */}
+            <div className="border border-black grid grid-cols-12 divide-x divide-black text-xs">
+              <div className="col-span-7 grid grid-cols-4 divide-x divide-black text-center border-r border-black">
+                <div className="p-2 bg-gray-100 font-bold border-b border-black">GST</div>
+                <div className="p-2 bg-gray-100 font-bold border-b border-black">IGST</div>
+                <div className="p-2 bg-gray-100 font-bold border-b border-black">CGST</div>
+                <div className="p-2 bg-gray-100 font-bold border-b border-black">SGST</div>
+
+                <div className="p-2 font-semibold">{taxRate}%</div>
+                <div className="p-2 font-semibold">{taxRate}%</div>
+                <div className="p-2 font-semibold">{(taxRate / 2)}%</div>
+                <div className="p-2 font-semibold">{(taxRate / 2)}%</div>
+              </div>
+              <div className="col-span-5 divide-y divide-black font-semibold">
+                <div className="flex justify-between p-2">
+                  <span>CGST Amount:</span>
+                  <span>₹{(Number(selectedInvoice.tax) / 2).toFixed(2)}</span>
                 </div>
-                <div className="flex justify-between">
-                  <span>Tax ({selectedInvoice.tax > 0 ? taxRate : 0}%):</span>
-                  <span>₹{Number(selectedInvoice.tax).toFixed(2)}</span>
+                <div className="flex justify-between p-2">
+                  <span>SGST Amount:</span>
+                  <span>₹{(Number(selectedInvoice.tax) / 2).toFixed(2)}</span>
                 </div>
-                {selectedInvoice.discount > 0 && (
-                  <div className="flex justify-between text-red-500">
-                    <span>Discount:</span>
-                    <span>-₹{Number(selectedInvoice.discount).toFixed(2)}</span>
-                  </div>
-                )}
-                <div className="flex justify-between border-t border-gray-200 pt-2 text-base font-bold text-black">
-                  <span>Total Due:</span>
+                <div className="flex justify-between p-2">
+                  <span>IGST Amount:</span>
+                  <span>₹0.00</span>
+                </div>
+                <div className="flex justify-between p-2 font-bold bg-gray-100 text-sm">
+                  <span>Total Amt:</span>
                   <span>₹{Number(selectedInvoice.total).toFixed(2)}</span>
                 </div>
+              </div>
+            </div>
+
+            {/* Bank Details & Authorized Signatory Box */}
+            <div className="border border-black grid grid-cols-12 divide-x divide-black text-xs">
+              <div className="col-span-8 p-3 space-y-1">
+                <p className="font-bold border-b border-gray-300 pb-1 text-center">Bank Details</p>
+                <p><strong>Bank Name:</strong> HDFC Bank</p>
+                <p><strong>Branch Name:</strong> Bangalore Main Branch</p>
+                <p><strong>Bank Account No:</strong> 50200084920194</p>
+                <p><strong>Bank IFSC Code:</strong> HDFC0001234</p>
+              </div>
+              <div className="col-span-4 p-3 flex flex-col justify-between items-center text-center">
+                <span className="font-bold text-gray-500 text-[10px]">AJ & Co. Pvt Ltd.</span>
+                <div className="h-10 flex items-center justify-center font-serif font-bold text-base italic text-gray-800">
+                  AJ & Co.
+                </div>
+                <span className="font-bold text-xs border-t border-black pt-1 w-full">Auth. Signatory</span>
               </div>
             </div>
           </div>
@@ -823,6 +852,143 @@ export default function Invoices() {
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* On-screen Preview & Print Modal for Tax Invoice */}
+      {selectedInvoice && (
+        <div className="fixed inset-0 bg-black/85 backdrop-blur-sm z-50 flex items-center justify-center p-4 print:hidden">
+          <div className="bg-[#121212] border border-white/10 p-6 rounded-2xl w-full max-w-3xl max-h-[90vh] overflow-y-auto shadow-2xl relative space-y-4">
+            <div className="flex justify-between items-center border-b border-white/10 pb-4">
+              <div className="flex items-center gap-2">
+                <FileText className="w-5 h-5 text-emerald-400" />
+                <h3 className="font-syne font-bold text-lg text-white">Tax Invoice Preview #{selectedInvoice.invoice_number}</h3>
+              </div>
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={handleTriggerPrint}
+                  className="bg-emerald-500 hover:bg-emerald-400 text-black font-semibold px-4 py-2 rounded-xl text-xs flex items-center gap-1.5 transition-all cursor-pointer shadow-lg shadow-emerald-500/10"
+                >
+                  <Printer className="w-4 h-4" /> Download PDF / Print
+                </button>
+                <button
+                  onClick={() => setSelectedInvoice(null)}
+                  className="p-1.5 hover:bg-white/10 text-gray-400 hover:text-white rounded-lg transition-colors cursor-pointer"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              </div>
+            </div>
+
+            {/* Render Exact Tax Invoice Box */}
+            <div className="border-2 border-black p-6 font-sans text-black bg-white space-y-4 rounded-lg shadow-inner">
+              {/* Header */}
+              <div className="flex justify-between items-start border-b-2 border-black pb-4">
+                <div>
+                  <h1 className="font-bold text-xl text-black">{companySettings?.company_name || 'AJ & Co. Pvt Ltd.'}</h1>
+                  <p className="text-[11px] font-mono mt-0.5">GSTIN : {companySettings?.gst_number || '29AAAAA0000A1Z5'}</p>
+                  <p className="text-[11px] mt-0.5">Office :- {companySettings?.address || 'Bangalore, Karnataka, India'}</p>
+                  <p className="text-[11px] mt-0.5">Email ID :- team.ajandco@gmail.com</p>
+                </div>
+                <div className="text-right">
+                  <h2 className="font-bold text-lg text-black uppercase tracking-wider">Tax Invoice</h2>
+                </div>
+              </div>
+
+              {/* Client & Invoice Metadata Box */}
+              <div className="border border-black grid grid-cols-12 divide-x divide-black text-[11px]">
+                <div className="col-span-7 p-2.5 space-y-0.5">
+                  <p><strong>Client Name :-</strong> {selectedInvoice.clients?.company_name}</p>
+                  <p><strong>Address 1 :-</strong> Corporate Office</p>
+                  <p><strong>Address 2 :-</strong> India</p>
+                  <p><strong>GSTIN No :-</strong> Unregistered</p>
+                </div>
+                <div className="col-span-5 p-2.5 space-y-1">
+                  <p><strong>Invoice No :-</strong> {selectedInvoice.invoice_number}</p>
+                  <p><strong>Invoice Date :-</strong> {selectedInvoice.issue_date || new Date().toISOString().split('T')[0]}</p>
+                </div>
+              </div>
+
+              {/* Items Grid */}
+              <div className="border border-black overflow-hidden">
+                <table className="w-full text-[11px] text-left border-collapse">
+                  <thead>
+                    <tr className="border-b border-black font-bold bg-gray-100 divide-x divide-black">
+                      <th className="p-1.5 w-10 text-center">Sr No</th>
+                      <th className="p-1.5">Description of Goods / Services</th>
+                      <th className="p-1.5 w-20 text-center">HSN Code</th>
+                      <th className="p-1.5 w-12 text-center">Qty</th>
+                      <th className="p-1.5 w-20 text-right">Rate</th>
+                      <th className="p-1.5 w-24 text-right">Amount</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-black font-medium">
+                    {selectedInvoice.invoice_items?.map((item, idx) => (
+                      <tr key={idx} className="divide-x divide-black">
+                        <td className="p-1.5 text-center">{idx + 1}</td>
+                        <td className="p-1.5 font-semibold">{item.description}</td>
+                        <td className="p-1.5 text-center">998313</td>
+                        <td className="p-1.5 text-center">{item.quantity}</td>
+                        <td className="p-1.5 text-right">₹{Number(item.unit_price).toFixed(2)}</td>
+                        <td className="p-1.5 text-right font-bold">₹{Number(item.amount).toFixed(2)}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+
+              {/* GST Breakdown Box */}
+              <div className="border border-black grid grid-cols-12 divide-x divide-black text-[11px]">
+                <div className="col-span-7 grid grid-cols-4 divide-x divide-black text-center border-r border-black">
+                  <div className="p-1.5 bg-gray-100 font-bold border-b border-black">GST</div>
+                  <div className="p-1.5 bg-gray-100 font-bold border-b border-black">IGST</div>
+                  <div className="p-1.5 bg-gray-100 font-bold border-b border-black">CGST</div>
+                  <div className="p-1.5 bg-gray-100 font-bold border-b border-black">SGST</div>
+
+                  <div className="p-1.5 font-semibold">{taxRate}%</div>
+                  <div className="p-1.5 font-semibold">{taxRate}%</div>
+                  <div className="p-1.5 font-semibold">{(taxRate / 2)}%</div>
+                  <div className="p-1.5 font-semibold">{(taxRate / 2)}%</div>
+                </div>
+                <div className="col-span-5 divide-y divide-black font-semibold">
+                  <div className="flex justify-between p-1.5">
+                    <span>CGST Amount:</span>
+                    <span>₹{(Number(selectedInvoice.tax) / 2).toFixed(2)}</span>
+                  </div>
+                  <div className="flex justify-between p-1.5">
+                    <span>SGST Amount:</span>
+                    <span>₹{(Number(selectedInvoice.tax) / 2).toFixed(2)}</span>
+                  </div>
+                  <div className="flex justify-between p-1.5">
+                    <span>IGST Amount:</span>
+                    <span>₹0.00</span>
+                  </div>
+                  <div className="flex justify-between p-1.5 font-bold bg-gray-100 text-xs">
+                    <span>Total Amt:</span>
+                    <span>₹{Number(selectedInvoice.total).toFixed(2)}</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Bank Details & Auth Signatory */}
+              <div className="border border-black grid grid-cols-12 divide-x divide-black text-[11px]">
+                <div className="col-span-8 p-2.5 space-y-0.5">
+                  <p className="font-bold border-b border-gray-300 pb-0.5 text-center">Bank Details</p>
+                  <p><strong>Bank Name:</strong> HDFC Bank</p>
+                  <p><strong>Branch Name:</strong> Bangalore Main Branch</p>
+                  <p><strong>Bank Account No:</strong> 50200084920194</p>
+                  <p><strong>Bank IFSC Code:</strong> HDFC0001234</p>
+                </div>
+                <div className="col-span-4 p-2.5 flex flex-col justify-between items-center text-center">
+                  <span className="font-bold text-gray-500 text-[9px]">AJ & Co. Pvt Ltd.</span>
+                  <div className="h-8 flex items-center justify-center font-serif font-bold text-sm italic text-gray-800">
+                    AJ & Co.
+                  </div>
+                  <span className="font-bold text-[10px] border-t border-black pt-0.5 w-full">Auth. Signatory</span>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       )}
