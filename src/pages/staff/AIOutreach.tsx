@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Sparkles, FileText, AlertCircle, Loader, RefreshCw, Check } from 'lucide-react';
+import { Sparkles, FileText, AlertCircle, Loader, RefreshCw, Check, LogOut } from 'lucide-react';
 import UploadZone from '../../components/staff/UploadZone';
 import PasteInput from '../../components/staff/PasteInput';
 import QueueDashboard from '../../components/staff/QueueDashboard';
@@ -24,6 +24,12 @@ export default function AIOutreach() {
   const [loadingStores, setLoadingStores] = useState(true);
   const [gmailConnected, setGmailConnected] = useState(false);
   const [gmailEmail, setGmailEmail] = useState('');
+
+  const handleDisconnectGmail = () => {
+    gmailService.disconnect();
+    setGmailConnected(false);
+    setGmailEmail('');
+  };
 
   // Sync state with the queue store and queue manager singleton
   useEffect(() => {
@@ -156,9 +162,19 @@ export default function AIOutreach() {
               Connect Google Workspace / Gmail
             </button>
           ) : (
-            <div className="bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-mono px-3 py-1.5 rounded-xl flex items-center gap-2">
-              <Check className="w-3.5 h-3.5" />
-              <span>Gmail Connected: <strong className="text-white font-medium">{gmailEmail || 'Google Workspace'}</strong></span>
+            <div className="flex items-center gap-2">
+              <div className="bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-mono px-3 py-1.5 rounded-xl flex items-center gap-2">
+                <Check className="w-3.5 h-3.5" />
+                <span>Gmail Connected: <strong className="text-white font-medium">{gmailEmail || 'Google Workspace'}</strong></span>
+              </div>
+              <button
+                onClick={handleDisconnectGmail}
+                className="bg-red-500/10 hover:bg-red-500/20 border border-red-500/20 text-red-400 hover:text-red-300 text-xs font-mono px-3 py-1.5 rounded-xl transition-all cursor-pointer flex items-center gap-1.5"
+                title="Disconnect active Google account to switch email"
+              >
+                <LogOut className="w-3.5 h-3.5" />
+                <span>Disconnect</span>
+              </button>
             </div>
           )}
           {queueItems.length > 0 && (

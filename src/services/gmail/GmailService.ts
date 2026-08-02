@@ -17,6 +17,13 @@ export class GmailService {
     return `https://accounts.google.com/o/oauth2/v2/auth?client_id=${clientId}&redirect_uri=${redirectUri}&response_type=code&scope=${scopes}&access_type=offline&prompt=consent`;
   }
 
+  disconnect(): void {
+    localStorage.removeItem('aj_co_gmail_token');
+    localStorage.removeItem('aj_co_gmail_refresh_token');
+    localStorage.removeItem('aj_co_gmail_expiry');
+    localStorage.removeItem('aj_co_gmail_user_email');
+  }
+
   async getStatus(): Promise<{ isAuthenticated: boolean; mockMode?: boolean; email?: string }> {
     const token = localStorage.getItem('aj_co_gmail_token');
     const userEmail = localStorage.getItem('aj_co_gmail_user_email');
