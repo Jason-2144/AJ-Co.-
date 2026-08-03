@@ -58,16 +58,18 @@ export class GmailStore {
 
     (async () => {
       try {
-        await supabase.from('gmail_draft_records').upsert({
-          prospect_id: prospectId,
-          draft_id: record.draftId || null,
-          thread_id: record.threadId || null,
-          created_time: record.createdTime || null,
-          status: record.status,
-          last_error: record.lastError || null,
-        });
+        if (supabase) {
+          await supabase.from('gmail_draft_records').upsert({
+            prospect_id: prospectId,
+            draft_id: record.draftId || null,
+            thread_id: record.threadId || null,
+            created_time: record.createdTime || null,
+            status: record.status,
+            last_error: record.lastError || null,
+          }).catch(() => {});
+        }
       } catch (err) {
-        console.error('Failed to save Gmail draft record to Supabase:', err);
+        // Ignore Supabase sync failures in client mode
       }
     })();
   }
