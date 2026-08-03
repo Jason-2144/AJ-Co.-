@@ -2,7 +2,7 @@ import { MailboxRecord, MailboxStatus } from './MailboxTypes';
 import { DEFAULT_MAILBOXES, DEFAULT_WARMUP_PROFILE } from './MailboxStore';
 
 class MailboxRepository {
-  private STORAGE_KEY = 'aj_co_mailboxes_v3';
+  private STORAGE_KEY = 'aj_co_mailboxes_v4_clean';
 
   private getStored(): MailboxRecord[] {
     const raw = localStorage.getItem(this.STORAGE_KEY);
