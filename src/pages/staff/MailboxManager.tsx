@@ -23,6 +23,7 @@ import { mailboxRepository } from '../../services/mailbox/MailboxRepository';
 import { warmupEngine } from '../../services/mailbox/WarmupEngine';
 import { deliverabilityService } from '../../services/mailbox/DeliverabilityService';
 import { emailVerificationService } from '../../services/mailbox/EmailVerificationService';
+import { multiGmailAuthManager } from '../../services/gmail/MultiGmailAuthManager';
 
 export default function MailboxManager() {
   const [mailboxes, setMailboxes] = useState<MailboxRecord[]>([]);
@@ -303,6 +304,21 @@ export default function MailboxManager() {
 
                     <td className="px-6 py-4 text-right">
                       <div className="flex items-center justify-end gap-2">
+                        {multiGmailAuthManager.isEmailConnected(mb.email) ? (
+                          <span className="px-2.5 py-1 text-xs font-mono bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 rounded-lg flex items-center gap-1">
+                            <CheckCircle2 className="w-3.5 h-3.5" />
+                            OAuth Active
+                          </span>
+                        ) : (
+                          <a
+                            href={multiGmailAuthManager.getAuthUrlForEmail(mb.email)}
+                            className="px-2.5 py-1.5 bg-emerald-500 hover:bg-emerald-600 text-black font-semibold text-xs rounded-lg transition-all flex items-center gap-1 shadow-sm"
+                          >
+                            <Mail className="w-3.5 h-3.5" />
+                            Connect Google
+                          </a>
+                        )}
+
                         <button
                           onClick={() => handleAdvanceWarmup(mb.id)}
                           className="px-2.5 py-1.5 bg-white/5 hover:bg-white/10 text-gray-300 text-xs rounded-lg transition-all border border-white/5 flex items-center gap-1"

@@ -3,6 +3,7 @@ import { GeneratedEmail } from '../email/EmailTypes';
 import { GmailDraftRecord } from './GmailTypes';
 import { gmailStore } from './GmailStore';
 import { DraftFormatter } from './DraftFormatter';
+import { multiGmailAuthManager } from './MultiGmailAuthManager';
 
 export class GmailService {
   /**
@@ -96,9 +97,9 @@ export class GmailService {
   }
 
   /**
-   * Invokes backend, direct Google Gmail API, or generates a direct 1-click Gmail Web Draft link.
+   * Creates a draft specifically from an authenticated sender email token context.
    */
-  async createDraft(prospect: Prospect, email: GeneratedEmail): Promise<GmailDraftRecord> {
+  async createDraftForSender(prospect: Prospect, email: GeneratedEmail, senderEmail: string): Promise<GmailDraftRecord> {
     const prospectId = prospect.id;
     const recipient = prospect.emails?.[0] || `contact@${(prospect.website || 'client.com').replace(/^https?:\/\//, '').replace(/\/.*$/, '')}`;
     const subject = email.subject || `AI Process Automation Opportunities for ${prospect.companyName}`;
@@ -106,47 +107,13 @@ export class GmailService {
     const htmlText = DraftFormatter.formatHtmlBody(email.opening, email.body, email.opportunities || [], email.cta, email.signature);
     const composeUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(recipient)}&su=${encodeURIComponent(subject)}&body=${encodeURIComponent(plainText)}`;
 
-    // Save optimistic state
-    gmailStore.setDraft(prospectId, {
-      prospectId,
-      status: 'pending',
-      composeUrl
-    });
-
-    // 1. Try server backend endpoint first
-    try {
-      const response = await fetch('/api/gmail/draft', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ prospect, email }),
-      });
-
-      if (response.ok) {
-        const data = await response.json();
-        const record: GmailDraftRecord = {
-          prospectId,
-          draftId: data.draftId,
-          threadId: data.threadId,
-          createdTime: data.createdTime,
-          status: 'created',
-          composeUrl
-        };
-        gmailStore.setDraft(prospectId, record);
-        return record;
-      }
-    } catch (error: any) {
-      console.warn('Backend draft API unavailable, checking client Google OAuth:', error);
-    }
-
-    // 2. Direct browser Google Gmail API using valid or refreshed authenticated token
-    let token = await this.getValidToken();
+    // Try multi-mailbox OAuth token for specified sender
+    const token = await multiGmailAuthManager.getAccessTokenForEmail(senderEmail);
     if (token) {
       try {
         const rawMime = DraftFormatter.buildMimeBase64(recipient, subject, plainText, htmlText);
 
-        let res = await fetch('https://gmail.googleapis.com/gmail/v1/users/me/drafts', {
+        const res = await fetch('https://gmail.googleapis.com/gmail/v1/users/me/drafts', {
           method: 'POST',
           headers: {
             'Authorization': `Bearer ${token}`,
@@ -156,24 +123,6 @@ export class GmailService {
             message: { raw: rawMime }
           })
         });
-
-        // If 401 token expired, attempt force refresh once
-        if (res.status === 401) {
-          localStorage.removeItem('aj_co_gmail_token');
-          token = await this.getValidToken();
-          if (token) {
-            res = await fetch('https://gmail.googleapis.com/gmail/v1/users/me/drafts', {
-              method: 'POST',
-              headers: {
-                'Authorization': `Bearer ${token}`,
-                'Content-Type': 'application/json'
-              },
-              body: JSON.stringify({
-                message: { raw: rawMime }
-              })
-            });
-          }
-        }
 
         if (res.ok) {
           const data = await res.json();
@@ -187,27 +136,49 @@ export class GmailService {
           };
           gmailStore.setDraft(prospectId, record);
           return record;
-        } else {
-          const errBody = await res.json().catch(() => ({}));
-          console.error('Google Gmail API Error Response:', res.status, errBody);
         }
-      } catch (err: any) {
-        console.warn('Direct Google API draft creation error:', err);
+      } catch (err) {
+        console.warn(`Direct Google API draft creation error for ${senderEmail}:`, err);
       }
     }
 
-    // 3. Guaranteed Draft Record & 1-Click Gmail Web Compose Link
-    const record: GmailDraftRecord = {
-      prospectId,
-      draftId: `gmail_draft_${Math.random().toString(36).substring(2, 10)}`,
-      threadId: `thread_${Math.random().toString(36).substring(2, 10)}`,
-      createdTime: Date.now(),
-      status: 'created',
-      composeUrl
-    };
+    return this.createDraft(prospect, email);
+  }
 
-    gmailStore.setDraft(prospectId, record);
-    return record;
+  /**
+   * Directly sends an email (live dispatch) from a selected sender mailbox token context.
+   */
+  async sendDirectEmail(prospect: Prospect, email: GeneratedEmail, senderEmail: string): Promise<{ success: boolean; messageId?: string }> {
+    const recipient = prospect.emails?.[0] || `contact@${(prospect.website || 'client.com').replace(/^https?:\/\//, '').replace(/\/.*$/, '')}`;
+    const subject = email.subject || `AI Process Automation Opportunities for ${prospect.companyName}`;
+    const plainText = DraftFormatter.formatPlainText(email.opening, email.body, email.opportunities || [], email.cta, email.signature);
+    const htmlText = DraftFormatter.formatHtmlBody(email.opening, email.body, email.opportunities || [], email.cta, email.signature);
+
+    const token = await multiGmailAuthManager.getAccessTokenForEmail(senderEmail);
+    if (!token) {
+      throw new Error(`Sender mailbox ${senderEmail} is not connected via Google OAuth.`);
+    }
+
+    const rawMime = DraftFormatter.buildMimeBase64(recipient, subject, plainText, htmlText);
+
+    const res = await fetch('https://gmail.googleapis.com/gmail/v1/users/me/messages/send', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        raw: rawMime
+      })
+    });
+
+    if (!res.ok) {
+      const errData = await res.json().catch(() => ({}));
+      throw new Error(errData?.error?.message || `Failed to dispatch email from ${senderEmail}`);
+    }
+
+    const data = await res.json();
+    return { success: true, messageId: data.id };
   }
 }
 
