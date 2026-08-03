@@ -146,37 +146,22 @@ export default function AIOutreach() {
           </p>
         </div>
         <div className="flex items-center gap-3">
-          {!gmailConnected ? (
-            <button
-              onClick={async () => {
-                try {
-                  const url = await gmailService.getAuthUrl();
-                  window.location.href = url;
-                } catch (e) {
-                  console.error(e);
-                }
-              }}
-              className="bg-emerald-500 hover:bg-emerald-400 text-black text-xs font-bold px-4 py-2 rounded-xl transition-all shadow-lg shadow-emerald-500/10 flex items-center gap-2 cursor-pointer"
-            >
-              <Sparkles className="w-4 h-4" />
-              Connect Google Workspace / Gmail
-            </button>
-          ) : (
-            <div className="flex items-center gap-2">
-              <div className="bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-mono px-3 py-1.5 rounded-xl flex items-center gap-2">
-                <Check className="w-3.5 h-3.5" />
-                <span>Gmail Connected: <strong className="text-white font-medium">{gmailEmail || 'Google Workspace'}</strong></span>
-              </div>
-              <button
-                onClick={handleDisconnectGmail}
-                className="bg-red-500/10 hover:bg-red-500/20 border border-red-500/20 text-red-400 hover:text-red-300 text-xs font-mono px-3 py-1.5 rounded-xl transition-all cursor-pointer flex items-center gap-1.5"
-                title="Disconnect active Google account to switch email"
-              >
-                <LogOut className="w-3.5 h-3.5" />
-                <span>Disconnect</span>
-              </button>
-            </div>
-          )}
+          <button
+            onClick={() => {
+              const url = new URL(window.location.href);
+              url.searchParams.set('tab', 'mailboxes');
+              window.history.pushState({}, '', url);
+              window.dispatchEvent(new Event('popstate'));
+              // trigger React tab change
+              const event = new CustomEvent('tabchange', { detail: 'mailboxes' });
+              window.dispatchEvent(event);
+              window.location.reload();
+            }}
+            className="bg-emerald-500/10 border border-emerald-500/20 hover:bg-emerald-500/20 text-emerald-400 text-xs font-mono px-4 py-2 rounded-xl transition-all shadow-lg flex items-center gap-2 cursor-pointer"
+          >
+            <Sparkles className="w-4 h-4 text-emerald-400" />
+            <span>Manage Sender Pool (Mailbox Manager)</span>
+          </button>
           {queueItems.length > 0 && (
             <div className="text-xs font-mono text-gray-500 bg-white/[0.02] border border-white/5 px-3 py-1.5 rounded-xl flex items-center gap-2">
               <FileText className="w-3.5 h-3.5 text-gray-400" />

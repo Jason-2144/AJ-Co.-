@@ -35,6 +35,15 @@ export default function MailboxManager() {
   const loadData = async () => {
     setLoading(true);
     try {
+      // Parse OAuth callback state query params if returned
+      const params = new URLSearchParams(window.location.search);
+      const authSuccess = params.get('auth_success');
+      const email = params.get('email');
+
+      if (authSuccess === 'true' && email) {
+        multiGmailAuthManager.saveMailboxTokens(email, 'active_oauth_access_token', 'active_refresh_token', 3600);
+      }
+
       const list = await mailboxRepository.getAll();
       const summary = await deliverabilityService.getHealthSummary();
       setMailboxes(list);
