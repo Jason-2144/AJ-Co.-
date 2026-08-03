@@ -35,13 +35,24 @@ export default function MailboxManager() {
   const loadData = async () => {
     setLoading(true);
     try {
-      // Parse OAuth callback state query params if returned
+      // Parse OAuth callback state query params if returned from Google
       const params = new URLSearchParams(window.location.search);
       const authSuccess = params.get('auth_success');
       const email = params.get('email');
 
       if (authSuccess === 'true' && email) {
+        // Save OAuth token state for target email
         multiGmailAuthManager.saveMailboxTokens(email, 'active_oauth_access_token', 'active_refresh_token', 3600);
+        
+        // Also update MailboxRecord in repository
+        const list = await mailboxRepository.getAll();
+        const existing = list.find(m => m.email.toLowerCase() === email.toLowerCase());
+        if (existing) {
+          await mailboxRepository.update(existing.id, {
+            googleAccountConnected: true,
+            oauthStatus: 'connected'
+          });
+        }
       }
 
       const list = await mailboxRepository.getAll();
@@ -237,7 +248,7 @@ export default function MailboxManager() {
               <tbody className="divide-y divide-white/5 font-sans">
                 {mailboxes.map((mb) => {
                   const health = warmupEngine.calculateHealthScore(mb);
-                  const isConnected = multiGmailAuthManager.isEmailConnected(mb.email);
+                  const isConnected = mb.googleAccountConnected || multiGmailAuthManager.isEmailConnected(mb.email);
 
                   return (
                     <tr key={mb.id} className="hover:bg-white/[0.01] transition-colors">
