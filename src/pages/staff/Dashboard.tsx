@@ -14,6 +14,7 @@ import Team from './Team';
 import Settings from './Settings';
 import AIOutreach from './AIOutreach';
 import Campaigns from './Campaigns';
+import MailboxManager from './MailboxManager';
 
 export default function Dashboard() {
   const { user, loading } = useAuth();
@@ -51,6 +52,7 @@ export default function Dashboard() {
       <main className="flex-grow p-6 md:p-10 overflow-y-auto h-screen max-w-7xl mx-auto space-y-8">
         {activeTab === 'dashboard' && <DashboardOverview setActiveTab={setActiveTab} />}
         {activeTab === 'outreach' && <AIOutreach />}
+        {activeTab === 'mailboxes' && <MailboxManager />}
         {activeTab === 'crm' && <CRM />}
         {activeTab === 'projects' && <Projects />}
         {activeTab === 'tasks' && <Tasks />}

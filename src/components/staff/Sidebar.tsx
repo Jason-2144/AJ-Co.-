@@ -12,7 +12,8 @@ import {
   ChevronLeft, 
   ChevronRight,
   ShieldAlert,
-  Sparkles
+  Sparkles,
+  Mail
 } from 'lucide-react';
 
 interface SidebarProps {
@@ -28,6 +29,7 @@ export default function Sidebar({ collapsed, setCollapsed, activeTab, setActiveT
   const menuItems = [
     { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
     { id: 'outreach', label: 'AI Outreach', icon: Sparkles },
+    { id: 'mailboxes', label: 'Mailbox Manager', icon: Mail },
     { id: 'crm', label: 'CRM', icon: Users },
     { id: 'projects', label: 'Projects', icon: FolderGit2 },
     { id: 'tasks', label: 'Tasks', icon: CheckSquare },
