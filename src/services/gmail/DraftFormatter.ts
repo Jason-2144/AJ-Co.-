@@ -180,9 +180,18 @@ ajandco.site
 
     // Base64Url encoding (Node environment safe vs browser btoa)
     let base64 = '';
-    if (typeof Buffer !== 'undefined') {
-      base64 = Buffer.from(mimeString, 'utf-8').toString('base64');
-    } else {
+    try {
+      if (typeof Buffer !== 'undefined') {
+        base64 = Buffer.from(mimeString, 'utf-8').toString('base64');
+      } else {
+        const bytes = new TextEncoder().encode(mimeString);
+        let bin = '';
+        for (let i = 0; i < bytes.length; i++) {
+          bin += String.fromCharCode(bytes[i]);
+        }
+        base64 = btoa(bin);
+      }
+    } catch (e) {
       base64 = btoa(unescape(encodeURIComponent(mimeString)));
     }
 
