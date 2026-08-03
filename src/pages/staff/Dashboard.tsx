@@ -20,7 +20,10 @@ export default function Dashboard() {
   const { user, loading } = useAuth();
   const navigate = useNavigate();
   const [collapsed, setCollapsed] = useState(false);
-  const [activeTab, setActiveTab] = useState('dashboard');
+  const [activeTab, setActiveTab] = useState(() => {
+    const params = new URLSearchParams(window.location.search);
+    return params.get('tab') || 'dashboard';
+  });
 
   useEffect(() => {
     if (!loading && !user) {

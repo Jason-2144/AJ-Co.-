@@ -152,7 +152,7 @@ async function startServer() {
     const appUrl = process.env.APP_URL || `${req.protocol}://${req.headers.host}`;
     try {
       await gmailAuth.handleCallback(code as string, appUrl);
-      res.redirect("/staff/outreach");
+      res.redirect("/staff?tab=mailboxes");
     } catch (err: any) {
       console.error("OAuth callback exchange failure:", err);
       res.status(500).send(`OAuth callback exchange failed: ${err?.message}`);
