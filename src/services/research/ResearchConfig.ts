@@ -1,20 +1,21 @@
 export const RESEARCH_CONFIG = {
-  timeout: 30000,          // 30 seconds
-  maxBodySize: 50000,      // characters
-  maxLinks: 50,            // maximum internal links to extract
-  maxImages: 20,           // maximum image assets to extract
+  timeout: 45000,          // 45 seconds per page
+  maxBodySize: 150000,     // 150k characters per page
+  maxLinks: 100,           // maximum internal links to extract
+  maxImages: 30,           // maximum image assets to extract
   headless: true,          // launch Playwright chromium in headless mode
   
   // Intelligent Crawler Settings
-  maxPages: 10,            // default max pages to crawl
-  maxDepth: 2,             // max recursion depth
-  parallelWorkers: 2,      // parallel worker loaders
-  minContentSize: 100,     // minimum characters of body text to store
+  maxPages: 25,            // crawl up to 25 pages per domain
+  maxDepth: 3,             // max recursion depth
+  parallelWorkers: 4,      // 4 parallel worker loaders
+  minContentSize: 50,      // minimum characters of body text to store
   retryCount: 2,           // network retry counts
   priorityKeywords: [
     'about', 'services', 'products', 'pricing', 'solutions', 'industries', 
     'case-studies', 'customers', 'blog', 'news', 'contact', 'careers', 
-    'team', 'technology', 'ai', 'automation', 'integrations'
+    'team', 'technology', 'ai', 'automation', 'integrations', 'features',
+    'platform', 'company', 'about-us', 'what-we-do', 'how-it-works'
   ],
   ignoredPaths: [
     'login', 'signin', 'signup', 'register', 'account', 'cart', 'checkout', 

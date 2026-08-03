@@ -25,8 +25,8 @@ export class ResearchAggregator {
 
     // 1. Build raw context template mapping page sources
     const rawContext = sortedPages
-      .slice(0, 5) // Limit to top 5 content-rich pages to fit Ollama context window safely
-      .map((p) => `--- SOURCE PAGE: ${p.url} ---\n${p.cleanedContent.substring(0, 4000)}`)
+      .slice(0, 15) // Expand to top 15 content-rich pages to give deep business context
+      .map((p) => `--- SOURCE PAGE: ${p.url} ---\n${p.cleanedContent.substring(0, 6000)}`)
       .join('\n\n');
 
     const prompt = `You are a web intelligence preprocessing agent. Your goal is to analyze the crawled pages of a company website and build a single structured "Website Profile" that downstream agents can consume. Do not invent facts. Write a structured summary using this layout:

@@ -100,7 +100,29 @@ export class ResearchCrawler {
             timeout: RESEARCH_CONFIG.timeout,
           });
 
-          await workerPage.waitForTimeout(1500);
+          // Wait for network to settle slightly
+          await workerPage.waitForLoadState('networkidle', { timeout: 5000 }).catch(() => {});
+
+          // Auto-scroll down the page to trigger lazy-loaded text, images & dynamic content
+          await workerPage.evaluate(async () => {
+            await new Promise<void>((resolve) => {
+              let totalHeight = 0;
+              const distance = 400;
+              const timer = setInterval(() => {
+                const scrollHeight = document.body.scrollHeight;
+                window.scrollBy(0, distance);
+                totalHeight += distance;
+
+                if (totalHeight >= scrollHeight || totalHeight >= 4000) {
+                  clearInterval(timer);
+                  window.scrollTo(0, 0); // Scroll back up
+                  resolve();
+                }
+              }, 100);
+            });
+          }).catch(() => {});
+
+          await workerPage.waitForTimeout(1000);
 
           const statusCode = response ? response.status() : 200;
           const loadTimeMs = Date.now() - startTime;
