@@ -41,11 +41,11 @@ export class MultiGmailAuthManager {
     const clientId = '632447354859-tlv5am8916oks3gb0d7ikhhlk3ll8c09.apps.googleusercontent.com';
     const redirectUri = encodeURIComponent(`${appUrl}/api/gmail/callback`);
     const scopes = encodeURIComponent(
-      'https://www.googleapis.com/auth/gmail.compose https://www.googleapis.com/auth/userinfo.email'
+      'https://mail.google.com/ https://www.googleapis.com/auth/gmail.send https://www.googleapis.com/auth/gmail.readonly https://www.googleapis.com/auth/gmail.modify https://www.googleapis.com/auth/userinfo.email'
     );
     const loginHint = encodeURIComponent(email);
 
-    return `https://accounts.google.com/o/oauth2/v2/auth?client_id=${clientId}&redirect_uri=${redirectUri}&response_type=code&scope=${scopes}&access_type=offline&prompt=select_account&login_hint=${loginHint}`;
+    return `https://accounts.google.com/o/oauth2/v2/auth?client_id=${clientId}&redirect_uri=${redirectUri}&response_type=code&scope=${scopes}&access_type=offline&prompt=consent%20select_account&login_hint=${loginHint}`;
   }
 
   /**
