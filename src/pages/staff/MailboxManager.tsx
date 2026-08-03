@@ -49,6 +49,12 @@ export default function MailboxManager() {
     }
   };
 
+  const handleResetData = async () => {
+    localStorage.removeItem('aj_co_mailboxes_v3');
+    localStorage.removeItem('aj_co_scheduled_jobs_v3');
+    await loadData();
+  };
+
   useEffect(() => {
     loadData();
   }, []);
@@ -107,6 +113,14 @@ export default function MailboxManager() {
         </div>
 
         <div className="flex items-center gap-3">
+          <button
+            onClick={handleResetData}
+            className="px-3 py-2 bg-red-500/10 hover:bg-red-500/20 text-red-400 text-xs font-mono rounded-xl transition-all border border-red-500/20 flex items-center gap-1.5"
+            title="Reset metrics to fresh zero state"
+          >
+            <RefreshCw className="w-3.5 h-3.5" />
+            Reset State (0 Sent)
+          </button>
           <button
             onClick={loadData}
             className="p-2.5 bg-white/5 hover:bg-white/10 text-gray-300 rounded-xl transition-all border border-white/5"
