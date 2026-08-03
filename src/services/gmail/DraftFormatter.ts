@@ -36,23 +36,89 @@ export class DraftFormatter {
 
     const formattedSignature = (signature || '').replace(/\n/g, '<br />');
 
-    return `
-<!DOCTYPE html>
-<html>
-  <head>
-    <meta charset="utf-8">
-  </head>
-  <body style="font-family: Arial, sans-serif; font-size: 14px; line-height: 1.6; color: #1f2937; margin: 0; padding: 20px;">
-    <p style="margin-bottom: 16px;">${opening}</p>
-    <p style="margin-bottom: 20px;">${body}</p>
-    <div style="margin: 20px 0;">
-      ${opportunitiesHtml}
-    </div>
-    <p style="margin-bottom: 20px;">${cta}</p>
-    <p style="margin-top: 24px; color: #4b5563;">${formattedSignature}</p>
-  </body>
-</html>
-`.trim();
+    return `<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AJ & Co.</title>
+</head>
+
+<body style="margin:0;padding:0;background:#f5f5f5;">
+
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#f5f5f5;padding:40px 0;">
+<tr>
+<td align="center">
+
+<table role="presentation" width="600" cellpadding="0" cellspacing="0" style="background:#ffffff;border-radius:10px;overflow:hidden;font-family:Arial,Helvetica,sans-serif;">
+
+<tr>
+<td style="padding:0;">
+<img
+src="https://ajandco.site/email/banner.png"
+alt="AJ & Co."
+width="600"
+style="display:block;width:100%;max-width:600px;height:auto;border:0;">
+</td>
+</tr>
+
+<tr>
+<td style="padding:40px;">
+
+<h2 style="margin:0 0 20px;color:#111111;font-size:24px;">
+${opening}
+</h2>
+
+<p style="margin:0 0 20px;font-size:16px;line-height:1.7;color:#555555;">
+${body}
+</p>
+
+${opportunitiesHtml ? `<div style="margin: 20px 0;">${opportunitiesHtml}</div>` : ''}
+
+<table role="presentation" cellpadding="0" cellspacing="0" style="margin-top: 24px;">
+<tr>
+<td bgcolor="#000000" style="border-radius:6px;">
+<a href="https://ajandco.site"
+style="
+display:inline-block;
+padding:14px 28px;
+font-size:16px;
+font-weight:bold;
+color:#ffffff;
+text-decoration:none;">
+${cta || 'Book a Free Strategy Call'}
+</a>
+</td>
+</tr>
+</table>
+
+${formattedSignature ? `<p style="margin-top: 30px; font-size: 14px; color: #555555; line-height: 1.6;">${formattedSignature}</p>` : ''}
+
+</td>
+</tr>
+
+<tr>
+<td style="padding:30px;background:#fafafa;border-top:1px solid #eeeeee;text-align:center;font-size:13px;color:#777777;">
+
+<strong>AJ &amp; Co.</strong><br>
+We Automate Your Business Operations with AI.<br><br>
+
+<a href="https://ajandco.site"
+style="color:#777777;text-decoration:none;">
+ajandco.site
+</a>
+
+</td>
+</tr>
+
+</table>
+
+</td>
+</tr>
+</table>
+
+</body>
+</html>`.trim();
   }
 
   /**
