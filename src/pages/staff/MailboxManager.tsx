@@ -10,12 +10,8 @@ import {
   Play, 
   RefreshCw, 
   CheckCircle2, 
-  XCircle, 
-  Info, 
+  Trash2, 
   Send, 
-  TrendingUp,
-  Settings2,
-  Clock,
   Layers
 } from 'lucide-react';
 import { MailboxRecord, DeliverabilityHealthSummary } from '../../services/mailbox/MailboxTypes';
@@ -50,12 +46,6 @@ export default function MailboxManager() {
     }
   };
 
-  const handleResetData = async () => {
-    localStorage.removeItem('aj_co_mailboxes_v3');
-    localStorage.removeItem('aj_co_scheduled_jobs_v3');
-    await loadData();
-  };
-
   useEffect(() => {
     loadData();
   }, []);
@@ -66,8 +56,9 @@ export default function MailboxManager() {
     await loadData();
   };
 
-  const handleAdvanceWarmup = async (id: string) => {
-    await warmupEngine.advanceWarmupDay(id);
+  const handleRemoveMailbox = async (id: string, email: string) => {
+    await mailboxRepository.removeMailbox(id);
+    multiGmailAuthManager.disconnectEmail(email);
     await loadData();
   };
 
@@ -103,25 +94,17 @@ export default function MailboxManager() {
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-white/10 pb-6">
         <div>
           <div className="flex items-center gap-3">
-            <h1 className="text-2xl font-bold font-syne text-white">Outbound Infrastructure</h1>
+            <h1 className="text-2xl font-bold font-syne text-white">Outbound Mailbox Manager</h1>
             <span className="px-2.5 py-1 text-xs font-mono bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 rounded-full font-semibold">
-              VERSION 3.0 • PHASE 10
+              LIVE DOMAIN POOL
             </span>
           </div>
           <p className="text-gray-400 text-sm mt-1">
-            Google Workspace Mailbox Manager, Safety Warm-up Engine & Deliverability Protection.
+            Connect and manage your official Google Workspace mailboxes.
           </p>
         </div>
 
         <div className="flex items-center gap-3">
-          <button
-            onClick={handleResetData}
-            className="px-3 py-2 bg-red-500/10 hover:bg-red-500/20 text-red-400 text-xs font-mono rounded-xl transition-all border border-red-500/20 flex items-center gap-1.5"
-            title="Reset metrics to fresh zero state"
-          >
-            <RefreshCw className="w-3.5 h-3.5" />
-            Reset State (0 Sent)
-          </button>
           <button
             onClick={loadData}
             className="p-2.5 bg-white/5 hover:bg-white/10 text-gray-300 rounded-xl transition-all border border-white/5"
@@ -134,7 +117,7 @@ export default function MailboxManager() {
             className="px-4 py-2.5 bg-emerald-500 hover:bg-emerald-600 text-black font-semibold text-sm rounded-xl transition-all flex items-center gap-2 shadow-lg shadow-emerald-500/10"
           >
             <Plus className="w-4 h-4" />
-            Connect Google Mailbox
+            Connect New Mailbox
           </button>
         </div>
       </div>
@@ -162,11 +145,11 @@ export default function MailboxManager() {
 
           <div className="bg-[#121212] border border-white/10 rounded-2xl p-5">
             <div className="flex items-center justify-between text-gray-400 text-xs font-mono mb-2">
-              <span>MANAGED MAILBOXES</span>
+              <span>ACTIVE MAILBOXES</span>
               <Mail className="w-4 h-4 text-emerald-400" />
             </div>
             <div className="text-3xl font-bold font-mono text-white mb-1">
-              {healthSummary.totalMailboxes}
+              {mailboxes.length}
             </div>
             <p className="text-xs text-gray-400 mt-2 font-mono">
               <span className="text-emerald-400 font-semibold">{healthSummary.healthyMailboxes} Healthy</span> • <span className="text-amber-400 font-semibold">{healthSummary.warmingMailboxes} Warming</span>
@@ -192,26 +175,11 @@ export default function MailboxManager() {
               <Activity className="w-4 h-4 text-emerald-400" />
             </div>
             <div className="text-3xl font-bold font-mono text-emerald-400 mb-1">
-              {healthSummary.spfPassing}/{healthSummary.totalMailboxes} <span className="text-sm text-gray-400 font-normal">Verified</span>
+              {healthSummary.spfPassing}/{healthSummary.totalMailboxes || 1} <span className="text-sm text-gray-400 font-normal">Verified</span>
             </div>
             <p className="text-xs text-gray-400 mt-2 font-mono">
-              Zero spoofing risk detected
+              Protected authentication
             </p>
-          </div>
-        </div>
-      )}
-
-      {/* Deliverability Alerts Banner */}
-      {healthSummary && healthSummary.actionItems.length > 0 && (
-        <div className="bg-amber-500/10 border border-amber-500/20 rounded-2xl p-5 flex items-start gap-4">
-          <AlertTriangle className="w-5 h-5 text-amber-400 shrink-0 mt-0.5" />
-          <div className="space-y-1">
-            <h4 className="text-sm font-semibold text-amber-300">Deliverability Recommendations Required</h4>
-            <ul className="text-xs text-amber-200/80 space-y-1 list-disc pl-4 font-mono">
-              {healthSummary.actionItems.map((item, idx) => (
-                <li key={idx}>{item}</li>
-              ))}
-            </ul>
           </div>
         </div>
       )}
@@ -221,143 +189,152 @@ export default function MailboxManager() {
         <div className="px-6 py-5 border-b border-white/10 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <Layers className="w-5 h-5 text-emerald-400" />
-            <h3 className="font-bold text-white text-lg">Google Workspace Sender Pool</h3>
+            <h3 className="font-bold text-white text-lg">Connected Mailbox Pool</h3>
           </div>
           <span className="text-xs text-gray-400 font-mono">
-            Weighted Rotation Active
+            {mailboxes.length} Active Connected Accounts
           </span>
         </div>
 
-        <div className="overflow-x-auto">
-          <table className="w-full text-left text-sm text-gray-300">
-            <thead className="bg-white/[0.02] text-xs font-mono text-gray-400 uppercase border-b border-white/10">
-              <tr>
-                <th className="px-6 py-4">Sender Mailbox</th>
-                <th className="px-6 py-4">Status</th>
-                <th className="px-6 py-4">Warmup Progress</th>
-                <th className="px-6 py-4">Daily Limit</th>
-                <th className="px-6 py-4">Sent Today</th>
-                <th className="px-6 py-4">Health Score</th>
-                <th className="px-6 py-4">DNS Auth</th>
-                <th className="px-6 py-4 text-right">Actions</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-white/5 font-sans">
-              {mailboxes.map((mb) => {
-                const health = warmupEngine.calculateHealthScore(mb);
-                return (
-                  <tr key={mb.id} className="hover:bg-white/[0.01] transition-colors">
-                    <td className="px-6 py-4">
-                      <div>
-                        <div className="font-semibold text-white flex items-center gap-2">
-                          {mb.email}
-                          {mb.googleAccountConnected && (
-                            <span className="w-2 h-2 rounded-full bg-emerald-400" title="Connected to Google Workspace" />
-                          )}
-                        </div>
-                        <div className="text-xs text-gray-400">{mb.displayName}</div>
-                      </div>
-                    </td>
+        {mailboxes.length === 0 ? (
+          <div className="p-12 text-center space-y-4">
+            <Mail className="w-12 h-12 text-gray-600 mx-auto" />
+            <h4 className="text-white font-semibold text-base">No Mailboxes Connected</h4>
+            <p className="text-gray-400 text-sm max-w-md mx-auto">
+              Click <strong>Connect New Mailbox</strong> above to link your Google Workspace accounts (`jason@ajandco.site`, etc.) for cold outreach.
+            </p>
+            <button
+              onClick={() => setShowAddModal(true)}
+              className="px-5 py-2.5 bg-emerald-500 hover:bg-emerald-600 text-black font-semibold text-sm rounded-xl transition-all inline-flex items-center gap-2"
+            >
+              <Plus className="w-4 h-4" />
+              Connect Mailbox Now
+            </button>
+          </div>
+        ) : (
+          <div className="overflow-x-auto">
+            <table className="w-full text-left text-sm text-gray-300">
+              <thead className="bg-white/[0.02] text-xs font-mono text-gray-400 uppercase border-b border-white/10">
+                <tr>
+                  <th className="px-6 py-4">Sender Mailbox</th>
+                  <th className="px-6 py-4">Status</th>
+                  <th className="px-6 py-4">Warmup Progress</th>
+                  <th className="px-6 py-4">Daily Limit</th>
+                  <th className="px-6 py-4">Sent Today</th>
+                  <th className="px-6 py-4">Health Score</th>
+                  <th className="px-6 py-4 text-right">Actions</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-white/5 font-sans">
+                {mailboxes.map((mb) => {
+                  const health = warmupEngine.calculateHealthScore(mb);
+                  const isConnected = multiGmailAuthManager.isEmailConnected(mb.email);
 
-                    <td className="px-6 py-4">
-                      <span className={`px-2.5 py-1 text-xs font-mono rounded-full font-semibold uppercase ${
-                        mb.status === 'healthy' ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' :
-                        mb.status === 'warming' ? 'bg-amber-500/10 text-amber-400 border border-amber-500/20' :
-                        'bg-red-500/10 text-red-400 border border-red-500/20'
-                      }`}>
-                        {mb.status}
-                      </span>
-                    </td>
-
-                    <td className="px-6 py-4">
-                      <div className="flex items-center gap-2">
-                        <Flame className="w-4 h-4 text-amber-400 shrink-0" />
+                  return (
+                    <tr key={mb.id} className="hover:bg-white/[0.01] transition-colors">
+                      <td className="px-6 py-4">
                         <div>
-                          <div className="text-xs font-semibold text-white">Day {mb.warmupDay}</div>
-                          <div className="text-[10px] text-gray-400 font-mono uppercase">{mb.warmupStage.replace('_', ' ')}</div>
+                          <div className="font-semibold text-white flex items-center gap-2">
+                            {mb.email}
+                            {isConnected && (
+                              <span className="w-2 h-2 rounded-full bg-emerald-400" title="Google OAuth Active" />
+                            )}
+                          </div>
+                          <div className="text-xs text-gray-400">{mb.displayName}</div>
                         </div>
-                      </div>
-                    </td>
+                      </td>
 
-                    <td className="px-6 py-4 font-mono font-semibold text-white">
-                      {mb.currentDailyLimit} / day
-                    </td>
+                      <td className="px-6 py-4">
+                        <span className={`px-2.5 py-1 text-xs font-mono rounded-full font-semibold uppercase ${
+                          mb.status === 'healthy' ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' :
+                          mb.status === 'warming' ? 'bg-amber-500/10 text-amber-400 border border-amber-500/20' :
+                          'bg-red-500/10 text-red-400 border border-red-500/20'
+                        }`}>
+                          {mb.status}
+                        </span>
+                      </td>
 
-                    <td className="px-6 py-4 font-mono text-gray-300">
-                      <span className="text-emerald-400 font-semibold">{mb.todaySentCount}</span>
-                      <span className="text-gray-500"> ({mb.remainingCapacity} left)</span>
-                    </td>
+                      <td className="px-6 py-4">
+                        <div className="flex items-center gap-2">
+                          <Flame className="w-4 h-4 text-amber-400 shrink-0" />
+                          <div>
+                            <div className="text-xs font-semibold text-white">Day {mb.warmupDay}</div>
+                            <div className="text-[10px] text-gray-400 font-mono uppercase">{mb.warmupStage.replace('_', ' ')}</div>
+                          </div>
+                        </div>
+                      </td>
 
-                    <td className="px-6 py-4 font-mono">
-                      <span className={`font-semibold ${health >= 90 ? 'text-emerald-400' : health >= 75 ? 'text-yellow-400' : 'text-red-400'}`}>
-                        {health}%
-                      </span>
-                    </td>
+                      <td className="px-6 py-4 font-mono font-semibold text-white">
+                        {mb.currentDailyLimit} / day
+                      </td>
 
-                    <td className="px-6 py-4">
-                      <div className="flex items-center gap-1.5 font-mono text-xs">
-                        <span className="px-1.5 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">SPF</span>
-                        <span className="px-1.5 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">DKIM</span>
-                        <span className="px-1.5 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">DMARC</span>
-                      </div>
-                    </td>
+                      <td className="px-6 py-4 font-mono text-gray-300">
+                        <span className="text-emerald-400 font-semibold">{mb.todaySentCount}</span>
+                        <span className="text-gray-500"> ({mb.remainingCapacity} left)</span>
+                      </td>
 
-                    <td className="px-6 py-4 text-right">
-                      <div className="flex items-center justify-end gap-2">
-                        {multiGmailAuthManager.isEmailConnected(mb.email) ? (
-                          <span className="px-2.5 py-1 text-xs font-mono bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 rounded-lg flex items-center gap-1">
-                            <CheckCircle2 className="w-3.5 h-3.5" />
-                            OAuth Active
-                          </span>
-                        ) : (
-                          <a
-                            href={multiGmailAuthManager.getAuthUrlForEmail(mb.email)}
-                            className="px-2.5 py-1.5 bg-emerald-500 hover:bg-emerald-600 text-black font-semibold text-xs rounded-lg transition-all flex items-center gap-1 shadow-sm"
-                          >
-                            <Mail className="w-3.5 h-3.5" />
-                            Connect Google
-                          </a>
-                        )}
+                      <td className="px-6 py-4 font-mono">
+                        <span className={`font-semibold ${health >= 90 ? 'text-emerald-400' : health >= 75 ? 'text-yellow-400' : 'text-red-400'}`}>
+                          {health}%
+                        </span>
+                      </td>
 
-                        <button
-                          onClick={() => handleAdvanceWarmup(mb.id)}
-                          className="px-2.5 py-1.5 bg-white/5 hover:bg-white/10 text-gray-300 text-xs rounded-lg transition-all border border-white/5 flex items-center gap-1"
-                          title="Advance warm-up schedule by 1 day"
-                        >
-                          <TrendingUp className="w-3.5 h-3.5 text-amber-400" />
-                          +1 Day
-                        </button>
-
-                        <button
-                          onClick={() => handleToggleStatus(mb.id, mb.status)}
-                          className="p-1.5 bg-white/5 hover:bg-white/10 text-gray-300 rounded-lg transition-all border border-white/5"
-                          title={mb.status === 'paused' ? 'Resume Mailbox' : 'Pause Mailbox'}
-                        >
-                          {mb.status === 'paused' ? (
-                            <Play className="w-4 h-4 text-emerald-400" />
+                      <td className="px-6 py-4 text-right">
+                        <div className="flex items-center justify-end gap-2">
+                          {isConnected ? (
+                            <span className="px-2.5 py-1 text-xs font-mono bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 rounded-lg flex items-center gap-1">
+                              <CheckCircle2 className="w-3.5 h-3.5" />
+                              OAuth Active
+                            </span>
                           ) : (
-                            <Pause className="w-4 h-4 text-amber-400" />
+                            <a
+                              href={multiGmailAuthManager.getAuthUrlForEmail(mb.email)}
+                              className="px-2.5 py-1.5 bg-emerald-500 hover:bg-emerald-600 text-black font-semibold text-xs rounded-lg transition-all flex items-center gap-1 shadow-sm"
+                            >
+                              <Mail className="w-3.5 h-3.5" />
+                              Connect Google
+                            </a>
                           )}
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
-        </div>
+
+                          <button
+                            onClick={() => handleToggleStatus(mb.id, mb.status)}
+                            className="p-1.5 bg-white/5 hover:bg-white/10 text-gray-300 rounded-lg transition-all border border-white/5"
+                            title={mb.status === 'paused' ? 'Resume Mailbox' : 'Pause Mailbox'}
+                          >
+                            {mb.status === 'paused' ? (
+                              <Play className="w-4 h-4 text-emerald-400" />
+                            ) : (
+                              <Pause className="w-4 h-4 text-amber-400" />
+                            )}
+                          </button>
+
+                          <button
+                            onClick={() => handleRemoveMailbox(mb.id, mb.email)}
+                            className="p-1.5 bg-red-500/10 hover:bg-red-500/20 text-red-400 rounded-lg transition-all border border-red-500/10"
+                            title="Remove Mailbox"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        )}
       </div>
 
       {/* Real-time Email Verification Tool */}
       <div className="bg-[#121212] border border-white/10 rounded-2xl p-6 space-y-4">
         <div className="flex items-center gap-3">
           <ShieldCheck className="w-5 h-5 text-emerald-400" />
-          <h3 className="font-bold text-white text-lg">Real-Time Lead Verification (Pre-Queue Guard)</h3>
+          <h3 className="font-bold text-white text-lg">Real-Time Lead Verification Guard</h3>
         </div>
 
         <p className="text-sm text-gray-400">
-          Verify syntax, detect disposable temporary domains, and check MX records before enqueueing leads into outbound campaigns.
+          Verify syntax, detect disposable temporary domains, and check MX records before sending outreach emails.
         </p>
 
         <div className="flex items-center gap-3 max-w-xl">
@@ -393,10 +370,6 @@ export default function MailboxManager() {
               <span className="text-gray-400">REASON:</span>
               <span>{verifyResult.reason}</span>
             </div>
-            <div className="flex justify-between text-gray-300">
-              <span className="text-gray-400">MX RECORDS FOUND:</span>
-              <span>{verifyResult.mxRecordsFound ? 'YES' : 'NO'}</span>
-            </div>
           </div>
         )}
       </div>
@@ -421,7 +394,7 @@ export default function MailboxManager() {
                 <input
                   type="email"
                   required
-                  placeholder="e.g. contact@ajandco.site"
+                  placeholder="e.g. jason@ajandco.site"
                   value={newEmail}
                   onChange={(e) => setNewEmail(e.target.value)}
                   className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-emerald-500"
@@ -433,7 +406,7 @@ export default function MailboxManager() {
                 <input
                   type="text"
                   required
-                  placeholder="e.g. AJ & Co. Operations"
+                  placeholder="e.g. Jason | AJ & Co."
                   value={newName}
                   onChange={(e) => setNewName(e.target.value)}
                   className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-emerald-500"
@@ -456,7 +429,7 @@ export default function MailboxManager() {
                   type="submit"
                   className="px-5 py-2.5 bg-emerald-500 hover:bg-emerald-600 font-semibold text-black text-sm rounded-xl transition-all"
                 >
-                  Save &amp; Start Warmup
+                  Save &amp; Connect
                 </button>
               </div>
             </form>
