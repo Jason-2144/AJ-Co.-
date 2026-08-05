@@ -2,6 +2,7 @@ export interface GmailDraftRecord {
   prospectId: string;
   draftId?: string;
   threadId?: string;
+  senderEmail?: string;
   createdTime?: number;
   status: 'pending' | 'created' | 'failed';
   lastError?: string;

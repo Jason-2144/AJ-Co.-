@@ -638,21 +638,30 @@ export default function QueueDashboard({ items, errors, onClear, isRunning, isPa
                     {/* Gmail Draft Status Cell */}
                     <td className="px-6 py-4 text-center">
                       {draftRecord ? (
-                        <div className="flex items-center justify-center gap-1.5">
-                          <span className={`px-2 py-0.5 rounded-full text-[9px] font-mono font-bold uppercase border ${
-                            draftRecord.status === 'created'
-                              ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20'
-                              : draftRecord.status === 'failed'
-                              ? 'bg-red-500/10 text-red-400 border-red-500/20'
-                              : 'bg-gray-500/10 text-gray-400 border-gray-500/20'
-                          }`}>
-                            {draftRecord.status}
-                          </span>
-                          
-                          {/* Errors Tooltip Icon */}
-                          {draftRecord.status === 'failed' && (
-                            <span className="text-red-400 cursor-help" title={draftRecord.lastError}>
-                              <AlertOctagon className="w-3.5 h-3.5" />
+                        <div className="flex flex-col items-center justify-center gap-1">
+                          <div className="flex items-center gap-1.5">
+                            <span className={`px-2 py-0.5 rounded-full text-[9px] font-mono font-bold uppercase border ${
+                              draftRecord.status === 'created'
+                                ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20'
+                                : draftRecord.status === 'failed'
+                                ? 'bg-red-500/10 text-red-400 border-red-500/20'
+                                : 'bg-gray-500/10 text-gray-400 border-gray-500/20'
+                            }`}>
+                              {draftRecord.status}
+                            </span>
+                            
+                            {/* Errors Tooltip Icon */}
+                            {draftRecord.status === 'failed' && (
+                              <span className="text-red-400 cursor-help" title={draftRecord.lastError}>
+                                <AlertOctagon className="w-3.5 h-3.5" />
+                              </span>
+                            )}
+                          </div>
+
+                          {/* Sender Account Tag */}
+                          {draftRecord.senderEmail && (
+                            <span className="text-[9px] font-mono text-purple-300 bg-purple-500/10 px-2 py-0.5 rounded-md border border-purple-500/20 font-medium">
+                              Sent via: {draftRecord.senderEmail}
                             </span>
                           )}
                         </div>
@@ -899,14 +908,20 @@ export default function QueueDashboard({ items, errors, onClear, isRunning, isPa
             {/* Modal Body */}
             <div className="p-6 overflow-y-auto space-y-6 text-sm">
               {/* Stats Grid */}
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-3 gap-4">
                 <div className="bg-white/[0.02] p-3 rounded-lg border border-white/5">
                   <span className="text-[10px] text-gray-500 uppercase block font-mono">Company</span>
-                  <span className="font-semibold text-white mt-1 block">{selectedItem.prospect.company}</span>
+                  <span className="font-semibold text-white mt-1 block truncate">{selectedItem.prospect.company}</span>
                 </div>
                 <div className="bg-white/[0.02] p-3 rounded-lg border border-white/5">
                   <span className="text-[10px] text-gray-500 uppercase block font-mono">Status State</span>
                   <span className="font-mono font-semibold text-amber-400 mt-1 block capitalize">{selectedItem.status}</span>
+                </div>
+                <div className="bg-white/[0.02] p-3 rounded-lg border border-white/5">
+                  <span className="text-[10px] text-gray-500 uppercase block font-mono">Sender Account</span>
+                  <span className="font-mono font-semibold text-purple-300 mt-1 block truncate">
+                    {gmailStore.getDraft(selectedItem.prospect.id)?.senderEmail || 'amaan@ajandco.site'}
+                  </span>
                 </div>
               </div>
 

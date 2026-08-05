@@ -11,8 +11,14 @@ class MailboxRepository {
       return DEFAULT_MAILBOXES;
     }
     try {
-      return JSON.parse(raw);
+      const parsed = JSON.parse(raw);
+      if (Array.isArray(parsed) && parsed.length > 0) {
+        return parsed;
+      }
+      this.save(DEFAULT_MAILBOXES);
+      return DEFAULT_MAILBOXES;
     } catch {
+      this.save(DEFAULT_MAILBOXES);
       return DEFAULT_MAILBOXES;
     }
   }

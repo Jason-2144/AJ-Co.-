@@ -4,6 +4,8 @@ import { GmailDraftRecord } from './GmailTypes';
 import { gmailStore } from './GmailStore';
 import { DraftFormatter } from './DraftFormatter';
 import { multiGmailAuthManager } from './MultiGmailAuthManager';
+import { mailboxRepository } from '../mailbox/MailboxRepository';
+import { rotationEngine } from '../mailbox/RotationEngine';
 
 export class GmailService {
   /**
@@ -108,9 +110,22 @@ export class GmailService {
     const htmlText = DraftFormatter.formatHtmlBody(email.opening, email.body, email.opportunities || [], email.cta, email.signature);
     const composeUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(recipient)}&su=${encodeURIComponent(subject)}&body=${encodeURIComponent(plainText)}`;
 
+    // Select rotated sender account from live MailboxPool
+    const allMailboxes = await mailboxRepository.getAll().catch(() => []);
+    let senderEmail = 'amaan@ajandco.site';
+    if (allMailboxes.length > 0) {
+      const poolIds = allMailboxes.map(m => m.id);
+      const selectedMb = await rotationEngine.selectBestMailbox(poolIds).catch(() => null) || allMailboxes[Math.floor(Math.random() * allMailboxes.length)];
+      if (selectedMb) {
+        senderEmail = selectedMb.email;
+        mailboxRepository.incrementSentCount(selectedMb.id).catch(() => {});
+      }
+    }
+
     // Save optimistic state
     gmailStore.setDraft(prospectId, {
       prospectId,
+      senderEmail,
       status: 'pending',
       composeUrl
     });
@@ -158,6 +173,7 @@ export class GmailService {
             prospectId,
             draftId: data.id,
             threadId: data.message?.threadId,
+            senderEmail,
             createdTime: Date.now(),
             status: 'created',
             composeUrl
@@ -178,6 +194,7 @@ export class GmailService {
       prospectId,
       draftId: `gmail_draft_${Math.random().toString(36).substring(2, 10)}`,
       threadId: `thread_${Math.random().toString(36).substring(2, 10)}`,
+      senderEmail,
       createdTime: Date.now(),
       status: 'created',
       composeUrl
