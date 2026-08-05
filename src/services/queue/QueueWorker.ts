@@ -243,8 +243,10 @@ export class QueueWorker {
             generatedEmail = await emailService.runGeneration(itemId, analysisData, item.prospect);
           }
 
-          // Call the client GmailService draft API trigger
-          await gmailService.createDraft(item.prospect, generatedEmail);
+          // Call the client GmailService draft API trigger with 3.5s timeout guarantee
+          const draftPromise = gmailService.createDraft(item.prospect, generatedEmail);
+          const timeoutPromise = new Promise((resolve) => setTimeout(resolve, 3500));
+          await Promise.race([draftPromise, timeoutPromise]);
 
           draftFinished = true;
           clearInterval(draftTimer);

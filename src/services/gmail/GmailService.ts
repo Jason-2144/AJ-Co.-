@@ -75,6 +75,7 @@ export class GmailService {
             refresh_token: refreshToken,
             grant_type: 'refresh_token',
           }),
+          signal: AbortSignal.timeout(3500)
         });
 
         if (res.ok) {
@@ -115,7 +116,7 @@ export class GmailService {
     });
 
     // 1. Direct browser Google Gmail API using valid or refreshed authenticated token
-    let token = await this.getValidToken();
+    let token = await this.getValidToken().catch(() => null);
     if (token) {
       try {
         const rawMime = DraftFormatter.buildMimeBase64(recipient, subject, plainText, htmlText);
@@ -128,13 +129,14 @@ export class GmailService {
           },
           body: JSON.stringify({
             message: { raw: rawMime }
-          })
+          }),
+          signal: AbortSignal.timeout(3500)
         });
 
         // If 401 token expired, attempt force refresh once
         if (res.status === 401) {
           localStorage.removeItem('aj_co_gmail_token');
-          token = await this.getValidToken();
+          token = await this.getValidToken().catch(() => null);
           if (token) {
             res = await fetch('https://gmail.googleapis.com/gmail/v1/users/me/drafts', {
               method: 'POST',
@@ -144,7 +146,8 @@ export class GmailService {
               },
               body: JSON.stringify({
                 message: { raw: rawMime }
-              })
+              }),
+              signal: AbortSignal.timeout(3500)
             });
           }
         }
