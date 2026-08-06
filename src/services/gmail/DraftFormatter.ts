@@ -17,18 +17,18 @@ export class DraftFormatter {
         const benefit = op.benefit || op.impact || 'Streamlined turnaround times and operational cost reduction.';
 
         return `
-        <div style="margin-bottom: 16px; padding: 14px; background-color: #f9fafb; border-left: 4px solid #10b981; border-radius: 6px; font-family: Arial, sans-serif;">
+        <div style="margin-bottom: 16px; padding: 16px; background-color: #fffdfa; border-left: 4px solid #d97706; border: 1px solid #fce7f3; border-left: 4px solid #d97706; border-radius: 8px; font-family: Arial, sans-serif; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
           <div style="font-weight: bold; color: #111827; font-size: 14px; margin-bottom: 6px;">
             ${idx + 1}. ${title}
           </div>
-          <div style="font-size: 12px; color: #4b5563; margin-bottom: 4px;">
-            <strong>Problem:</strong> ${problem}
+          <div style="font-size: 13px; color: #374151; margin-bottom: 4px; line-height: 1.5;">
+            <strong style="color: #111827;">Problem:</strong> ${problem}
           </div>
-          <div style="font-size: 12px; color: #4b5563; margin-bottom: 4px;">
-            <strong>Suggested Automation:</strong> ${solution}
+          <div style="font-size: 13px; color: #374151; margin-bottom: 4px; line-height: 1.5;">
+            <strong style="color: #111827;">Suggested Automation:</strong> ${solution}
           </div>
-          <div style="font-size: 12px; color: #047857; font-weight: 500;">
-            <strong>Business Benefit:</strong> ${benefit}
+          <div style="font-size: 13px; color: #b45309; font-weight: 600; margin-top: 6px;">
+            <strong style="color: #b45309;">Business Benefit:</strong> ${benefit}
           </div>
         </div>`;
       })
