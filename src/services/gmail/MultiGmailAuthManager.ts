@@ -125,12 +125,55 @@ export class MultiGmailAuthManager {
   }
 
   /**
+   * Returns list of all genuinely authenticated Google OAuth accounts.
+   */
+  getConnectedMailboxes(): MultiMailboxToken[] {
+    const tokens = this.getStoredTokens();
+    const list = Object.values(tokens);
+
+    // Also include primary connected single account if present
+    const primaryToken = localStorage.getItem('aj_co_gmail_token');
+    const primaryEmail = localStorage.getItem('aj_co_gmail_user_email');
+    if (primaryToken && primaryEmail && !tokens[primaryEmail.toLowerCase()]) {
+      list.push({
+        email: primaryEmail.toLowerCase(),
+        accessToken: primaryToken,
+        refreshToken: localStorage.getItem('aj_co_gmail_refresh_token') || '',
+        expiryDate: Number(localStorage.getItem('aj_co_gmail_expiry') || (Date.now() + 3600000))
+      });
+    }
+
+    return list;
+  }
+
+  private rotationIndex = 0;
+
+  /**
+   * Selects the next authenticated sender mailbox in round-robin sequence.
+   */
+  async getNextSenderMailbox(): Promise<MultiMailboxToken | null> {
+    const connected = this.getConnectedMailboxes();
+    if (connected.length === 0) return null;
+
+    const selected = connected[this.rotationIndex % connected.length];
+    this.rotationIndex = (this.rotationIndex + 1) % connected.length;
+    return selected;
+  }
+
+  /**
    * Disconnect an individual mailbox OAuth session.
    */
   disconnectEmail(email: string): void {
     const tokens = this.getStoredTokens();
     delete tokens[email.toLowerCase()];
     this.saveTokens(tokens);
+
+    if (localStorage.getItem('aj_co_gmail_user_email')?.toLowerCase() === email.toLowerCase()) {
+      localStorage.removeItem('aj_co_gmail_token');
+      localStorage.removeItem('aj_co_gmail_refresh_token');
+      localStorage.removeItem('aj_co_gmail_expiry');
+      localStorage.removeItem('aj_co_gmail_user_email');
+    }
   }
 }
 

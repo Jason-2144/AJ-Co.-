@@ -34,73 +34,47 @@ export class EmailService {
 
     const companyName = prospect.companyName || prospect.company || (prospect.website ? prospect.website.replace(/^https?:\/\//, '').replace(/\..*$/, '').toUpperCase() : 'there');
     const domain = (prospect.website || '').replace(/^https?:\/\//, '').replace(/\/.*$/, '') || 'your website';
-    const title = analysis.companySummary || '';
+    const industry = analysis.industry || 'Technology Solutions';
 
-    // Seed pseudo-random index based on prospectId hash to guarantee distinct, deterministic copy per prospect
+    // Seed pseudo-random index based on prospectId hash
     const seed = (prospectId || companyName).split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
 
     const subjects = [
-      `A couple of quick ideas for ${companyName}`,
-      `Quick thought regarding ${companyName}`,
-      `Had a look at ${companyName}`,
-      `Thought this might be useful for ${companyName}`,
-      `Ideas for ${companyName}'s workflow`
+      `Ideas for ${companyName}'s ${industry} workflow`,
+      `Quick thought on ${companyName}'s operations`,
+      `A couple of AI automation ideas for ${companyName}`,
+      `Had a look at ${domain} (${industry})`
     ];
 
     const bodies = [
-      `I'm Amaan, I run AJ & Co (ajandco.site). I was looking into ${domain} earlier today and noticed a couple of everyday things that might save your team some time:`,
-      `I'm Amaan. I run AJ & Co (ajandco.site). Had a quick look at ${domain}'s platform and had a few thoughts on where some manual effort could probably be cut down:`,
-      `I'm Amaan, founder of AJ & Co (ajandco.site). Checking out ${companyName} (${domain}) and identified a couple of quick operational ideas:`,
-      `I'm Amaan from AJ & Co (ajandco.site). Spent a few minutes looking over ${companyName} (${domain}) and noticed a few tasks that could probably be automated quite easily:`
+      `I'm Amaan, founder of AJ & Co (ajandco.site). I was looking into ${domain}'s work in ${industry} and noticed a few operational areas where automated AI pipelines could save your team significant bandwidth:`,
+      `I'm Amaan from AJ & Co (ajandco.site). Had a detailed look at ${companyName} (${domain}) and identified a couple of specific opportunities to streamline your ${industry} workflows:`
     ];
 
-    const allObservations = [
-      {
-        title: `Client Onboarding`,
-        problem: `Onboarding new clients at ${companyName} looks like something that takes quite a bit of manual back-and-forth.`,
-        solution: `Set up a simple system to gather client details and handle initial setup automatically for ${domain}.`,
-        benefit: 'Saves your team hours of manual setup work every week.'
-      },
-      {
-        title: `Lead Research & Context`,
-        problem: `Researching new target leads before sales calls probably consumes more bandwidth than anyone enjoys.`,
-        solution: `Automatically gather company background, tech details, and key facts before calls.`,
-        benefit: 'Frees up your sales team to focus on actual client conversations.'
-      },
-      {
-        title: `Internal Team Repetitions`,
-        problem: `Your team probably ends up answering the exact same internal product and workflow questions quite a bit.`,
-        solution: `Put together a simple private assistant linked directly to your team docs and wiki.`,
-        benefit: 'Instant answers for your team without interrupting anyone.'
-      },
-      {
-        title: `Proposal & Quote Preparation`,
-        problem: `Putting together proposals and custom quotes for ${companyName} likely takes longer than it should.`,
-        solution: `Create a quick draft generator using your existing pricing templates.`,
-        benefit: 'Cuts proposal creation time from hours down to a couple of minutes.'
-      },
-      {
-        title: `Data Handoffs Between Tools`,
-        problem: `Seems like a fair amount of prospect information still moves between your web forms and internal tools manually.`,
-        solution: `Connect custom triggers between your intake forms and backend task managers.`,
-        benefit: 'Zero manual copy-pasting and zero missed follow-ups.'
-      }
-    ];
+    // Use dynamic observations directly derived from CompanyAnalysis
+    const opps = (analysis.aiOpportunities || []).map((opp, idx) => {
+      const pPoint = analysis.painPoints?.[idx] || `Manual operational overhead in ${industry}.`;
+      return {
+        title: opp.title,
+        problem: pPoint,
+        solution: opp.description,
+        benefit: `Cuts turnaround latency and frees up key team bandwidth.`
+      };
+    });
 
-    // Pick 2-3 unique observations based on seed
-    const chosenOpp1 = allObservations[seed % allObservations.length];
-    const chosenOpp2 = allObservations[(seed + 2) % allObservations.length];
-    const chosenOpp3 = allObservations[(seed + 4) % allObservations.length];
-
-    const selectedOpps = [chosenOpp1, chosenOpp2];
-    if (seed % 2 === 0) {
-      selectedOpps.push(chosenOpp3);
+    // Fallback if opps empty
+    if (opps.length === 0) {
+      opps.push({
+        title: `Autonomous ${companyName} Lead Qualification`,
+        problem: `Researching new incoming prospects for ${domain} takes longer than it should.`,
+        solution: `Deploy custom AI agents to extract company credentials and qualify leads before calls.`,
+        benefit: `Frees up your sales team to focus on closing client deals.`
+      });
     }
 
     const ctas = [
-      `Happy to share what I had in mind if any of those sound useful.`,
-      `Let me know if any of those resonate, happy to walk through what we've seen work over a quick 10 minute chat.`,
-      `Happy to shoot over a quick 2-minute video showing what I mean if you're curious.`
+      `Happy to share a 2-minute video walkthrough showing how we've built this for similar ${industry} companies if you're curious.`,
+      `Let me know if any of those resonate—happy to hop on a quick 10-minute chat to share what we've seen work.`
     ];
 
     const subject = subjects[seed % subjects.length];
@@ -113,10 +87,10 @@ export class EmailService {
       preview: `Hey, I'm Amaan. I run AJ & Co.`,
       opening: `Hey ${companyName} team,`,
       body,
-      opportunities: selectedOpps,
+      opportunities: opps.slice(0, 3),
       cta,
-      signature: `Best,\nAmaan\nAJ & Co.\nhttps://ajandco.site`,
-      confidence: 95,
+      signature: `Best,\nAmaan\nFounder, AJ & Co.\nhttps://ajandco.site`,
+      confidence: 96,
       generatedAt: new Date().toISOString(),
       duration: 1200,
     };

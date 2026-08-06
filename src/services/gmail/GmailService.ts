@@ -110,29 +110,24 @@ export class GmailService {
     const htmlText = DraftFormatter.formatHtmlBody(email.opening, email.body, email.opportunities || [], email.cta, email.signature);
     const composeUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(recipient)}&su=${encodeURIComponent(subject)}&body=${encodeURIComponent(plainText)}`;
 
-    // Select rotated sender account from live MailboxPool
-    const allMailboxes = await mailboxRepository.getAll().catch(() => []);
-    let senderEmail = 'amaan@ajandco.site';
-    if (allMailboxes.length > 0) {
-      const poolIds = allMailboxes.map(m => m.id);
-      const selectedMb = await rotationEngine.selectBestMailbox(poolIds).catch(() => null) || allMailboxes[Math.floor(Math.random() * allMailboxes.length)];
-      if (selectedMb) {
-        senderEmail = selectedMb.email;
-        mailboxRepository.incrementSentCount(selectedMb.id).catch(() => {});
-      }
-    }
-
+    // Select next round-robin sender account from genuinely connected Google accounts
+    const nextSender = await multiGmailAuthManager.getNextSenderMailbox();
+    const senderEmail = nextSender?.email || localStorage.getItem('aj_co_gmail_user_email') || '';
+    
     // Save optimistic state
     gmailStore.setDraft(prospectId, {
       prospectId,
-      senderEmail,
+      senderEmail: senderEmail || 'Unauthenticated',
       status: 'pending',
       composeUrl
     });
 
-    // 1. Direct browser Google Gmail API using valid or refreshed authenticated token
-    let token = await this.getValidToken().catch(() => null);
-    if (token) {
+    // Obtain access token for the selected round-robin sender
+    const token = nextSender 
+      ? await multiGmailAuthManager.getAccessTokenForEmail(nextSender.email)
+      : await this.getValidToken().catch(() => null);
+
+    if (token && senderEmail) {
       try {
         const rawMime = DraftFormatter.buildMimeBase64(recipient, subject, plainText, htmlText);
 
@@ -145,27 +140,8 @@ export class GmailService {
           body: JSON.stringify({
             message: { raw: rawMime }
           }),
-          signal: AbortSignal.timeout(3500)
+          signal: AbortSignal.timeout(4000)
         });
-
-        // If 401 token expired, attempt force refresh once
-        if (res.status === 401) {
-          localStorage.removeItem('aj_co_gmail_token');
-          token = await this.getValidToken().catch(() => null);
-          if (token) {
-            res = await fetch('https://gmail.googleapis.com/gmail/v1/users/me/drafts', {
-              method: 'POST',
-              headers: {
-                'Authorization': `Bearer ${token}`,
-                'Content-Type': 'application/json'
-              },
-              body: JSON.stringify({
-                message: { raw: rawMime }
-              }),
-              signal: AbortSignal.timeout(3500)
-            });
-          }
-        }
 
         if (res.ok) {
           const data = await res.json();
@@ -173,7 +149,7 @@ export class GmailService {
             prospectId,
             draftId: data.id,
             threadId: data.message?.threadId,
-            senderEmail: localStorage.getItem('aj_co_gmail_user_email') || senderEmail,
+            senderEmail,
             createdTime: Date.now(),
             status: 'created',
             composeUrl
@@ -182,30 +158,30 @@ export class GmailService {
           return record;
         } else {
           const errBody = await res.json().catch(() => ({}));
-          console.error('Google Gmail API Error Response:', res.status, errBody);
+          console.error(`Google Gmail API Error for ${senderEmail}:`, res.status, errBody);
           const record: GmailDraftRecord = {
             prospectId,
-            senderEmail: localStorage.getItem('aj_co_gmail_user_email') || senderEmail,
+            senderEmail,
             createdTime: Date.now(),
             status: 'failed',
-            lastError: `Google API ${res.status}: ${errBody?.error?.message || 'Unauthorized or expired token. Click "Connect Google Account" to re-authenticate.'}`,
+            lastError: `Google API ${res.status}: ${errBody?.error?.message || 'Token expired or invalid scope. Please re-authorize account in Mailbox Manager.'}`,
             composeUrl
           };
           gmailStore.setDraft(prospectId, record);
           return record;
         }
       } catch (err: any) {
-        console.warn('Direct Google API draft creation error:', err);
+        console.warn(`Direct Google API draft creation error for ${senderEmail}:`, err);
       }
     }
 
-    // 2. If token missing or disconnected: set status to 'failed' so user is informed to connect Google OAuth
+    // If no token or account connected: return explicit failed status
     const record: GmailDraftRecord = {
       prospectId,
-      senderEmail: localStorage.getItem('aj_co_gmail_user_email') || senderEmail,
+      senderEmail: senderEmail || 'Not Connected',
       createdTime: Date.now(),
       status: 'failed',
-      lastError: 'Google Workspace not connected. Click "Connect Google Account" in the top bar to enable live Gmail draft creation.',
+      lastError: 'No authenticated Google Workspace accounts found. Click "Add & Authorize Google Account" in Mailbox Manager to connect sender mailboxes.',
       composeUrl
     };
 
