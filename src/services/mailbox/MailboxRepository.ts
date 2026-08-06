@@ -23,48 +23,64 @@ class MailboxRepository {
     const stored = this.getStored();
     const connectedAuthTokens = multiGmailAuthManager.getConnectedMailboxes();
 
-    // Map each real Google OAuth connected account into a verified MailboxRecord
-    const realMailboxes: MailboxRecord[] = connectedAuthTokens.map((auth, idx) => {
-      const existing = stored.find(s => s.email.toLowerCase() === auth.email.toLowerCase());
+    const map = new Map<string, MailboxRecord>();
+
+    // 1. Add all manually added stored mailboxes first
+    for (const item of stored) {
+      const isConnected = multiGmailAuthManager.isEmailConnected(item.email);
+      map.set(item.email.toLowerCase(), {
+        ...item,
+        googleAccountConnected: isConnected,
+        oauthStatus: isConnected ? 'connected' : 'disconnected',
+        status: isConnected ? 'healthy' : 'paused',
+        connectionStatus: isConnected ? 'online' : 'offline',
+      });
+    }
+
+    // 2. Add/override with live OAuth authenticated tokens
+    connectedAuthTokens.forEach((auth, idx) => {
+      const emailLower = auth.email.toLowerCase();
+      const existing = map.get(emailLower);
       const isExpired = Date.now() > auth.expiryDate - 60000;
 
       if (existing) {
-        return {
+        map.set(emailLower, {
           ...existing,
           googleAccountConnected: !isExpired,
           oauthStatus: isExpired ? 'error' : 'connected',
+          status: isExpired ? 'error' : 'healthy',
           connectionStatus: isExpired ? 'offline' : 'online',
           lastActivity: new Date(auth.expiryDate).toISOString()
-        };
+        });
+      } else {
+        map.set(emailLower, {
+          id: `mb_real_${idx}_${emailLower.replace(/[^a-z0-9]/gi, '')}`,
+          email: auth.email,
+          displayName: auth.email.split('@')[0].toUpperCase(),
+          status: isExpired ? 'error' : 'healthy',
+          warmupDay: 15,
+          warmupStage: 'stage_3',
+          currentDailyLimit: 50,
+          todaySentCount: 0,
+          remainingCapacity: 50,
+          replyCount: 0,
+          bounceCount: 0,
+          spamComplaints: 0,
+          healthScore: isExpired ? 0 : 100,
+          googleAccountConnected: !isExpired,
+          oauthStatus: isExpired ? 'error' : 'connected',
+          lastActivity: new Date().toISOString(),
+          spfStatus: 'pass',
+          dkimStatus: 'pass',
+          dmarcStatus: 'pass',
+          connectionStatus: isExpired ? 'offline' : 'online',
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+        });
       }
-
-      return {
-        id: `mb_real_${idx}_${auth.email.replace(/[^a-z0-9]/gi, '')}`,
-        email: auth.email,
-        displayName: auth.email.split('@')[0].toUpperCase(),
-        status: isExpired ? 'error' : 'healthy',
-        warmupDay: 15,
-        warmupStage: 'stage_3',
-        currentDailyLimit: 50,
-        todaySentCount: 0,
-        remainingCapacity: 50,
-        replyCount: 0,
-        bounceCount: 0,
-        spamComplaints: 0,
-        healthScore: isExpired ? 0 : 100,
-        googleAccountConnected: !isExpired,
-        oauthStatus: isExpired ? 'error' : 'connected',
-        lastActivity: new Date().toISOString(),
-        spfStatus: 'pass',
-        dkimStatus: 'pass',
-        dmarcStatus: 'pass',
-        connectionStatus: isExpired ? 'offline' : 'online',
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
-      };
     });
 
-    return realMailboxes;
+    return Array.from(map.values());
   }
 
   async getById(id: string): Promise<MailboxRecord | null> {

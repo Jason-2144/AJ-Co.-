@@ -85,11 +85,18 @@ export default function MailboxManager() {
   const handleAddMailbox = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!newEmail || !newName) return;
-    await mailboxRepository.addMailbox(newEmail, newName);
+    const cleanEmail = newEmail.trim().toLowerCase();
+    const cleanName = newName.trim();
+
+    await mailboxRepository.addMailbox(cleanEmail, cleanName);
+    const authUrl = multiGmailAuthManager.getAuthUrlForEmail(cleanEmail);
+
     setNewEmail('');
     setNewName('');
     setShowAddModal(false);
-    await loadData();
+
+    // Launch Google OAuth flow for the target email address
+    window.location.href = authUrl;
   };
 
   const handleTestVerify = async () => {
