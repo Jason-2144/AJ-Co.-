@@ -173,7 +173,7 @@ export class GmailService {
             prospectId,
             draftId: data.id,
             threadId: data.message?.threadId,
-            senderEmail,
+            senderEmail: localStorage.getItem('aj_co_gmail_user_email') || senderEmail,
             createdTime: Date.now(),
             status: 'created',
             composeUrl
@@ -183,20 +183,29 @@ export class GmailService {
         } else {
           const errBody = await res.json().catch(() => ({}));
           console.error('Google Gmail API Error Response:', res.status, errBody);
+          const record: GmailDraftRecord = {
+            prospectId,
+            senderEmail: localStorage.getItem('aj_co_gmail_user_email') || senderEmail,
+            createdTime: Date.now(),
+            status: 'failed',
+            lastError: `Google API ${res.status}: ${errBody?.error?.message || 'Unauthorized or expired token. Click "Connect Google Account" to re-authenticate.'}`,
+            composeUrl
+          };
+          gmailStore.setDraft(prospectId, record);
+          return record;
         }
       } catch (err: any) {
         console.warn('Direct Google API draft creation error:', err);
       }
     }
 
-    // 2. Guaranteed Draft Record & 1-Click Gmail Web Compose Link
+    // 2. If token missing or disconnected: set status to 'failed' so user is informed to connect Google OAuth
     const record: GmailDraftRecord = {
       prospectId,
-      draftId: `gmail_draft_${Math.random().toString(36).substring(2, 10)}`,
-      threadId: `thread_${Math.random().toString(36).substring(2, 10)}`,
-      senderEmail,
+      senderEmail: localStorage.getItem('aj_co_gmail_user_email') || senderEmail,
       createdTime: Date.now(),
-      status: 'created',
+      status: 'failed',
+      lastError: 'Google Workspace not connected. Click "Connect Google Account" in the top bar to enable live Gmail draft creation.',
       composeUrl
     };
 

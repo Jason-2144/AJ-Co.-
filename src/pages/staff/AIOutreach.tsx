@@ -160,13 +160,53 @@ export default function AIOutreach() {
             className="bg-emerald-500/10 border border-emerald-500/20 hover:bg-emerald-500/20 text-emerald-400 text-xs font-mono px-4 py-2 rounded-xl transition-all shadow-lg flex items-center gap-2 cursor-pointer"
           >
             <Sparkles className="w-4 h-4 text-emerald-400" />
-            <span>Manage Sender Pool (Mailbox Manager)</span>
+            <span>Manage Sender Pool</span>
           </button>
           {queueItems.length > 0 && (
             <div className="text-xs font-mono text-gray-500 bg-white/[0.02] border border-white/5 px-3 py-1.5 rounded-xl flex items-center gap-2">
               <FileText className="w-3.5 h-3.5 text-gray-400" />
               <span>Active Source: <strong className="text-white font-medium">{sourceName}</strong></span>
             </div>
+          )}
+        </div>
+      </div>
+
+      {/* Google Account OAuth Connection Status Banner */}
+      <div className="flex items-center gap-3 bg-[#121212] border border-white/5 p-4 rounded-2xl justify-between flex-wrap shadow-xl">
+        <div className="flex items-center gap-3">
+          <div className={`w-3 h-3 rounded-full ${gmailConnected ? 'bg-emerald-400 animate-pulse' : 'bg-amber-500'}`} />
+          <div>
+            <span className="text-[10px] font-mono uppercase tracking-wider text-gray-400 block">Google Gmail API Connection Status</span>
+            <span className="text-xs font-semibold text-white mt-0.5 block font-mono">
+              {gmailConnected ? (
+                <span className="text-emerald-400">🟢 Connected Account: {gmailEmail || 'Active Workspace Session'}</span>
+              ) : (
+                <span className="text-amber-400">⚠️ Google Account Disconnected — Connect Google Account to create live Gmail drafts</span>
+              )}
+            </span>
+          </div>
+        </div>
+
+        <div className="flex items-center gap-2">
+          {!gmailConnected ? (
+            <button
+              onClick={async () => {
+                const authUrl = await gmailService.getAuthUrl();
+                window.location.href = authUrl;
+              }}
+              className="bg-emerald-500 hover:bg-emerald-400 text-black px-4 py-2 rounded-xl text-xs font-bold font-mono transition-all cursor-pointer flex items-center gap-2 shadow-lg"
+            >
+              <Sparkles className="w-4 h-4" />
+              <span>Connect Google Account (Enable Live Drafts)</span>
+            </button>
+          ) : (
+            <button
+              onClick={handleDisconnectGmail}
+              className="bg-red-500/10 hover:bg-red-500/20 text-red-400 border border-red-500/20 px-3 py-1.5 rounded-xl text-xs font-mono transition-all cursor-pointer flex items-center gap-1.5"
+            >
+              <LogOut className="w-3.5 h-3.5" />
+              <span>Disconnect Account</span>
+            </button>
           )}
         </div>
       </div>
