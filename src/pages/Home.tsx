@@ -1,188 +1,335 @@
 import SEO from '../components/SEO';
-import React, { lazy, Suspense } from 'react';
+import React, { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'motion/react';
 import { Link } from 'react-router-dom';
-
-const Spline = lazy(() => import('@splinetool/react-spline'));
+import { ArrowUpRight, Plus, Minus, Layers, Zap, Cpu, Sparkles, Check, ChevronRight } from 'lucide-react';
 
 export default function Home() {
+  const [activeAccordion, setActiveAccordion] = useState<number | null>(0);
+  const [selectedFilter, setSelectedFilter] = useState<string>('All');
+  const [cursorPos, setCursorPos] = useState({ x: 0, y: 0 });
+
+  useEffect(() => {
+    const handleMouseMove = (e: MouseEvent) => {
+      setCursorPos({ x: e.clientX, y: e.clientY });
+    };
+    window.addEventListener('mousemove', handleMouseMove);
+    return () => window.removeEventListener('mousemove', handleMouseMove);
+  }, []);
+
+  const bentoItems = [
+    {
+      id: "01",
+      category: "AI AGENTS",
+      title: "Autonomous Workforce",
+      desc: "Custom AI agents engineered to perform complex, multi-step tasks inside your software ecosystem 24/7.",
+      span: "col-span-12 md:col-span-8",
+      highlight: "99.4% Accuracy Rate"
+    },
+    {
+      id: "02",
+      category: "CHATBOTS",
+      title: "Contextual Front Doors",
+      desc: "Conversational interfaces trained on your exact business knowledge base and CRM data.",
+      span: "col-span-12 md:col-span-4",
+      highlight: "Instant Setup"
+    },
+    {
+      id: "03",
+      category: "AUTOMATION",
+      title: "Zero-Latency Pipelines",
+      desc: "Eliminate manual data entry between your apps with resilient API integrations and fallback safeguards.",
+      span: "col-span-12 md:col-span-5",
+      highlight: "10x Throughput"
+    },
+    {
+      id: "04",
+      category: "WEB DEV",
+      title: "Bespoke Digital Platforms",
+      desc: "Blazing fast, conversion-optimized web applications designed to convert automated leads into enterprise clients.",
+      span: "col-span-12 md:col-span-7",
+      highlight: "Sub-100ms Load Time"
+    }
+  ];
+
+  const caseStudies = [
+    {
+      client: "NURA Electric Mobility",
+      category: "Geospatial Forecasting",
+      metric: "90%",
+      label: "5-Minute SLA Pickup Rate",
+      desc: "Machine learning demand model predicting vehicle placement across metropolitan pickup zones."
+    },
+    {
+      client: "Hyderabad Pickleball Assoc.",
+      category: "Tournament Automation",
+      metric: "1,000+",
+      label: "Active Bracket Players",
+      desc: "Autonomous player check-in, real-time match scoring, and automatic court scheduling."
+    },
+    {
+      client: "Balani Custom Suits",
+      category: "Booking Flow Engineering",
+      metric: "1:1",
+      label: "Appointment Conversion",
+      desc: "Re-engineered client browsing flow increasing high-intent private fitting bookings."
+    },
+    {
+      client: "Stan Ventures",
+      category: "Outbound Pipeline Agent",
+      metric: "24/7",
+      label: "Unattended Prospecting",
+      desc: "Lead enrichment and AI email draft generation executing continuous pipeline research."
+    }
+  ];
+
+  const faqs = [
+    {
+      q: "How fast can an automated AI agent be deployed into production?",
+      a: "We ship initial working Proof of Concepts (PoC) within 2 weeks, followed by full security auditing and production deployment in 4 to 6 weeks."
+    },
+    {
+      q: "Do we need to upgrade our existing software stack first?",
+      a: "No. Our automation pipelines and agents connect directly to your existing tools (HubSpot, Salesforce, Slack, Notion, custom APIs) without requiring software overhauls."
+    },
+    {
+      q: "What security measures protect our company data?",
+      a: "Every deployment adheres to strict enterprise governance. Your data is never used to train public LLM models, and all API interactions use OAuth 2.0 and encrypted storage."
+    },
+    {
+      q: "How do you ensure ongoing adoption by our internal team?",
+      a: "We stay with you post-launch for 30–90 days, conducting role-specific workshops, building custom playbooks, and tracking daily system utilization."
+    }
+  ];
+
   return (
     <>
       <SEO 
-        title="AJ & Co. — Engineering the Unmanned Workflow"
-        description="AJ & Co. designs AI agents, chatbots, and automation pipelines for founders who are tired of doing the same task twice."
+        title="Stackgrid — AJ & Co. AI Engineering Studio"
+        description="AJ & Co. builds autonomous AI agents, intelligent workflow automation pipelines, and high-performance web systems for modern businesses."
       />
 
-      <div className="bg-[#0A0A09] text-[#F8F7F3] selection:bg-[#C7A24C] selection:text-[#F8F7F3] font-sans min-h-screen">
+      <div className="bg-[#f5f5f5] text-[#000000] selection:bg-[#000000] selection:text-[#ffffff] font-sans min-h-screen overflow-x-hidden relative">
         
-        {/* ================= HERO ================= */}
-        <header className="relative min-h-screen pt-[140px] pb-12 px-6 sm:px-10 max-w-[1440px] mx-auto flex flex-col justify-between overflow-hidden" id="top">
-          
-          {/* Fullscreen 3D Spline Robot Canvas Background */}
-          <div className="absolute inset-0 z-0 w-full h-full pointer-events-auto">
-            <Suspense fallback={<div className="w-full h-full flex items-center justify-center text-xs font-mono text-gray-500">Loading 3D Experience...</div>}>
-              <Spline 
-                scene="https://prod.spline.design/nGTNHOEWh-Q122fP/scene.splinecode" 
-                className="w-full h-full"
-              />
-            </Suspense>
-          </div>
+        {/* Ambient Subtle Background Grid */}
+        <div 
+          className="fixed inset-0 pointer-events-none opacity-[0.03] z-0" 
+          style={{ backgroundImage: `radial-[#000] 1px, transparent 1px)`, backgroundSize: '32px 32px' }}
+        />
 
-          {/* Clean 3D Robot Background — Zero Dark Overlay */}
+        {/* Floating Custom Cursor Dot */}
+        <div 
+          className="fixed w-4 h-4 bg-black rounded-full pointer-events-none z-50 transition-transform duration-75 ease-out -translate-x-1/2 -translate-y-1/2 hidden md:block mix-blend-difference"
+          style={{ left: `${cursorPos.x}px`, top: `${cursorPos.y}px` }}
+        />
 
-          {/* Foreground Editorial Content */}
-          <div className="relative z-10 pointer-events-none">
-
-
-            <h1 className="font-serif font-normal text-[clamp(2.6rem,7vw,6.4rem)] leading-[0.98] tracking-tight max-w-[15ch] text-[#0A0A09]">
-              We build the staff<br />
-              that never <span className="italic text-[#C7A24C]">clocks out.</span>
-            </h1>
-
-            <p className="mt-7 max-w-[44ch] text-[1.05rem] leading-[1.55] text-[#0A0A09] font-medium">
-              AJ &amp; Co. designs AI agents, chatbots, and automation pipelines for founders who are tired of doing the same task twice — plus the websites that make the case for you while you sleep.
-            </p>
-          </div>
-
-          <div className="relative z-10 flex justify-between items-end gap-6 flex-wrap mt-20 pb-4 pointer-events-auto">
-            <div className="font-mono text-[0.7rem] tracking-[0.1em] uppercase text-[#8a877e] flex items-center gap-3">
-              <div className="w-[1px] h-[34px] bg-[#3a382f] relative overflow-hidden">
-                <div className="absolute top-0 left-0 w-full h-[40%] bg-[#C7A24C] animate-pulse" />
-              </div> 
-              Scroll to explore
-            </div>
-          </div>
-
-          <Link 
-            to="/contact" 
-            className="absolute bottom-16 right-12 z-50 font-mono text-[0.8rem] tracking-[0.1em] uppercase border border-[#F8F7F3] px-9 py-4 bg-[#0A0A09] text-[#F8F7F3] hover:bg-[#F8F7F3] hover:text-[#0A0A09] transition-all duration-250 shadow-2xl"
-          >
-            Start a project →
-          </Link>
-
-          {/* Smooth White-to-Black Fade Transition Under Robot Hero */}
-          <div className="absolute bottom-0 inset-x-0 h-64 bg-gradient-to-b from-transparent via-[#0A0A09]/60 to-[#0A0A09] pointer-events-none z-10" />
-        </header>
-
-        {/* ================= SERVICES ================= */}
-        <section id="services" className="max-w-[1440px] mx-auto py-24 sm:py-32 px-6 sm:px-10">
-          <div className="flex justify-between items-end gap-5 flex-wrap mb-14 pb-5 border-b border-[#242320]">
-            <div>
-              <div className="font-mono text-[0.72rem] text-[#C7A24C] tracking-[0.1em]">§ 01 — INDEX</div>
-              <div className="font-serif text-[clamp(1.9rem,4vw,3rem)] font-normal mt-1.5">What we build</div>
-            </div>
-            <p className="text-[0.95rem] text-[#8a877e] max-w-[34ch] font-light">
-              Four disciplines, one team. We scope narrow and ship the thing that removes the task from your calendar.
-            </p>
-          </div>
-
-          <div className="border-t border-[#242320]">
-            {[
-              { num: "01", title: "AI Agents", body: "Custom agents that read, decide, and act inside your existing tools — qualifying leads, drafting responses, or handling the research your team keeps postponing." },
-              { num: "02", title: "Chatbots", body: "Conversational front doors trained on your business, not a generic script — for support, onboarding, or sales, wired into the systems you already run." },
-              { num: "03", title: "Automation Pipelines", body: "The connective tissue between your apps — CRM, email, spreadsheets, forms — so information moves on its own and nothing falls through a manual step." },
-              { num: "04", title: "Web Development", body: "Fast, crawlable, conversion-minded sites built to hold up under real traffic — the storefront your automation work eventually needs to point to." }
-            ].map((item, idx) => (
-              <div key={idx} className="grid grid-cols-1 md:grid-cols-[70px_1fr_1fr] gap-4 md:gap-6 items-start py-8 border-b border-[#242320] hover:bg-white/[0.02] transition-colors">
-                <div className="font-mono text-[#8a877e] text-[0.85rem] pt-1">{item.num}</div>
-                <div className="font-serif text-2xl sm:text-3xl font-normal">{item.title}</div>
-                <div className="text-[#cfccc2] text-[0.92rem] leading-relaxed font-light">{item.body}</div>
-              </div>
-            ))}
-          </div>
-        </section>
-
-        {/* ================= CASE STUDIES ================= */}
-        <section id="work" className="max-w-[1440px] mx-auto py-24 sm:py-32 px-6 sm:px-10">
-          <div className="flex justify-between items-end gap-5 flex-wrap mb-14 pb-5 border-b border-[#242320]">
-            <div>
-              <div className="font-mono text-[0.72rem] text-[#C7A24C] tracking-[0.1em]">§ 02 — FIELD REPORTS</div>
-              <div className="font-serif text-[clamp(1.9rem,4vw,3rem)] font-normal mt-1.5">Recent dispatches</div>
-            </div>
-            <p className="text-[0.95rem] text-[#8a877e] max-w-[34ch] font-light">
-              A sample of what shipped, and what changed once it did.
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-[1px] bg-[#242320] border border-[#242320]">
-            {[
-              { tag: "Mobility · Geospatial Forecasting", stat: "90", unit: "%", desc: "of pickups met a five-minute SLA after we modeled demand across the service area.", name: "NURA Electric Mobility" },
-              { tag: "Sports Ops · Tournament Platform", stat: "1,000", unit: "+", desc: "players run through 15+ tournaments on a platform we built to automate brackets, scoring, and check-in.", name: "Hyderabad Pickleball Association" },
-              { tag: "Retail · Web & Booking", stat: "1", unit: ":1", desc: "appointment-to-fitting conversion after we rebuilt the booking flow around how clients actually browse.", name: "Balani Custom Suits" },
-              { tag: "SaaS · Outbound Automation", stat: "24", unit: "/7", desc: "lead research and outreach running unattended, freeing the founder from the pipeline's manual first mile.", name: "Stan Ventures" }
-            ].map((cs, idx) => (
-              <div key={idx} className="bg-[#0A0A09] p-8 sm:p-11 flex flex-col gap-4 min-h-[340px]">
-                <div className="font-mono text-[0.68rem] tracking-[0.08em] text-[#8a877e] uppercase">{cs.tag}</div>
-                <div className="font-serif text-5xl sm:text-6xl text-[#F8F7F3] leading-none font-normal">
-                  {cs.stat}<span className="text-[#C7A24C] italic">{cs.unit}</span>
-                </div>
-                <div className="text-[0.88rem] text-[#cfccc2] leading-relaxed font-light">{cs.desc}</div>
-                <div className="font-serif text-xl sm:text-2xl mt-auto pt-4">{cs.name}</div>
-              </div>
-            ))}
-          </div>
-        </section>
-
-        {/* ================= ABOUT ================= */}
-        <section id="about" className="max-w-[1440px] mx-auto py-24 sm:py-32 px-6 sm:px-10">
-          <div className="mb-14 pb-5 border-b border-[#242320]">
-            <div className="font-mono text-[0.72rem] text-[#C7A24C] tracking-[0.1em]">§ 03 — MASTHEAD</div>
-            <div className="font-serif text-[clamp(1.9rem,4vw,3rem)] font-normal mt-1.5">Who's behind the byline</div>
-          </div>
-
-          <div className="grid grid-cols-1 lg:grid-cols-[1.1fr_1fr] gap-12 lg:gap-20">
-            <div>
-              <p className="font-serif text-[clamp(1.5rem,2.6vw,2.1rem)] leading-[1.35] font-normal">
-                Two operators, one <span className="text-[#C7A24C] italic">low-overhead studio</span> — built to earn in dollars while running on Indian cost structures.
-              </p>
-              <p className="text-[0.95rem] leading-relaxed text-[#cfccc2] font-light mt-6">
-                AJ &amp; Co. started because client acquisition was the hard part, not the building. Jason leads product and delivery from Chennai; Amaan runs execution and outreach; a Texas-based partner handles the US-facing conversations that a cold email alone can't close. Every engagement is scoped by someone who's felt the operational pain being automated — that's the filter for who we take on.
-              </p>
-            </div>
-
-            <div>
-              <div className="border-t border-[#242320]">
-                {[
-                  { name: "Jason", role: "Product & Delivery — Chennai" },
-                  { name: "Amaan", role: "Execution & Outreach" },
-                  { name: "US Desk", role: "Client Acquisition — Austin, TX" },
-                  { name: "Ideal client", role: "Seed–early growth, <30 people" }
-                ].map((r, idx) => (
-                  <div key={idx} className="flex justify-between items-center py-4 border-b border-[#242320] font-mono text-[0.78rem] tracking-[0.03em]">
-                    <span className="text-[#F8F7F3]">{r.name}</span>
-                    <span className="text-[#8a877e] uppercase tracking-[0.06em]">{r.role}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* ================= CONTACT ================= */}
-        <section id="contact" className="max-w-[1440px] mx-auto py-24 sm:py-32 px-6 sm:px-10">
-          <div className="border border-[#3a382f] p-8 sm:p-16 relative grid grid-cols-1 md:grid-cols-[1fr_auto] gap-10 items-end">
-            <div className="absolute -top-[11px] left-10 bg-[#0A0A09] px-2.5 font-mono text-[0.68rem] tracking-[0.12em] text-[#8a877e]">
-              CORRESPONDENCE
-            </div>
-
-            <div>
-              <div className="font-serif text-[clamp(1.8rem,3.4vw,2.6rem)] leading-[1.15] max-w-[16ch]">
-                Have a workflow worth <span className="text-[#C7A24C] italic">killing?</span>
-              </div>
-              <div className="font-mono text-[0.82rem] text-[#8a877e] mt-5 leading-loose">
-                info@ajandco.site<br />
-                <a href="https://ajandco.site" target="_blank" rel="noopener noreferrer" className="text-[#F8F7F3] border-b border-[#C7A24C]">
-                  ajandco.site
-                </a><br />
-                Chennai, IN — Austin, TX
-              </div>
-            </div>
-
-            <a 
-              href="mailto:info@ajandco.site" 
-              className="font-mono text-[0.85rem] tracking-[0.08em] uppercase border border-[#F8F7F3] px-8 py-4 hover:bg-[#F8F7F3] hover:text-[#0A0A09] transition-all text-center inline-block"
+        {/* ================= HERO SECTION ================= */}
+        <section className="relative pt-36 pb-24 px-6 sm:px-10 max-w-[1280px] mx-auto min-h-[85vh] flex flex-col justify-between z-10">
+          <div>
+            <motion.div 
+              initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}
+              className="inline-flex items-center gap-2.5 px-3.5 py-1.5 rounded-full bg-black/5 border border-black/10 text-xs font-mono tracking-wider uppercase text-black/70 mb-8"
             >
-              Send an inquiry →
-            </a>
+              <span className="w-2 h-2 rounded-full bg-black animate-pulse" />
+              AJ &amp; CO. STUDIO · AI &amp; AUTOMATION
+            </motion.div>
+
+            <motion.h1 
+              initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, delay: 0.1 }}
+              className="text-[clamp(2.8rem,7vw,6.5rem)] font-bold tracking-[ -0.04em] leading-[0.98] text-[#000000] max-w-[17ch]"
+            >
+              Engineering <br />
+              <span className="italic font-serif font-normal text-[#545454]">unmanned</span> workflows.
+            </motion.h1>
+
+            <motion.p 
+              initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, delay: 0.2 }}
+              className="mt-8 max-w-[48ch] text-[1.15rem] leading-[1.6] text-[#545454] font-normal"
+            >
+              We design autonomous AI agents, intelligent chatbots, and zero-latency automation pipelines for founders who refuse to perform the same manual task twice.
+            </motion.p>
+          </div>
+
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, delay: 0.3 }}
+            className="flex flex-wrap items-center justify-between gap-6 pt-16 border-b border-black/10 pb-10"
+          >
+            <div className="flex items-center gap-4">
+              <Link 
+                to="/contact" 
+                className="group relative inline-flex items-center gap-3 px-8 py-4 bg-black text-white text-sm font-semibold tracking-wide rounded-full overflow-hidden transition-all duration-300 hover:bg-black/90 hover:scale-[1.02] shadow-lg"
+              >
+                <span>Start a Project</span>
+                <ArrowUpRight className="w-4 h-4 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
+              </Link>
+
+              <Link 
+                to="/services" 
+                className="inline-flex items-center gap-2 px-7 py-4 border border-black/15 text-black text-sm font-semibold tracking-wide rounded-full hover:bg-black/5 transition-all duration-300"
+              >
+                Explore Capabilities
+              </Link>
+            </div>
+
+            <div className="flex items-center gap-8 font-mono text-xs text-[#787878] uppercase tracking-widest">
+              <div>CHENNAI — AUSTIN</div>
+              <div>·</div>
+              <div>ISSUE NO. 004</div>
+            </div>
+          </motion.div>
+        </section>
+
+        {/* ================= BENTO GRID SERVICES SECTION ================= */}
+        <section id="services" className="py-24 px-6 sm:px-10 max-w-[1280px] mx-auto z-10 relative">
+          <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 mb-16">
+            <div>
+              <span className="font-mono text-xs tracking-[0.2em] text-[#787878] uppercase">§ 01 — CAPABILITIES</span>
+              <h2 className="text-3xl sm:text-5xl font-bold tracking-tight text-black mt-2">What we build.</h2>
+            </div>
+            <p className="text-[#545454] max-w-[36ch] text-base leading-relaxed">
+              Modular AI disciplines engineered to remove operational drag from your organization.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-12 gap-6">
+            {bentoItems.map((item, idx) => (
+              <motion.div 
+                key={item.id}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: "-60px" }}
+                transition={{ duration: 0.5, delay: idx * 0.1 }}
+                className={`${item.span} bg-white p-8 sm:p-10 rounded-3xl border border-black/10 hover:border-black/30 transition-all duration-300 shadow-sm hover:shadow-xl flex flex-col justify-between group min-h-[300px]`}
+              >
+                <div>
+                  <div className="flex justify-between items-center mb-6">
+                    <span className="font-mono text-xs text-[#787878] tracking-widest">{item.id} / {item.category}</span>
+                    <span className="text-[11px] font-mono uppercase bg-black/5 px-3 py-1 rounded-full text-black/70 font-semibold">{item.highlight}</span>
+                  </div>
+                  <h3 className="text-2xl sm:text-3xl font-bold text-black group-hover:text-black/80 transition-colors mb-4">{item.title}</h3>
+                  <p className="text-[#545454] text-base leading-relaxed font-normal">{item.desc}</p>
+                </div>
+
+                <div className="pt-8 mt-auto flex items-center justify-between border-t border-black/5">
+                  <Link 
+                    to="/services" 
+                    className="inline-flex items-center gap-2 font-mono text-xs font-bold uppercase text-black group-hover:translate-x-1 transition-transform"
+                  >
+                    View Specifications <ChevronRight className="w-4 h-4" />
+                  </Link>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        </section>
+
+        {/* ================= FIELD REPORTS / CASE STUDIES SECTION ================= */}
+        <section id="work" className="py-24 px-6 sm:px-10 max-w-[1280px] mx-auto z-10 relative">
+          <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 mb-16">
+            <div>
+              <span className="font-mono text-xs tracking-[0.2em] text-[#787878] uppercase">§ 02 — FIELD REPORTS</span>
+              <h2 className="text-3xl sm:text-5xl font-bold tracking-tight text-black mt-2">Proven Dispatches.</h2>
+            </div>
+            <Link 
+              to="/case-studies"
+              className="inline-flex items-center gap-2 font-mono text-xs uppercase tracking-widest text-black border-b border-black pb-0.5 hover:opacity-70 transition-opacity"
+            >
+              View All Case Studies →
+            </Link>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {caseStudies.map((cs, idx) => (
+              <motion.div 
+                key={idx}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: idx * 0.1 }}
+                className="bg-white p-8 sm:p-10 rounded-3xl border border-black/10 hover:border-black/30 transition-all duration-300 flex flex-col justify-between group"
+              >
+                <div>
+                  <span className="font-mono text-xs text-[#787878] uppercase tracking-wider block mb-4">{cs.category}</span>
+                  <div className="text-5xl sm:text-6xl font-bold tracking-tight text-black mb-2">
+                    {cs.metric}
+                  </div>
+                  <div className="font-mono text-xs uppercase text-black font-semibold tracking-wider mb-6">{cs.label}</div>
+                  <p className="text-[#545454] text-base leading-relaxed mb-8">{cs.desc}</p>
+                </div>
+
+                <div className="pt-6 border-t border-black/5 flex justify-between items-center">
+                  <span className="font-bold text-xl text-black">{cs.client}</span>
+                  <Link to="/case-studies" className="w-10 h-10 rounded-full border border-black/10 flex items-center justify-center group-hover:bg-black group-hover:text-white transition-colors">
+                    <ArrowUpRight className="w-5 h-5" />
+                  </Link>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        </section>
+
+        {/* ================= ACCORDION / FAQ SECTION ================= */}
+        <section id="process" className="py-24 px-6 sm:px-10 max-w-[1280px] mx-auto z-10 relative">
+          <div className="max-w-3xl mb-16">
+            <span className="font-mono text-xs tracking-[0.2em] text-[#787878] uppercase">§ 03 — FREQUENT QUESTIONS</span>
+            <h2 className="text-3xl sm:text-5xl font-bold tracking-tight text-black mt-2">Clear Answers.</h2>
+          </div>
+
+          <div className="max-w-4xl space-y-4">
+            {faqs.map((faq, idx) => (
+              <div 
+                key={idx}
+                className="bg-white rounded-2xl border border-black/10 overflow-hidden transition-all duration-300"
+              >
+                <button
+                  onClick={() => setActiveAccordion(activeAccordion === idx ? null : idx)}
+                  className="w-full p-6 sm:p-8 text-left flex justify-between items-center gap-4 cursor-pointer focus:outline-none"
+                >
+                  <span className="text-lg sm:text-xl font-bold text-black">{faq.q}</span>
+                  <div className="w-8 h-8 rounded-full border border-black/10 flex items-center justify-center shrink-0">
+                    {activeAccordion === idx ? <Minus className="w-4 h-4" /> : <Plus className="w-4 h-4" />}
+                  </div>
+                </button>
+
+                <AnimatePresence>
+                  {activeAccordion === idx && (
+                    <motion.div 
+                      initial={{ height: 0, opacity: 0 }}
+                      animate={{ height: "auto", opacity: 1 }}
+                      exit={{ height: 0, opacity: 0 }}
+                      transition={{ duration: 0.3 }}
+                      className="px-6 sm:px-8 pb-8 text-[#545454] text-base leading-relaxed"
+                    >
+                      {faq.a}
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        {/* ================= STACKGRID CTA SECTION ================= */}
+        <section id="contact" className="py-24 px-6 sm:px-10 max-w-[1280px] mx-auto z-10 relative">
+          <div className="bg-black text-white p-10 sm:p-20 rounded-[40px] relative overflow-hidden flex flex-col md:flex-row justify-between items-start md:items-center gap-10 shadow-2xl">
+            <div className="relative z-10 max-w-xl">
+              <span className="font-mono text-xs uppercase tracking-widest text-white/60">INITIATE CONSULTATION</span>
+              <h2 className="text-3xl sm:text-5xl font-bold tracking-tight text-white mt-4 leading-tight">
+                Have a workflow worth killing?
+              </h2>
+              <p className="mt-6 text-white/70 text-base leading-relaxed">
+                Schedule a free 30-minute strategy call with our automation architects. We scope narrow and quantify ROI before taking on any project.
+              </p>
+            </div>
+
+            <div className="relative z-10 shrink-0">
+              <Link 
+                to="/contact" 
+                className="inline-flex items-center gap-3 px-9 py-5 bg-white text-black text-sm font-bold tracking-wide rounded-full hover:bg-white/90 hover:scale-[1.03] transition-all shadow-xl"
+              >
+                Book Strategy Call →
+              </Link>
+            </div>
           </div>
         </section>
 

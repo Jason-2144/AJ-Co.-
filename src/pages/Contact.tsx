@@ -1,12 +1,7 @@
 import SEO from '../components/SEO';
 import React, { useState } from 'react';
 import { motion } from 'motion/react';
-import { Linkedin, Twitter, CheckCircle2, Loader2, Calendar } from 'lucide-react';
-
-const fadeUp = {
-  hidden: { opacity: 0, y: 20 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: "easeOut" } }
-};
+import { Calendar, CheckCircle2, Loader2, ArrowUpRight } from 'lucide-react';
 
 export default function Contact() {
   const [formData, setFormData] = useState({
@@ -68,20 +63,19 @@ export default function Contact() {
 
   return (
     <>
-      <SEO title="Book Strategy Call — AJ & Co." description="Schedule a free 30-minute AI strategy consultation with our senior engineering team." canonicalUrl="/contact" />
+      <SEO title="Book Strategy Call — AJ & Co." description="Schedule a free 30-minute AI strategy consultation with our engineering team." canonicalUrl="/contact" />
       
-      <div className="bg-[#0A0A09] text-[#F8F7F3] selection:bg-[#C7A24C] selection:text-[#F8F7F3] font-sans min-h-screen pt-[140px] pb-24">
-        <div className="max-w-[1440px] mx-auto px-6 sm:px-10">
+      <div className="bg-[#f5f5f5] text-black selection:bg-black selection:text-white font-sans min-h-screen pt-[120px] pb-24">
+        <div className="max-w-[1280px] mx-auto px-6 sm:px-10">
           
           {/* Header */}
-          <div className="mb-16 pb-8 border-b border-[#242320]">
-            <div className="font-mono text-[0.72rem] text-[#C7A24C] tracking-[0.12em] uppercase mb-4 flex items-center gap-2">
-              <Calendar className="w-4 h-4 text-[#C7A24C]" /> STRATEGY CONSULTATION
-            </div>
-            <h1 className="font-serif text-[clamp(2.5rem,5.5vw,5rem)] font-normal leading-[1.05] tracking-tight max-w-[22ch]">
-              Let's Figure Out What AI Can Do For <span className="italic text-[#C7A24C]">Your Business.</span>
+          <div className="mb-16 pb-10 border-b border-black/10">
+            <span className="font-mono text-xs text-[#787878] tracking-[0.2em] uppercase">INITIATE CONSULTATION</span>
+            <h1 className="text-[clamp(2.5rem,5vw,4.8rem)] font-bold tracking-tight mt-3 text-black leading-[1.02]">
+              Let's Figure Out What AI <br />
+              Can Do For <span className="italic font-serif font-normal text-[#545454]">Your Business.</span>
             </h1>
-            <p className="mt-6 text-[1.05rem] text-[#cfccc2] max-w-[46ch] font-light leading-relaxed">
+            <p className="mt-6 text-lg text-[#545454] max-w-[48ch] font-normal leading-relaxed">
               Start with a free 30-minute strategy call. No commitment. No hard sell. Just clarity on high-impact automation targets.
             </p>
           </div>
@@ -89,62 +83,53 @@ export default function Contact() {
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
             
             {/* Left Info Column */}
-            <div className="lg:col-span-5 space-y-10">
-              <div className="border border-[#242320] p-8 bg-[#0A0A09]">
-                <div className="font-mono text-[0.7rem] text-[#C7A24C] uppercase tracking-[0.08em] mb-4">
-                  WHAT HAPPENS ON THE CALL
-                </div>
-                <ul className="space-y-4 text-sm font-light text-[#cfccc2]">
+            <div className="lg:col-span-5 space-y-8">
+              <div className="bg-white p-8 rounded-3xl border border-black/10 shadow-sm">
+                <span className="font-mono text-xs uppercase tracking-widest text-[#787878] block mb-4">WHAT HAPPENS ON THE CALL</span>
+                <ul className="space-y-4 text-sm text-[#545454] font-normal">
                   <li className="flex items-start gap-3">
-                    <span className="w-1.5 h-1.5 bg-[#C7A24C] rounded-full mt-2 shrink-0" />
+                    <CheckCircle2 className="w-4 h-4 text-black shrink-0 mt-0.5" />
                     Identify the repetitive workflows currently consuming your team's hours.
                   </li>
                   <li className="flex items-start gap-3">
-                    <span className="w-1.5 h-1.5 bg-[#C7A24C] rounded-full mt-2 shrink-0" />
-                    Calculate projected financial ROI &amp; time savings for top 3 opportunities.
+                    <CheckCircle2 className="w-4 h-4 text-black shrink-0 mt-0.5" />
+                    Calculate projected financial ROI &amp; time savings for top opportunities.
                   </li>
                   <li className="flex items-start gap-3">
-                    <span className="w-1.5 h-1.5 bg-[#C7A24C] rounded-full mt-2 shrink-0" />
+                    <CheckCircle2 className="w-4 h-4 text-black shrink-0 mt-0.5" />
                     Receive an architectural blueprint for custom AI agents &amp; integrations.
                   </li>
                 </ul>
               </div>
 
-              <div className="border-l-2 border-[#C7A24C] pl-6 py-2">
-                <p className="font-serif text-lg italic text-[#F8F7F3] mb-2">
-                  "Every engagement is scoped by someone who has felt the operational pain being automated."
-                </p>
-                <span className="font-mono text-xs text-[#8a877e] uppercase">
-                  AJ &amp; Co. Engineering Desk
-                </span>
+              <div className="bg-white p-8 rounded-3xl border border-black/10">
+                <span className="font-mono text-xs uppercase tracking-widest text-[#787878] block mb-2">DIRECT CORRESPONDENCE</span>
+                <p className="text-xl font-bold text-black mb-1">info@ajandco.site</p>
+                <p className="text-xs text-[#787878] font-mono">Chennai, IN — Austin, TX</p>
               </div>
             </div>
 
             {/* Right Booking Form Column */}
-            <div className="lg:col-span-7 border border-[#242320] p-8 sm:p-12 bg-[#0A0A09] relative">
-              <div className="absolute -top-[11px] left-10 bg-[#0A0A09] px-2.5 font-mono text-[0.68rem] tracking-[0.12em] text-[#8a877e]">
-                SCHEDULE SESSION
-              </div>
-
+            <div className="lg:col-span-7 bg-white p-8 sm:p-12 rounded-3xl border border-black/10 shadow-sm">
               {isSuccess ? (
                 <div className="py-12 text-center space-y-6">
-                  <CheckCircle2 className="w-14 h-14 text-[#C7A24C] mx-auto animate-bounce" />
-                  <h3 className="font-serif text-3xl">Strategy Call Requested</h3>
-                  <p className="text-[#cfccc2] text-sm max-w-md mx-auto leading-relaxed">
-                    Thank you, {formData.fullName}. Our team has received your request and will reach out to <strong className="text-white">{formData.workEmail}</strong> within 2 hours to confirm your calendar slot.
+                  <CheckCircle2 className="w-16 h-16 text-black mx-auto" />
+                  <h3 className="text-3xl font-bold text-black">Strategy Call Requested</h3>
+                  <p className="text-[#545454] text-base max-w-md mx-auto leading-relaxed">
+                    Thank you, {formData.fullName}. Our team has received your request and will reach out to <strong className="text-black">{formData.workEmail}</strong> within 2 hours to confirm your calendar slot.
                   </p>
                 </div>
               ) : (
-                <form onSubmit={handleSubmit} className="space-y-6 font-sans">
+                <form onSubmit={handleSubmit} className="space-y-6">
                   {errorMsg && (
-                    <div className="p-4 border border-red-500/40 bg-red-500/10 text-red-400 text-xs font-mono">
+                    <div className="p-4 border border-red-500/40 bg-red-500/10 text-red-600 text-xs font-mono rounded-xl">
                       {errorMsg}
                     </div>
                   )}
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                     <div>
-                      <label className="block font-mono text-[0.7rem] uppercase tracking-[0.08em] text-[#8a877e] mb-2">
+                      <label className="block font-mono text-xs uppercase tracking-wider text-[#787878] mb-2">
                         Full Name *
                       </label>
                       <input 
@@ -153,13 +138,13 @@ export default function Contact() {
                         value={formData.fullName}
                         onChange={handleInputChange}
                         placeholder="Alex Morgan"
-                        className="w-full bg-[#0A0A09] border border-[#242320] px-4 py-3 text-sm text-[#F8F7F3] focus:border-[#C7A24C] outline-none transition-colors"
+                        className="w-full bg-[#f5f5f5] border border-black/10 rounded-xl px-4 py-3.5 text-sm text-black focus:border-black outline-none transition-colors"
                         required
                       />
                     </div>
 
                     <div>
-                      <label className="block font-mono text-[0.7rem] uppercase tracking-[0.08em] text-[#8a877e] mb-2">
+                      <label className="block font-mono text-xs uppercase tracking-wider text-[#787878] mb-2">
                         Work Email *
                       </label>
                       <input 
@@ -168,7 +153,7 @@ export default function Contact() {
                         value={formData.workEmail}
                         onChange={handleInputChange}
                         placeholder="alex@company.com"
-                        className="w-full bg-[#0A0A09] border border-[#242320] px-4 py-3 text-sm text-[#F8F7F3] focus:border-[#C7A24C] outline-none transition-colors"
+                        className="w-full bg-[#f5f5f5] border border-black/10 rounded-xl px-4 py-3.5 text-sm text-black focus:border-black outline-none transition-colors"
                         required
                       />
                     </div>
@@ -176,7 +161,7 @@ export default function Contact() {
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                     <div>
-                      <label className="block font-mono text-[0.7rem] uppercase tracking-[0.08em] text-[#8a877e] mb-2">
+                      <label className="block font-mono text-xs uppercase tracking-wider text-[#787878] mb-2">
                         Company Name *
                       </label>
                       <input 
@@ -185,20 +170,20 @@ export default function Contact() {
                         value={formData.companyName}
                         onChange={handleInputChange}
                         placeholder="Acme Corp"
-                        className="w-full bg-[#0A0A09] border border-[#242320] px-4 py-3 text-sm text-[#F8F7F3] focus:border-[#C7A24C] outline-none transition-colors"
+                        className="w-full bg-[#f5f5f5] border border-black/10 rounded-xl px-4 py-3.5 text-sm text-black focus:border-black outline-none transition-colors"
                         required
                       />
                     </div>
 
                     <div>
-                      <label className="block font-mono text-[0.7rem] uppercase tracking-[0.08em] text-[#8a877e] mb-2">
+                      <label className="block font-mono text-xs uppercase tracking-wider text-[#787878] mb-2">
                         Company Size
                       </label>
                       <select
                         name="companySize"
                         value={formData.companySize}
                         onChange={handleInputChange}
-                        className="w-full bg-[#0A0A09] border border-[#242320] px-4 py-3 text-sm text-[#F8F7F3] focus:border-[#C7A24C] outline-none transition-colors"
+                        className="w-full bg-[#f5f5f5] border border-black/10 rounded-xl px-4 py-3.5 text-sm text-black focus:border-black outline-none transition-colors"
                       >
                         <option value="1–10">1–10 employees</option>
                         <option value="11–50">11–50 employees</option>
@@ -209,7 +194,7 @@ export default function Contact() {
                   </div>
 
                   <div>
-                    <label className="block font-mono text-[0.7rem] uppercase tracking-[0.08em] text-[#8a877e] mb-2">
+                    <label className="block font-mono text-xs uppercase tracking-wider text-[#787878] mb-2">
                       Describe your biggest manual bottleneck
                     </label>
                     <textarea 
@@ -218,14 +203,14 @@ export default function Contact() {
                       onChange={handleInputChange}
                       rows={4}
                       placeholder="e.g. Our team spends 15 hours a week manually copy-pasting lead data into Notion and drafting outreach emails..."
-                      className="w-full bg-[#0A0A09] border border-[#242320] px-4 py-3 text-sm text-[#F8F7F3] focus:border-[#C7A24C] outline-none transition-colors resize-none"
+                      className="w-full bg-[#f5f5f5] border border-black/10 rounded-xl px-4 py-3.5 text-sm text-black focus:border-black outline-none transition-colors resize-none"
                     />
                   </div>
 
                   <button
                     type="submit"
                     disabled={isSubmitting}
-                    className="w-full font-mono text-[0.8rem] tracking-[0.08em] uppercase border border-[#F8F7F3] px-8 py-4 bg-[#F8F7F3] text-[#0A0A09] font-bold hover:bg-[#C7A24C] hover:border-[#C7A24C] transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
+                    className="w-full font-semibold text-sm tracking-wide bg-black text-white py-4 rounded-xl hover:bg-black/90 transition-all flex items-center justify-center gap-2 cursor-pointer shadow-lg disabled:opacity-50"
                   >
                     {isSubmitting ? (
                       <>
