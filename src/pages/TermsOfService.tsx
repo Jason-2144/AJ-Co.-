@@ -1,80 +1,65 @@
 import SEO from '../components/SEO';
-import { motion } from 'motion/react';
-
-const fadeUp = {
- hidden: { opacity: 0, y: 20 },
- visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: "easeOut" } }
-};
+import React from 'react';
+import { Link } from 'react-router-dom';
 
 export default function TermsOfService() {
- return (
+  return (
     <>
-      <SEO title="Terms of Service | AJ & Co." description="Terms and conditions for using our website and services." canonicalUrl="/terms-of-service" />
-    <section className="pt-40 pb-32 bg-[#0A0A0A] min-h-screen">
- <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-3xl">
- <motion.div initial="hidden" animate="visible" variants={fadeUp} className="mb-16">
- <h1 className="font-syne text-4xl md:text-5xl font-extrabold text-white mb-4">Terms of Service</h1>
- <p className="text-emerald-400 font-mono text-sm uppercase tracking-widest">Last Updated: June 2026</p>
- </motion.div>
+      <SEO title="Terms of Service — AJ & Co." description="Terms of service and service agreements for AJ & Co." canonicalUrl="/terms-of-service" />
+      
+      <div className="bg-[#0A0A09] text-[#F8F7F3] selection:bg-[#C7A24C] selection:text-[#F8F7F3] font-sans min-h-screen pt-[140px] pb-24">
+        <div className="max-w-[1000px] mx-auto px-6 sm:px-10">
+          
+          <div className="mb-14 pb-8 border-b border-[#242320]">
+            <div className="font-mono text-[0.72rem] text-[#C7A24C] tracking-[0.12em] uppercase mb-4">
+              LEGAL DOCUMENTATION
+            </div>
+            <h1 className="font-serif text-[clamp(2.4rem,4.5vw,4.2rem)] font-normal leading-[1.08] tracking-tight">
+              Terms of Service
+            </h1>
+            <p className="mt-4 font-mono text-xs text-[#8a877e]">
+              EFFECTIVE DATE: JANUARY 1, 2026
+            </p>
+          </div>
 
- <motion.div initial="hidden" animate="visible" variants={fadeUp} className="space-y-12 text-gray-300 leading-relaxed font-sans">
- 
- <div>
- <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-white mb-4">1. Agreement to Terms</h2>
- <p>By accessing or using our Website (ajandco.site) or services, you agree to be bound by these Terms. If you disagree, you must not use our website.</p>
- </div>
+          <div className="space-y-10 text-[0.95rem] text-[#cfccc2] font-light leading-relaxed">
+            <section className="space-y-4">
+              <h2 className="font-serif text-2xl font-normal text-[#F8F7F3]">1. Agreement to Terms</h2>
+              <p>
+                By accessing our website or engaging AJ & Co. for AI agent development, workflow automation, or strategy consulting, you agree to be bound by these Terms of Service.
+              </p>
+            </section>
 
- <div>
- <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-white mb-4">2. Intellectual Property Rights</h2>
- <p>All content on this website (text, graphics, logos, images) is the property of AJ and Co or its content suppliers and is protected by intellectual property laws. You may not reproduce it without permission.</p>
- </div>
+            <section className="space-y-4">
+              <h2 className="font-serif text-2xl font-normal text-[#F8F7F3]">2. Services & Scope</h2>
+              <p>
+                All development deliverables, production schedules, and project milestones are governed by individual Statement of Work (SOW) agreements executed between AJ & Co. and the client.
+              </p>
+            </section>
 
- <div>
- <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-white mb-4">3. User Representations</h2>
- <p>You warrant that all information you submit to us is true, accurate, and current. You will not use the website for any illegal or unauthorised purpose.</p>
- </div>
+            <section className="space-y-4">
+              <h2 className="font-serif text-2xl font-normal text-[#F8F7F3]">3. Intellectual Property</h2>
+              <p>
+                Upon full payment of project fees, clients receive ownership of custom agent implementations and software code built explicitly for their organization under the relevant SOW.
+              </p>
+            </section>
 
- <div>
- <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-white mb-4">4. Disclaimers</h2>
- <p className="p-4 bg-white/5 border-l-2 border-emerald-500 italic mb-4">
- The website is provided on an AS-IS and AS-AVAILABLE basis. We make no representations or warranties, express or implied.
- </p>
- <p>Case studies and statistics represent past performance and do not guarantee future results for your specific business.</p>
- </div>
+            <section className="space-y-4">
+              <h2 className="font-serif text-2xl font-normal text-[#F8F7F3]">4. Contact</h2>
+              <p>
+                For questions regarding terms and service contracts, reach out to <a href="mailto:info@ajandco.site" className="text-[#F8F7F3] border-b border-[#C7A24C]">info@ajandco.site</a>.
+              </p>
+            </section>
+          </div>
 
- <div>
- <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-white mb-4">5. Professional Services Engagement</h2>
- <p>Booking a strategy call via this website does not constitute an agreement for professional services or consulting. Any professional engagement will be governed by a separate, signed Master Services Agreement (MSA) and Statement of Work (SOW).</p>
- </div>
+          <div className="mt-16 pt-8 border-t border-[#242320]">
+            <Link to="/" className="font-mono text-[0.75rem] tracking-[0.08em] uppercase text-[#F8F7F3] border-b border-[#C7A24C] pb-0.5 hover:text-[#C7A24C] transition-colors">
+              ← Return to Home
+            </Link>
+          </div>
 
- <div>
- <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-white mb-4">6. Third-Party Websites</h2>
- <p>Our website may contain links to third-party websites or services. We are not responsible for the content, privacy policies, or practices of any third-party websites.</p>
- </div>
-
- <div>
- <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-white mb-4">7. Limitations of Liability</h2>
- <p>In no event shall AJ and Co be liable for any direct, indirect, incidental, special, or consequential damages resulting from your use of the website or the content within it.</p>
- </div>
-
- <div>
- <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-white mb-4">8. Governing Law</h2>
- <p>These terms shall be governed by and construed in accordance with the laws of the jurisdiction in which AJ and Co operates, without regard to its conflict of law principles.</p>
- </div>
-
- <div>
- <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-white mb-4">9. Changes to Terms</h2>
- <p>We reserve the right to modify these terms at any time. We will indicate modifications by updating the "Last Updated" date at the top of this page.</p>
- </div>
-
- <div>
- <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-white mb-4">10. Contact Us</h2>
- <p>For questions about these terms: <a href="mailto:team.ajandco@gmail.com" className="text-emerald-400 hover:text-emerald-300">team.ajandco@gmail.com</a></p>
- </div>
-
- </motion.div>
- </div>
- </section>
- </>
-);
+        </div>
+      </div>
+    </>
+  );
 }

@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Loader, CheckCircle, AlertCircle } from 'lucide-react';
 import axios from 'axios';
+import { multiGmailAuthManager } from '../../services/gmail/MultiGmailAuthManager';
 
 export default function GmailCallback() {
   const navigate = useNavigate();
@@ -41,27 +42,38 @@ export default function GmailCallback() {
 
         const { access_token, refresh_token, expires_in } = response.data;
         if (access_token) {
-          localStorage.setItem('aj_co_gmail_token', access_token);
-          if (refresh_token) {
-            localStorage.setItem('aj_co_gmail_refresh_token', refresh_token);
-          }
-          localStorage.setItem('aj_co_gmail_expiry', String(Date.now() + expires_in * 1000));
-
-          // Fetch user profile email
+          // Fetch authenticated user profile email from Google
+          let userEmail = 'team.ajandco@gmail.com';
           try {
             const userRes = await axios.get('https://www.googleapis.com/oauth2/v2/userinfo', {
               headers: { Authorization: `Bearer ${access_token}` },
             });
             if (userRes.data?.email) {
-              localStorage.setItem('aj_co_gmail_user_email', userRes.data.email);
+              userEmail = userRes.data.email.toLowerCase().trim();
             }
           } catch (e) {
-            // ignore userinfo fetch failure
+            console.warn('Could not fetch user email profile:', e);
           }
+
+          // Save token into multi-mailbox manager index (does NOT wipe existing accounts)
+          multiGmailAuthManager.saveMailboxTokens(
+            userEmail,
+            access_token,
+            refresh_token || '',
+            expires_in || 3600
+          );
+
+          // Update global active tokens
+          localStorage.setItem('aj_co_gmail_token', access_token);
+          if (refresh_token) {
+            localStorage.setItem('aj_co_gmail_refresh_token', refresh_token);
+          }
+          localStorage.setItem('aj_co_gmail_expiry', String(Date.now() + (expires_in || 3600) * 1000));
+          localStorage.setItem('aj_co_gmail_user_email', userEmail);
 
           setStatus('success');
           setTimeout(() => {
-            navigate('/staff');
+            navigate(`/staff/mailboxes?auth_success=true&email=${encodeURIComponent(userEmail)}`);
           }, 1000);
         } else {
           throw new Error('No access token returned from Google.');

@@ -1,182 +1,108 @@
 import SEO from '../components/SEO';
-import { motion } from 'motion/react';
+import React from 'react';
 import { Link } from 'react-router-dom';
 
-const fadeUp = {
- hidden: { opacity: 0, y: 20 },
- visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: "easeOut" } }
-};
-
-const staggerContainer = {
- hidden: { opacity: 0 },
- visible: {
- opacity: 1,
- transition: { staggerChildren: 0.1 }
- }
-};
-
-const processPhases = [
- {
- id: "01",
- label: "PHASE 01 — IDENTIFY (4–6 days)",
- title: "Find What's Worth Building",
- desc: [
- "We start every engagement the same way: by understanding your business before we touch any technology.",
- "This phase is about asking better questions than your team has time to ask. Where is work getting stuck? What decisions are being made with incomplete information? Where is manual effort compounding?",
- "Most AI agencies skip this step. They start with a tool and work backwards. We start with your business and work forwards. That's why our projects succeed."
- ],
- deliverables: [
- "Stakeholder Interviews (all relevant team leads)",
- "Process Mapping Sessions",
- "Data Infrastructure Audit",
- "Opportunity Prioritisation Matrix",
- "ROI Modeling for Top 3 Opportunities",
- "AI Readiness Report (delivered as executive document)"
- ]
- },
- {
- id: "02",
- label: "PHASE 02 — DEVELOP (3–12 weeks depending on scope)",
- title: "Build It Right, The First Time",
- desc: [
- "Once we know what to build, we move fast. But fast doesn't mean reckless. Our build process is structured to catch problems early — at the PoC stage when they're cheap to fix, not after full deployment when they're expensive.",
- "Every system we build is designed to plug into your existing stack from day one. We don't create isolated AI tools that live outside your workflow. We build systems your team encounters every time they do their job."
- ],
- deliverables: [
- "System Architecture Document",
- "Data & API Integration Map",
- "Working Proof of Concept (Week 2)",
- "Stakeholder Review & Sign-Off",
- "Full Production Build",
- "Security & Governance Documentation",
- "Pre-Launch QA & Performance Testing"
- ]
- },
- {
- id: "03",
- label: "PHASE 03 — ADOPT (30–90 days post-launch)",
- title: "Shipping Is The Beginning, Not The End",
- desc: [
- "This is the phase most agencies skip entirely. They ship the system and call it done. We've seen what happens when that approach is taken — tools sit unused, teams revert to old habits, and the investment evaporates.",
- "We stay. We run training sessions, track adoption metrics, identify where teams are struggling, and iterate until the system is just how work gets done.",
- "Adoption isn't a nice-to-have. It's the entire point."
- ],
- deliverables: [
- "Rollout & Change Management Plan",
- "Team Enablement Sessions (role-specific)",
- "User Documentation & Playbooks",
- "30-Day Adoption Review",
- "Performance Dashboard Setup",
- "Ongoing Optimisation (as needed)"
- ]
- }
-];
-
-const faqs = [
- {
- q: "How long does a full engagement take?",
- a: "Typically 8–16 weeks from kickoff to full adoption. Smaller, focused projects can move faster — 3–6 weeks for a single automation or agent build."
- },
- {
- q: "Do we need to have our data infrastructure sorted first?",
- a: "No. Part of Phase 01 is auditing what you have and designing around it. We've worked with companies that had no data infrastructure at all."
- },
- {
- q: "What if we only need one phase?",
- a: "We can scope individual phases. But we'll always be honest with you — if we think skipping adoption support will cause the project to fail, we'll say so."
- },
- {
- q: "How involved does our team need to be?",
- a: "You'll need 2–3 key stakeholders available for the Identify phase (roughly 4–6 hours total). After that, your involvement scales down significantly until training."
- }
-];
-
 export default function Process() {
- return (
+  const processPhases = [
+    {
+      num: "PHASE 01",
+      label: "IDENTIFY (4–6 DAYS)",
+      title: "Find What's Worth Building",
+      desc: "We start every engagement the same way: by understanding your business before we touch any technology. We map your workflows, find where time bleeds, and model ROI before a single line of code is written.",
+      deliverables: ["Stakeholder Interviews", "Process Mapping Sessions", "Data Infrastructure Audit", "Opportunity Prioritisation Matrix", "ROI Modeling for Top 3 Opportunities", "Executive AI Readiness Report"]
+    },
+    {
+      num: "PHASE 02",
+      label: "DEVELOP (3–12 WEEKS)",
+      title: "Build It Right, The First Time",
+      desc: "Once we know what to build, we move fast. Our build process catches problems early at the PoC stage when they are cheap to fix, not after full deployment.",
+      deliverables: ["System Architecture Document", "Data & API Integration Map", "Working Proof of Concept (Week 2)", "Stakeholder Review & Sign-Off", "Full Production Build", "Security & Governance Documentation"]
+    },
+    {
+      num: "PHASE 03",
+      label: "ADOPT (30–90 DAYS)",
+      title: "Shipping Is The Beginning, Not The End",
+      desc: "We stay through adoption. We run role-specific training sessions, track utilization metrics, and iterate until the new AI tools are standard daily procedure.",
+      deliverables: ["Rollout & Change Management Plan", "Team Enablement Workshops", "User Playbooks", "30-Day Adoption Review", "Performance Dashboard Setup"]
+    }
+  ];
+
+  return (
     <>
-      <SEO title="Our Process | AJ & Co." description="How we build scalable AI solutions and web applications." canonicalUrl="/process" />
- <section className="relative pt-32 pb-24 overflow-hidden bg-[#0A0A0A]">
- <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center max-w-4xl">
- <motion.h1 
- initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, ease: "easeOut" }}
- className="font-syne text-3xl sm:text-4xl md:text-5xl lg:text-7xl font-extrabold tracking-tighter mb-8 text-white"
- >
- A Process Built Around One Thing: <span className="text-[#10B981]">Results That Stick</span>
- </motion.h1>
- <motion.p
- initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, delay: 0.2, ease: "easeOut" }}
- className="text-lg md:text-xl text-gray-400 max-w-3xl mx-auto leading-relaxed"
- >
- Most agencies hand off a deliverable and disappear. We stay until AI is embedded in how your business actually runs.
- </motion.p>
- </div>
- </section>
+      <SEO 
+        title="Our Process — AJ & Co." 
+        description="Three phases. Zero shortcuts. How we scope, build, and deploy production-grade AI systems."
+        canonicalUrl="/process" 
+      />
 
- <section className="py-16 sm:py-20 lg:py-28 container mx-auto px-4 sm:px-6 lg:px-8 max-w-5xl">
- <div className="space-y-32 relative">
- <div className="hidden md:block absolute top-[2%] bottom-[2%] left-10 w-px bg-white/10"></div>
- 
- {processPhases.map((phase, idx) => (
- <motion.div key={idx} initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-80px" }} variants={staggerContainer} className="relative md:pl-24">
- <motion.div variants={fadeUp} className="hidden md:flex absolute top-2 left-5 w-10 h-10 -translate-x-1/2 bg-[#0A0A0A] border-4 border-[#10B981] rounded-full items-center justify-center font-mono text-xs font-bold text-white z-10">
- {phase.id}
- </motion.div>
- 
- <motion.div variants={fadeUp}>
- <div className="font-mono text-xs md:text-sm text-emerald-400 uppercase tracking-widest font-bold mb-4">{phase.label}</div>
- <h2 className="font-syne text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-8">{phase.title}</h2>
- 
- <div className="space-y-6 mb-12">
- {phase.desc.map((p, i) => (
- <p key={i} className="text-gray-300 text-lg leading-relaxed">{p}</p>
- ))}
- </div>
- 
- <div className="glass p-8 rounded-xl bg-white/[0.02] border border-white/10">
- <h3 className="font-mono text-xs text-gray-500 uppercase tracking-widest font-bold mb-6">Deliverables in this phase:</h3>
- <ul className="grid grid-cols-1 sm:grid-cols-2 gap-4">
- {phase.deliverables.map((d, i) => (
- <li key={i} className="flex items-start gap-4">
- <div className="w-1.5 h-1.5 rounded-full bg-emerald-400 mt-2 shrink-0"></div>
- <span className="text-gray-300">{d}</span>
- </li>
- ))}
- </ul>
- </div>
- </motion.div>
- </motion.div>
- ))}
- </div>
- </section>
+      <div className="bg-[#0A0A09] text-[#F8F7F3] selection:bg-[#C7A24C] selection:text-[#F8F7F3] font-sans min-h-screen pt-[140px] pb-24">
+        <div className="max-w-[1440px] mx-auto px-6 sm:px-10">
+          
+          {/* Header */}
+          <div className="mb-16 pb-8 border-b border-[#242320]">
+            <div className="font-mono text-[0.72rem] text-[#C7A24C] tracking-[0.12em] uppercase mb-4">
+              § 02 — METHODOLOGY &amp; EXECUTION
+            </div>
+            <h1 className="font-serif text-[clamp(2.5rem,5.5vw,5rem)] font-normal leading-[1.05] tracking-tight max-w-[20ch]">
+              Three steps. <span className="italic text-[#C7A24C]">Zero shortcuts.</span>
+            </h1>
+            <p className="mt-6 text-[1.05rem] text-[#cfccc2] max-w-[46ch] font-light leading-relaxed">
+              We do not sell software platform subscriptions. We build bespoke systems designed to remove tasks from your calendar permanently.
+            </p>
+          </div>
 
- <section className="py-16 sm:py-20 lg:py-28 bg-white/[0.01] border-t border-white/5">
- <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-4xl">
- <motion.h2 
- initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-80px" }} variants={fadeUp}
- className="font-syne text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-center text-white mb-16"
- >
- Frequently Asked Questions
- </motion.h2>
- 
- <div className="grid grid-cols-1 sm:grid-cols-2 gap-12">
- {faqs.map((faq, i) => (
- <motion.div key={i} initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-80px" }} variants={fadeUp}>
- <h3 className="font-syne text-xl font-bold text-white mb-4 line-clamp-2">{faq.q}</h3>
- <p className="text-gray-400 leading-relaxed text-sm">{faq.a}</p>
- </motion.div>
- ))}
- </div>
- </div>
- </section>
+          {/* Phases */}
+          <div className="space-y-16">
+            {processPhases.map((phase, idx) => (
+              <div key={idx} className="border border-[#242320] p-8 sm:p-12 bg-[#0A0A09] grid grid-cols-1 lg:grid-cols-[1fr_1.2fr] gap-10 items-start">
+                <div>
+                  <div className="font-mono text-[0.72rem] text-[#C7A24C] tracking-[0.1em] uppercase mb-2">
+                    {phase.num} — {phase.label}
+                  </div>
+                  <h2 className="font-serif text-3xl sm:text-4xl font-normal leading-tight mb-4">
+                    {phase.title}
+                  </h2>
+                  <p className="text-[#cfccc2] text-[0.95rem] leading-relaxed font-light">
+                    {phase.desc}
+                  </p>
+                </div>
 
- <section className="py-16 sm:py-20 lg:py-28 relative text-center border-t border-white/5">
- <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-3xl">
- <h2 className="font-syne text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-12">Ready To Start?</h2>
- <Link to="/contact" className="inline-flex items-center justify-center bg-[#10B981] hover:brightness-110 text-black px-6 py-3 sm:px-8 sm:py-4 rounded-none font-syne font-bold emerald-glow transition-all uppercase text-sm tracking-widest w-full sm:w-auto text-center justify-center flex">
- Book A Free Strategy Call
- </Link>
- </div>
- </section>
- </>
- );
+                <div className="border-t lg:border-t-0 lg:border-l border-[#242320] pt-6 lg:pt-0 lg:pl-10">
+                  <div className="font-mono text-[0.7rem] text-[#8a877e] uppercase tracking-[0.08em] mb-4">
+                    KEY DELIVERABLES
+                  </div>
+                  <ul className="space-y-3 font-mono text-[0.8rem] text-[#cfccc2]">
+                    {phase.deliverables.map((d, i) => (
+                      <li key={i} className="flex items-center gap-3">
+                        <span className="w-1.5 h-1.5 bg-[#C7A24C] rounded-full" />
+                        {d}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* CTA Box */}
+          <div className="mt-20 border border-[#3a382f] p-8 sm:p-14 relative flex flex-col md:flex-row justify-between items-start md:items-center gap-8">
+            <div className="absolute -top-[11px] left-10 bg-[#0A0A09] px-2.5 font-mono text-[0.68rem] tracking-[0.12em] text-[#8a877e]">
+              READY TO AUDIT
+            </div>
+            <div>
+              <div className="font-serif text-2xl sm:text-3xl font-normal">Have a workflow worth killing?</div>
+              <p className="text-sm text-[#8a877e] font-light mt-2">Book a strategy session with our senior automation architects.</p>
+            </div>
+            <Link 
+              to="/contact" 
+              className="font-mono text-[0.78rem] tracking-[0.08em] uppercase border border-[#F8F7F3] px-7 py-3.5 hover:bg-[#F8F7F3] hover:text-[#0A0A09] transition-all whitespace-nowrap"
+            >
+              Start a project →
+            </Link>
+          </div>
+
+        </div>
+      </div>
+    </>
+  );
 }

@@ -4,15 +4,17 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "tsx server.ts",
-    "build": "vite build && esbuild server.ts --bundle --platform=node --format=cjs --packages=external --sourcemap --outfile=dist/server.cjs",
+    "dev": "node ./node_modules/tsx/dist/cli.mjs server.ts",
+    "build": "node ./node_modules/vite/bin/vite.js build && esbuild server.ts --bundle --platform=node --format=cjs --packages=external --sourcemap --outfile=dist/server.cjs",
     "start": "node dist/server.cjs",
-    "preview": "vite preview",
+    "preview": "node ./node_modules/vite/bin/vite.js preview",
     "clean": "rm -rf dist server.js",
-    "lint": "tsc --noEmit"
+    "lint": "node ./node_modules/typescript/bin/tsc --noEmit"
   },
   "dependencies": {
     "@google/genai": "^2.4.0",
+    "@splinetool/react-spline": "^4.1.0",
+    "@splinetool/runtime": "^1.12.98",
     "@supabase/server": "^1.4.1",
     "@supabase/supabase-js": "^2.110.7",
     "@tailwindcss/vite": "^4.1.14",

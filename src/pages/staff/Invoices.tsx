@@ -268,7 +268,7 @@ export default function Invoices() {
                 <h1 className="font-bold text-2xl text-black">{companySettings?.company_name || 'AJ & Co. Pvt Ltd.'}</h1>
                 <p className="text-xs font-mono mt-1">GSTIN : {companySettings?.gst_number || '29AAAAA0000A1Z5'}</p>
                 <p className="text-xs mt-0.5">Office :- {companySettings?.address || 'Bangalore, Karnataka, India'}</p>
-                <p className="text-xs mt-0.5">Email ID :- team.ajandco@gmail.com</p>
+                <p className="text-xs mt-0.5">Email ID :- info@ajandco.site</p>
               </div>
               <div className="text-right">
                 <h2 className="font-bold text-xl text-black uppercase tracking-wider">Tax Invoice</h2>
@@ -889,7 +889,7 @@ export default function Invoices() {
                   <h1 className="font-bold text-xl text-black">{companySettings?.company_name || 'AJ & Co. Pvt Ltd.'}</h1>
                   <p className="text-[11px] font-mono mt-0.5">GSTIN : {companySettings?.gst_number || '29AAAAA0000A1Z5'}</p>
                   <p className="text-[11px] mt-0.5">Office :- {companySettings?.address || 'Bangalore, Karnataka, India'}</p>
-                  <p className="text-[11px] mt-0.5">Email ID :- team.ajandco@gmail.com</p>
+                  <p className="text-[11px] mt-0.5">Email ID :- info@ajandco.site</p>
                 </div>
                 <div className="text-right">
                   <h2 className="font-bold text-lg text-black uppercase tracking-wider">Tax Invoice</h2>

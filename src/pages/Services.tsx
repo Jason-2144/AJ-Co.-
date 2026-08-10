@@ -1,107 +1,93 @@
 import SEO from '../components/SEO';
-import { motion } from 'motion/react';
-import { Scan, Bot, GitBranch, GraduationCap } from 'lucide-react';
+import React from 'react';
 import { Link } from 'react-router-dom';
 
-const fadeUp = {
- hidden: { opacity: 0, y: 20 },
- visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: "easeOut" } }
-};
-
-const staggerContainer = {
- hidden: { opacity: 0 },
- visible: {
- opacity: 1,
- transition: { staggerChildren: 0.1 }
- }
-};
-
-const services = [
- {
- id: "ai-opportunity-assessment",
- title: "AI Opportunity Assessment",
- icon: <Scan className="w-10 h-10 text-emerald-400" />,
- desc: "Before we build anything, we find what's actually worth building. We audit your workflows, map your data, and model the ROI — so every decision is grounded in evidence, not hype."
- },
- {
- id: "custom-agent-development",
- title: "Custom Agent Development",
- icon: <Bot className="w-10 h-10 text-emerald-400" />,
- desc: "We build production-ready AI agents tailored to your stack. Customer support agents, sales assistants, internal ops bots — built to work inside your tools from day one."
- },
- {
- id: "workflow-automation",
- title: "Workflow Automation",
- icon: <GitBranch className="w-10 h-10 text-emerald-400" />,
- desc: "We connect AI to the tools your team already uses — CRMs, project managers, communication platforms. Repetitive work disappears. Your team focuses on what actually matters."
- },
- {
- id: "enterprise-ai-training",
- title: "Enterprise AI Training",
- icon: <GraduationCap className="w-10 h-10 text-emerald-400" />,
- desc: "Shipping a system is only half the job. We train your people until AI is embedded in how they think and work — not just something IT manages."
- }
-];
-
 export default function Services() {
- return (
+  const servicesList = [
+    {
+      num: "01",
+      title: "AI Opportunity Assessment",
+      body: "Before we build anything, we find what's actually worth building. We audit your workflows, map your data, and model the ROI — so every decision is grounded in evidence, not hype."
+    },
+    {
+      num: "02",
+      title: "Custom Agent Development",
+      body: "We build production-ready AI agents tailored to your stack. Customer support agents, sales assistants, internal ops bots — built to work inside your tools from day one."
+    },
+    {
+      num: "03",
+      title: "Workflow Automation",
+      body: "We connect AI to the tools your team already uses — CRMs, project managers, communication platforms. Repetitive work disappears. Your team focuses on what actually matters."
+    },
+    {
+      num: "04",
+      title: "Enterprise AI Training",
+      body: "Shipping a system is only half the job. We train your people until AI is embedded in how they think and work — not just something IT manages."
+    }
+  ];
+
+  return (
     <>
-      <SEO title="Services | AJ & Co." description="From AI opportunity assessments to custom agents and full web systems." canonicalUrl="/services" />
- <section className="relative py-16 sm:py-20 lg:py-28 overflow-hidden bg-[#0A0A0A]">
- <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-white/10 to-transparent"></div>
- <motion.div 
- animate={{ y: [0, -30, 0], opacity: [0.3, 0.5, 0.3] }}
- transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
- className="absolute top-10 right-[10%] w-96 h-96 bg-emerald-500/10 rounded-full blur-[120px] pointer-events-none"
- />
+      <SEO 
+        title="Services — AJ & Co." 
+        description="Four disciplines, one team. We scope narrow and ship the thing that removes the task from your calendar."
+        canonicalUrl="/services" 
+      />
 
- <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center max-w-4xl">
- <motion.h1 
- initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, ease: "easeOut" }}
- className="font-syne text-3xl sm:text-4xl md:text-5xl lg:text-7xl font-extrabold tracking-tighter mb-8 text-white"
- >
- AI Services Built For <span className="text-[#10B981]">Real Business Outcomes</span>
- </motion.h1>
- <motion.p
- initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, delay: 0.2, ease: "easeOut" }}
- className="text-lg md:text-xl text-gray-400 max-w-3xl mx-auto leading-relaxed"
- >
- We don't offer generic AI tools. Every service we provide is designed around your workflows, your team, and your goals.
- </motion.p>
- </div>
- </section>
+      <div className="bg-[#0A0A09] text-[#F8F7F3] selection:bg-[#C7A24C] selection:text-[#F8F7F3] font-sans min-h-screen pt-[140px] pb-24">
+        <div className="max-w-[1440px] mx-auto px-6 sm:px-10">
+          
+          {/* Header */}
+          <div className="mb-16 pb-8 border-b border-[#242320]">
+            <div className="font-mono text-[0.72rem] text-[#C7A24C] tracking-[0.12em] uppercase mb-4">
+              § 01 — CAPABILITIES &amp; DISCIPLINES
+            </div>
+            <h1 className="font-serif text-[clamp(2.5rem,5.5vw,5rem)] font-normal leading-[1.05] tracking-tight max-w-[20ch]">
+              AI Services Built For <span className="italic text-[#C7A24C]">Real Business Outcomes</span>
+            </h1>
+            <p className="mt-6 text-[1.05rem] text-[#cfccc2] max-w-[46ch] font-light leading-relaxed">
+              We don't offer generic AI tools. Every service we provide is designed around your workflows, your team, and your goals.
+            </p>
+          </div>
 
- <section className="py-16 sm:py-20 lg:py-28 container mx-auto px-4 sm:px-6 lg:px-8">
- <motion.div 
- initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-80px" }} variants={staggerContainer}
- className="grid grid-cols-1 sm:grid-cols-2 gap-8"
- >
- {services.map((service) => (
- <Link key={service.id} to={`/services/${service.id}`}>
- <motion.div variants={fadeUp} className="glass p-4 sm:p-6 lg:p-8 rounded-2xl h-full flex flex-col group hover:border-[#10B981]/50 hover:bg-white/[0.04] transition-all duration-300">
- <div className="w-20 h-20 bg-[#0A0A0A] rounded-xl flex items-center justify-center mb-8 border border-white/10 group-hover:border-emerald-500/30 transition-colors">
- {service.icon}
- </div>
- <h3 className="font-syne text-3xl font-bold mb-6 text-white group-hover:text-emerald-400 transition-colors">{service.title}</h3>
- <p className="text-gray-300 text-lg leading-relaxed flex-grow mb-8">{service.desc}</p>
- <div className="mt-auto font-syne font-bold uppercase tracking-widest text-[#10B981] text-xs flex items-center gap-2">
- Learn More <span className="text-lg group-hover:translate-x-2 transition-transform duration-300">→</span>
- </div>
- </motion.div>
- </Link>
- ))}
- </motion.div>
- </section>
+          {/* Services List */}
+          <div className="border-t border-[#242320]">
+            {servicesList.map((service, idx) => (
+              <div key={idx} className="grid grid-cols-1 md:grid-cols-[80px_1fr_1.2fr] gap-6 items-start py-10 border-b border-[#242320] hover:bg-white/[0.02] transition-colors">
+                <div className="font-mono text-[#8a877e] text-sm pt-1">{service.num}</div>
+                <div className="font-serif text-2xl sm:text-4xl font-normal">{service.title}</div>
+                <div className="space-y-6">
+                  <p className="text-[#cfccc2] text-[0.95rem] leading-relaxed font-light">{service.body}</p>
+                  <Link 
+                    to="/contact" 
+                    className="inline-block font-mono text-[0.75rem] tracking-[0.08em] uppercase text-[#F8F7F3] border-b border-[#C7A24C] pb-0.5 hover:text-[#C7A24C] transition-colors"
+                  >
+                    Discuss this capability →
+                  </Link>
+                </div>
+              </div>
+            ))}
+          </div>
 
- <section className="py-16 sm:py-20 lg:py-28 relative text-center border-t border-white/5 bg-white/[0.01]">
- <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-3xl">
- <h2 className="font-syne text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-8">Not sure which service fits?</h2>
- <p className="text-xl text-gray-400 mb-12">Start with a free strategy call to identify your high-impact opportunities.</p>
- <Link to="/contact" className="inline-flex items-center justify-center bg-[#10B981] hover:brightness-110 text-black px-6 py-3 sm:px-8 sm:py-4 rounded-none font-syne font-bold emerald-glow transition-all uppercase text-sm tracking-widest w-full sm:w-auto text-center justify-center flex">
- Book Strategy Call
- </Link>
- </div>
- </section>
- </>
- );
+          {/* CTA Box */}
+          <div className="mt-24 border border-[#3a382f] p-8 sm:p-14 relative flex flex-col md:flex-row justify-between items-start md:items-center gap-8">
+            <div className="absolute -top-[11px] left-10 bg-[#0A0A09] px-2.5 font-mono text-[0.68rem] tracking-[0.12em] text-[#8a877e]">
+              STRATEGY INITIATION
+            </div>
+            <div>
+              <div className="font-serif text-2xl sm:text-3xl font-normal">Not sure which service fits?</div>
+              <p className="text-sm text-[#8a877e] font-light mt-2">Start with a free strategy call to identify your high-impact opportunities.</p>
+            </div>
+            <Link 
+              to="/contact" 
+              className="font-mono text-[0.78rem] tracking-[0.08em] uppercase border border-[#F8F7F3] px-7 py-3.5 hover:bg-[#F8F7F3] hover:text-[#0A0A09] transition-all whitespace-nowrap"
+            >
+              Start a project →
+            </Link>
+          </div>
+
+        </div>
+      </div>
+    </>
+  );
 }

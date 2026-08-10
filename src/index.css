@@ -1,9 +1,18 @@
 @import "tailwindcss";
 
 @theme {
-  --font-sans: "DM Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-serif: "Fraunces", serif;
+  --font-sans: "Work Sans", "DM Sans", ui-sans-serif, system-ui, sans-serif;
   --font-syne: "Syne", ui-sans-serif, system-ui, sans-serif;
   --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+
+  --color-ink: #0A0A09;
+  --color-paper: #F8F7F3;
+  --color-paper-dim: #EDEBE4;
+  --color-gray-subtle: #8a877e;
+  --color-rule: #242320;
+  --color-rule-light: #3a382f;
+  --color-signal: #C7A24C;
 }
 
 @layer utilities {
@@ -68,4 +77,15 @@ body {
 .no-scrollbar {
   -ms-overflow-style: none;
   scrollbar-width: none;
+}
+
+/* Hide Spline watermark logo pill */
+#spline-logo,
+a[href*="spline.design"],
+spline-viewer::part(logo),
+.spline-watermark {
+  display: none !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+  visibility: hidden !important;
 }

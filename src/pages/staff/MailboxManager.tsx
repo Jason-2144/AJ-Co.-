@@ -41,16 +41,14 @@ export default function MailboxManager() {
       const email = params.get('email');
 
       if (authSuccess === 'true' && email) {
-        // Save OAuth token state for target email
-        multiGmailAuthManager.saveMailboxTokens(email, 'active_oauth_access_token', 'active_refresh_token', 3600);
-        
-        // Also update MailboxRecord in repository
+        // Retrieve real token from multiGmailAuthManager or update mailbox record
         const list = await mailboxRepository.getAll();
         const existing = list.find(m => m.email.toLowerCase() === email.toLowerCase());
         if (existing) {
           await mailboxRepository.update(existing.id, {
             googleAccountConnected: true,
-            oauthStatus: 'connected'
+            oauthStatus: 'connected',
+            connectionStatus: 'online'
           });
         }
       }

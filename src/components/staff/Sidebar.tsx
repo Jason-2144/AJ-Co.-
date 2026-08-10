@@ -59,21 +59,20 @@ export default function Sidebar({ collapsed, setCollapsed, activeTab, setActiveT
       }`}
     >
       {/* Brand Header */}
-      <div className="h-20 border-b border-white/5 flex items-center justify-between px-6">
+      <div className="h-20 border-b border-[#242320] flex items-center justify-between px-6">
         {!collapsed && (
-          <div className="font-syne text-lg font-bold flex items-center text-white">
-            AJ <span className="text-[#10B981] mx-1">&amp;</span> Co
-            <span className="inline-block w-1.5 h-1.5 rounded-full bg-emerald-500 ml-1 mt-0.5"></span>
+          <div className="font-serif text-lg font-semibold flex items-center text-[#F8F7F3] tracking-tight">
+            AJ <span className="text-[#C7A24C] mx-1">&amp;</span> CO.
           </div>
         )}
         {collapsed && (
-          <div className="font-syne text-emerald-400 font-extrabold text-xl w-full text-center">
+          <div className="font-serif text-[#C7A24C] font-semibold text-lg w-full text-center">
             AJ
           </div>
         )}
         <button
           onClick={() => setCollapsed(!collapsed)}
-          className="text-gray-500 hover:text-white transition-colors focus:outline-none hidden md:block"
+          className="text-[#8a877e] hover:text-[#F8F7F3] transition-colors focus:outline-none hidden md:block"
         >
           {collapsed ? <ChevronRight className="w-5 h-5" /> : <ChevronLeft className="w-5 h-5" />}
         </button>
