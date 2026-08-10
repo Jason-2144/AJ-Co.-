@@ -60,7 +60,7 @@ export default function Home() {
           </Link>
 
           {/* Smooth White-to-Black Fade Transition Under Robot Hero */}
-          <div className="absolute bottom-0 inset-x-0 h-36 bg-gradient-to-b from-transparent to-[#0A0A09] pointer-events-none z-10" />
+          <div className="absolute bottom-0 inset-x-0 h-64 bg-gradient-to-b from-transparent via-[#0A0A09]/60 to-[#0A0A09] pointer-events-none z-10" />
         </header>
 
         {/* ================= SERVICES ================= */}
