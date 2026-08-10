@@ -136,17 +136,17 @@ export default function Home() {
 
             <motion.h1 
               initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, delay: 0.1 }}
-              className="text-[clamp(2.8rem,7vw,6.5rem)] font-bold tracking-[ -0.04em] leading-[0.98] text-[#000000] max-w-[17ch]"
+              className="text-[clamp(2.8rem,7vw,6.5rem)] font-bold tracking-[-0.04em] leading-[0.98] text-[#000000] max-w-[16ch]"
             >
-              Engineering <br />
-              <span className="italic font-serif font-normal text-[#545454]">unmanned</span> workflows.
+              We build the staff <br />
+              that never <span className="italic font-serif font-normal text-[#545454]">clocks out.</span>
             </motion.h1>
 
             <motion.p 
               initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, delay: 0.2 }}
               className="mt-8 max-w-[48ch] text-[1.15rem] leading-[1.6] text-[#545454] font-normal"
             >
-              We design autonomous AI agents, intelligent chatbots, and zero-latency automation pipelines for founders who refuse to perform the same manual task twice.
+              AJ &amp; Co. designs AI agents, chatbots, and automation pipelines for founders who are tired of doing the same task twice — plus the websites that make the case for you while you sleep.
             </motion.p>
           </div>
 

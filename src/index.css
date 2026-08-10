@@ -1,18 +1,14 @@
 @import "tailwindcss";
 
 @theme {
-  --font-serif: "Fraunces", serif;
-  --font-sans: "Work Sans", "DM Sans", ui-sans-serif, system-ui, sans-serif;
-  --font-syne: "Syne", ui-sans-serif, system-ui, sans-serif;
-  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+  --font-serif: "Instrument Serif", "Fraunces", serif;
+  --font-sans: "Google Sans Flex", "Inter", system-ui, sans-serif;
+  --font-mono: "Fragment Mono", "JetBrains Mono", monospace;
 
-  --color-ink: #0A0A09;
-  --color-paper: #F8F7F3;
-  --color-paper-dim: #EDEBE4;
-  --color-gray-subtle: #8a877e;
-  --color-rule: #242320;
-  --color-rule-light: #3a382f;
-  --color-signal: #C7A24C;
+  --color-framer-bg: #f5f5f5;
+  --color-framer-[#000000]: #000000;
+  --color-framer-[#545454]: #545454;
+  --color-framer-[#787878]: #787878;
 }
 
 @layer utilities {
