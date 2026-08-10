@@ -54,7 +54,7 @@ export default function Home() {
 
           <Link 
             to="/contact" 
-            className="absolute bottom-12 right-10 z-50 font-mono text-[0.8rem] tracking-[0.1em] uppercase border border-[#F8F7F3] px-9 py-4 bg-[#0A0A09] text-[#F8F7F3] hover:bg-[#F8F7F3] hover:text-[#0A0A09] transition-all duration-250 shadow-2xl"
+            className="absolute bottom-16 right-12 z-50 font-mono text-[0.8rem] tracking-[0.1em] uppercase border border-[#F8F7F3] px-9 py-4 bg-[#0A0A09] text-[#F8F7F3] hover:bg-[#F8F7F3] hover:text-[#0A0A09] transition-all duration-250 shadow-2xl"
           >
             Start a project →
           </Link>
