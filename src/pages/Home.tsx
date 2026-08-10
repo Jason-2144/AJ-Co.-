@@ -50,14 +50,14 @@ export default function Home() {
               </div> 
               Scroll to explore
             </div>
-            
-            <Link 
-              to="/contact" 
-              className="absolute bottom-4 right-4 z-50 font-mono text-[0.8rem] tracking-[0.1em] uppercase border border-[#F8F7F3] px-9 py-4 bg-[#0A0A09] text-[#F8F7F3] hover:bg-[#F8F7F3] hover:text-[#0A0A09] transition-all duration-250 shadow-2xl"
-            >
-              Start a project →
-            </Link>
           </div>
+
+          <Link 
+            to="/contact" 
+            className="absolute bottom-12 right-10 z-50 font-mono text-[0.8rem] tracking-[0.1em] uppercase border border-[#F8F7F3] px-9 py-4 bg-[#0A0A09] text-[#F8F7F3] hover:bg-[#F8F7F3] hover:text-[#0A0A09] transition-all duration-250 shadow-2xl"
+          >
+            Start a project →
+          </Link>
 
           {/* Smooth White-to-Black Fade Transition Under Robot Hero */}
           <div className="absolute bottom-0 inset-x-0 h-36 bg-gradient-to-b from-transparent to-[#0A0A09] pointer-events-none z-10" />
