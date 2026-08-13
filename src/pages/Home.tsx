@@ -1,8 +1,10 @@
 import SEO from '../components/SEO';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, lazy, Suspense } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Link } from 'react-router-dom';
 import { ArrowUpRight, Plus, Minus, Layers, Zap, Cpu, Sparkles, Check, ChevronRight } from 'lucide-react';
+
+const Spline = lazy(() => import('@splinetool/react-spline'));
 
 export default function Home() {
   const [activeAccordion, setActiveAccordion] = useState<number | null>(0);
