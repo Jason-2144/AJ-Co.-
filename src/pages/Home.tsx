@@ -1,10 +1,9 @@
 import SEO from '../components/SEO';
-import React, { useState, useEffect, lazy, Suspense } from 'react';
+import React, { useState, useEffect, Suspense } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Link } from 'react-router-dom';
 import { ArrowUpRight, Plus, Minus, Layers, Zap, Cpu, Sparkles, Check, ChevronRight } from 'lucide-react';
-
-const Spline = lazy(() => import('@splinetool/react-spline'));
+import Spline from '@splinetool/react-spline';
 
 export default function Home() {
   const [activeAccordion, setActiveAccordion] = useState<number | null>(0);
@@ -128,15 +127,12 @@ export default function Home() {
         {/* ================= HERO SECTION ================= */}
         <section className="relative pt-36 pb-24 px-6 sm:px-10 max-w-[1280px] mx-auto min-h-[85vh] flex flex-col justify-between z-10 overflow-hidden">
           
-          {/* 3D Spline Robot Stage Integration — GPU Accelerated & Smooth FPS */}
-          <div className="absolute inset-0 z-0 w-full h-full pointer-events-auto flex items-center justify-center will-change-transform transform-gpu">
-            <Suspense fallback={<div className="w-full h-full flex items-center justify-center text-xs font-mono text-gray-400">Loading 3D Experience...</div>}>
-              <Spline 
-                scene="https://prod.spline.design/nGTNHOEWh-Q122fP/scene.splinecode" 
-                className="w-full h-full transform-gpu"
-                style={{ willChange: 'transform, opacity', backfaceVisibility: 'hidden' }}
-              />
-            </Suspense>
+          {/* 3D Spline Robot Stage Integration */}
+          <div className="absolute inset-0 z-0 w-full h-full pointer-events-auto flex items-center justify-center">
+            <Spline 
+              scene="https://prod.spline.design/nGTNHOEWh-Q122fP/scene.splinecode" 
+              className="w-full h-full"
+            />
           </div>
 
           <div className="relative z-10">
