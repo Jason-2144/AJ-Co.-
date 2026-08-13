@@ -1,6 +1,7 @@
 import SEO from '../components/SEO';
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { ArrowUpRight } from 'lucide-react';
 
 export default function CaseStudies() {
   const caseStudiesList = [
@@ -39,18 +40,17 @@ export default function CaseStudies() {
         canonicalUrl="/case-studies" 
       />
 
-      <div className="bg-[#0A0A09] text-[#F8F7F3] selection:bg-[#C7A24C] selection:text-[#F8F7F3] font-sans min-h-screen pt-[140px] pb-24">
-        <div className="max-w-[1440px] mx-auto px-6 sm:px-10">
+      <div className="bg-[#f5f5f5] text-black selection:bg-black selection:text-white font-sans min-h-screen pt-[120px] pb-24">
+        <div className="max-w-[1280px] mx-auto px-6 sm:px-10">
           
           {/* Header */}
-          <div className="mb-16 pb-8 border-b border-[#242320]">
-            <div className="font-mono text-[0.72rem] text-[#C7A24C] tracking-[0.12em] uppercase mb-4">
-              § 03 — FIELD REPORTS &amp; DISPATCHES
-            </div>
-            <h1 className="font-serif text-[clamp(2.5rem,5.5vw,5rem)] font-normal leading-[1.05] tracking-tight max-w-[20ch]">
-              Real Problems. <span className="italic text-[#C7A24C]">Real Results.</span>
+          <div className="mb-16 pb-10 border-b border-black/10">
+            <span className="font-mono text-xs text-[#787878] tracking-[0.2em] uppercase">§ 03 — FIELD REPORTS &amp; DISPATCHES</span>
+            <h1 className="text-[clamp(2.5rem,5vw,4.8rem)] font-bold tracking-tight mt-3 text-black leading-[1.02]">
+              Real Problems. <br />
+              <span className="italic font-serif font-normal text-[#545454]">Real Results.</span>
             </h1>
-            <p className="mt-6 text-[1.05rem] text-[#cfccc2] max-w-[46ch] font-light leading-relaxed">
+            <p className="mt-6 text-lg text-[#545454] max-w-[48ch] font-normal leading-relaxed">
               A sample of what shipped, how it was engineered, and what changed once it did.
             </p>
           </div>
@@ -58,31 +58,36 @@ export default function CaseStudies() {
           {/* Case Studies Grid */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {caseStudiesList.map((cs, idx) => (
-              <div key={idx} className="border border-[#242320] p-8 bg-[#0A0A09] flex flex-col justify-between hover:border-[#C7A24C]/60 transition-colors">
+              <div 
+                key={idx} 
+                className="bg-white p-8 sm:p-10 rounded-3xl border border-black/10 hover:border-black/30 transition-all shadow-sm flex flex-col justify-between group"
+              >
                 <div>
-                  <div className="font-mono text-[0.68rem] tracking-[0.08em] text-[#8a877e] uppercase mb-6">
+                  <span className="font-mono text-xs text-[#787878] uppercase tracking-wider block mb-4">
                     {cs.tag}
-                  </div>
+                  </span>
                   
-                  <div className="font-serif text-5xl font-normal mb-3 text-[#F8F7F3]">
-                    {cs.stat}<span className="text-[#C7A24C] italic text-3xl">{cs.unit}</span>
+                  <div className="text-5xl font-bold tracking-tight text-black mb-2">
+                    {cs.stat}<span className="text-[#545454] font-normal text-3xl">{cs.unit}</span>
                   </div>
 
-                  <h3 className="font-serif text-2xl font-normal mb-4">
+                  <h3 className="text-2xl font-bold text-black mb-4">
                     {cs.title}
                   </h3>
 
-                  <p className="text-[#cfccc2] text-sm leading-relaxed font-light mb-8">
+                  <p className="text-[#545454] text-sm leading-relaxed font-normal mb-8">
                     {cs.desc}
                   </p>
                 </div>
 
-                <Link 
-                  to={`/case-studies/${cs.id}`} 
-                  className="font-mono text-[0.75rem] tracking-[0.08em] uppercase text-[#F8F7F3] border-b border-[#C7A24C] pb-0.5 hover:text-[#C7A24C] transition-colors w-max"
-                >
-                  Read Technical Dispatch →
-                </Link>
+                <div className="pt-6 border-t border-black/5 flex justify-between items-center">
+                  <Link 
+                    to={`/case-studies/${cs.id}`} 
+                    className="font-mono text-xs font-bold uppercase text-black group-hover:translate-x-1 transition-transform flex items-center gap-1.5"
+                  >
+                    Read Technical Dispatch <ArrowUpRight className="w-3.5 h-3.5" />
+                  </Link>
+                </div>
               </div>
             ))}
           </div>

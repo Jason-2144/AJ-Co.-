@@ -124,11 +124,22 @@ export default function Home() {
         />
 
         {/* ================= HERO SECTION ================= */}
-        <section className="relative pt-36 pb-24 px-6 sm:px-10 max-w-[1280px] mx-auto min-h-[85vh] flex flex-col justify-between z-10">
-          <div>
+        <section className="relative pt-36 pb-24 px-6 sm:px-10 max-w-[1280px] mx-auto min-h-[85vh] flex flex-col justify-between z-10 overflow-hidden">
+          
+          {/* 3D Spline Robot Stage Integration */}
+          <div className="absolute right-0 top-1/2 -translate-y-1/2 w-full lg:w-[55%] h-[75%] z-0 pointer-events-auto hidden md:block">
+            <Suspense fallback={<div className="w-full h-full flex items-center justify-center text-xs font-mono text-gray-400">Loading 3D Experience...</div>}>
+              <Spline 
+                scene="https://prod.spline.design/nGTNHOEWh-Q122fP/scene.splinecode" 
+                className="w-full h-full"
+              />
+            </Suspense>
+          </div>
+
+          <div className="relative z-10">
             <motion.div 
               initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}
-              className="inline-flex items-center gap-2.5 px-3.5 py-1.5 rounded-full bg-black/5 border border-black/10 text-xs font-mono tracking-wider uppercase text-black/70 mb-8"
+              className="inline-flex items-center gap-2.5 px-3.5 py-1.5 rounded-full bg-black/5 border border-black/10 text-xs font-mono tracking-wider uppercase text-black/70 mb-8 backdrop-blur-sm"
             >
               <span className="w-2 h-2 rounded-full bg-black animate-pulse" />
               AJ &amp; CO. STUDIO · AI &amp; AUTOMATION
@@ -144,7 +155,7 @@ export default function Home() {
 
             <motion.p 
               initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, delay: 0.2 }}
-              className="mt-8 max-w-[48ch] text-[1.15rem] leading-[1.6] text-[#545454] font-normal"
+              className="mt-8 max-w-[48ch] text-[1.15rem] leading-[1.6] text-[#545454] font-normal backdrop-blur-[2px] bg-white/40 p-2 rounded-xl border border-black/5"
             >
               AJ &amp; Co. designs AI agents, chatbots, and automation pipelines for founders who are tired of doing the same task twice — plus the websites that make the case for you while you sleep.
             </motion.p>
