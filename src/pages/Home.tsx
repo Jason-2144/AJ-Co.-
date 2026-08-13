@@ -106,7 +106,7 @@ export default function Home() {
   return (
     <>
       <SEO 
-        title="Stackgrid — AJ & Co. AI Engineering Studio"
+        title="AJ & Co. — AI Engineering Studio"
         description="AJ & Co. builds autonomous AI agents, intelligent workflow automation pipelines, and high-performance web systems for modern businesses."
       />
 
