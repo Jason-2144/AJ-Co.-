@@ -1,21 +1,61 @@
 import SEO from '../components/SEO';
-import React, { useState, useEffect, Suspense } from 'react';
+import React, { useState, useEffect, useRef, lazy, Suspense } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Link } from 'react-router-dom';
 import { ArrowUpRight, Plus, Minus, Layers, Zap, Cpu, Sparkles, Check, ChevronRight } from 'lucide-react';
-import Spline from '@splinetool/react-spline';
+import type { Application } from '@splinetool/runtime';
+
+// Loaded on its own chunk so the ~2MB Spline runtime never blocks first paint.
+const Spline = lazy(() => import('@splinetool/react-spline'));
 
 export default function Home() {
   const [activeAccordion, setActiveAccordion] = useState<number | null>(0);
   const [selectedFilter, setSelectedFilter] = useState<string>('All');
-  const [cursorPos, setCursorPos] = useState({ x: 0, y: 0 });
+  const cursorDotRef = useRef<HTMLDivElement>(null);
+  const splineStageRef = useRef<HTMLDivElement>(null);
+  const splineAppRef = useRef<Application | null>(null);
 
   useEffect(() => {
+    // Mutate the dot's position directly instead of via setState, so the
+    // cursor doesn't force a re-render (and fight the Spline canvas for
+    // main-thread time) on every single mousemove event.
+    let raf = 0;
     const handleMouseMove = (e: MouseEvent) => {
-      setCursorPos({ x: e.clientX, y: e.clientY });
+      if (raf) return;
+      raf = requestAnimationFrame(() => {
+        if (cursorDotRef.current) {
+          cursorDotRef.current.style.transform = `translate(${e.clientX}px, ${e.clientY}px) translate(-50%, -50%)`;
+        }
+        raf = 0;
+      });
     };
-    window.addEventListener('mousemove', handleMouseMove);
-    return () => window.removeEventListener('mousemove', handleMouseMove);
+    window.addEventListener('mousemove', handleMouseMove, { passive: true });
+    return () => {
+      window.removeEventListener('mousemove', handleMouseMove);
+      if (raf) cancelAnimationFrame(raf);
+    };
+  }, []);
+
+  useEffect(() => {
+    // Spline keeps its WebGL render loop running at full tilt even when the
+    // robot is scrolled out of view or the tab is backgrounded. Stop/play it
+    // based on visibility so it only spends GPU time when actually seen.
+    const stopIfPossible = () => splineAppRef.current?.stop?.();
+    const playIfPossible = () => splineAppRef.current?.play?.();
+
+    const io = new IntersectionObserver(
+      ([entry]) => (entry.isIntersecting ? playIfPossible() : stopIfPossible()),
+      { threshold: 0.05 }
+    );
+    if (splineStageRef.current) io.observe(splineStageRef.current);
+
+    const handleVisibility = () => (document.hidden ? stopIfPossible() : playIfPossible());
+    document.addEventListener('visibilitychange', handleVisibility);
+
+    return () => {
+      io.disconnect();
+      document.removeEventListener('visibilitychange', handleVisibility);
+    };
   }, []);
 
   const bentoItems = [
@@ -119,20 +159,28 @@ export default function Home() {
         />
 
         {/* Floating Custom Cursor Dot */}
-        <div 
-          className="fixed w-4 h-4 bg-black rounded-full pointer-events-none z-50 transition-transform duration-75 ease-out -translate-x-1/2 -translate-y-1/2 hidden md:block mix-blend-difference"
-          style={{ left: `${cursorPos.x}px`, top: `${cursorPos.y}px` }}
+        <div
+          ref={cursorDotRef}
+          className="fixed left-0 top-0 w-4 h-4 bg-black rounded-full pointer-events-none z-50 hidden md:block mix-blend-difference will-change-transform"
         />
 
         {/* ================= HERO SECTION ================= */}
         <section className="relative pt-36 pb-24 px-6 sm:px-10 max-w-[1280px] mx-auto min-h-[85vh] flex flex-col justify-between z-10 overflow-hidden">
           
-          {/* 3D Spline Robot Stage Integration */}
-          <div className="absolute inset-0 z-0 w-full h-full pointer-events-auto flex items-center justify-center">
-            <Spline 
-              scene="https://prod.spline.design/nGTNHOEWh-Q122fP/scene.splinecode" 
-              className="w-full h-full"
-            />
+          {/* 3D Spline Robot Stage Integration — GPU accelerated, lazy-loaded, paused off-screen */}
+          <div
+            ref={splineStageRef}
+            className="absolute inset-0 z-0 w-full h-full pointer-events-auto flex items-center justify-center transform-gpu will-change-transform"
+          >
+            <Suspense fallback={<div className="w-full h-full flex items-center justify-center text-xs font-mono text-gray-400">Loading 3D Experience...</div>}>
+              <Spline
+                scene="https://prod.spline.design/nGTNHOEWh-Q122fP/scene.splinecode"
+                className="w-full h-full transform-gpu"
+                style={{ willChange: 'transform', backfaceVisibility: 'hidden' }}
+                renderOnDemand
+                onLoad={(app) => { splineAppRef.current = app; }}
+              />
+            </Suspense>
           </div>
 
           <div className="relative z-10">
