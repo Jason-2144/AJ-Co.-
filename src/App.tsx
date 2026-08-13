@@ -30,7 +30,7 @@ function AppContent() {
   const isStaffRoute = location.pathname.startsWith('/staff') || location.pathname.includes('/gmail/callback');
 
   return (
-    <div className="font-sans min-h-screen bg-[#0A0A0A] text-white flex flex-col">
+    <div className={`font-sans min-h-screen ${isStaffRoute ? 'bg-[#0A0A0A] text-white' : 'bg-[#f5f5f5] text-black'} flex flex-col`}>
       {!isStaffRoute && <Navbar />}
       <main className={`flex-grow ${isStaffRoute ? '' : 'pt-24'}`}>
         <Routes>
