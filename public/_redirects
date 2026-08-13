@@ -1,3 +1,0 @@
-/dentist  https://dentist-os.vercel.app/dentist  200!
-/dentist/*  https://dentist-os.vercel.app/dentist/:splat  200!
-/*  /index.html  200

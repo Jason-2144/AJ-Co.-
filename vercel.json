@@ -25,14 +25,6 @@
   ],
   "rewrites": [
     {
-      "source": "/dentist",
-      "destination": "https://dentist-os.vercel.app/dentist"
-    },
-    {
-      "source": "/dentist/:path*",
-      "destination": "https://dentist-os.vercel.app/dentist/:path*"
-    },
-    {
       "source": "/(.*)",
       "destination": "/index.html"
     }
