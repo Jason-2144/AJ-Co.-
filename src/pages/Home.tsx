@@ -128,8 +128,8 @@ export default function Home() {
         {/* ================= HERO SECTION ================= */}
         <section className="relative pt-36 pb-24 px-6 sm:px-10 max-w-[1280px] mx-auto min-h-[85vh] flex flex-col justify-between z-10 overflow-hidden">
           
-          {/* 3D Spline Robot Stage Integration */}
-          <div className="absolute right-0 top-1/2 -translate-y-1/2 w-full lg:w-[55%] h-[75%] z-0 pointer-events-auto hidden md:block">
+          {/* 3D Spline Robot Stage Integration — Centered */}
+          <div className="absolute inset-0 z-0 w-full h-full pointer-events-auto flex items-center justify-center">
             <Suspense fallback={<div className="w-full h-full flex items-center justify-center text-xs font-mono text-gray-400">Loading 3D Experience...</div>}>
               <Spline 
                 scene="https://prod.spline.design/nGTNHOEWh-Q122fP/scene.splinecode" 
