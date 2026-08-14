@@ -1,6 +1,7 @@
 import SEO from '../components/SEO';
 import { useParams, Link } from 'react-router-dom';
 import React from 'react';
+import { ArrowLeft, ArrowUpRight, CheckCircle2 } from 'lucide-react';
 
 const caseStudyData: Record<string, any> = {
   "ecommerce-support-automation": {
@@ -65,9 +66,9 @@ export default function CaseStudyDetail() {
 
   if (!cs) {
     return (
-      <div className="bg-[#0A0A09] text-[#F8F7F3] min-h-screen pt-40 px-6 max-w-7xl mx-auto text-center font-mono">
+      <div className="bg-[#f5f5f5] text-black min-h-screen pt-40 px-6 max-w-7xl mx-auto text-center font-mono">
         <h1 className="text-2xl mb-4">DISPATCH NOT FOUND</h1>
-        <Link to="/case-studies" className="text-[#C7A24C] border-b border-[#C7A24C]">Return to Field Reports →</Link>
+        <Link to="/case-studies" className="text-black border-b border-black">Return to Field Reports →</Link>
       </div>
     );
   }
@@ -79,101 +80,82 @@ export default function CaseStudyDetail() {
         description={cs.challenge} 
       />
 
-      <div className="bg-[#0A0A09] text-[#F8F7F3] selection:bg-[#C7A24C] selection:text-[#F8F7F3] font-sans min-h-screen pt-[140px] pb-24">
-        <div className="max-w-[1440px] mx-auto px-6 sm:px-10">
+      <div className="bg-[#f5f5f5] text-black selection:bg-black selection:text-white font-sans min-h-screen pt-[120px] pb-24">
+        <div className="max-w-[1280px] mx-auto px-6 sm:px-10">
           
           {/* Back link */}
           <div className="mb-8">
-            <Link to="/case-studies" className="font-mono text-[0.72rem] tracking-[0.1em] text-[#8a877e] uppercase hover:text-[#C7A24C] transition-colors">
-              ← Back to Field Reports
+            <Link to="/case-studies" className="inline-flex items-center gap-2 font-mono text-xs text-[#787878] uppercase hover:text-black transition-colors">
+              <ArrowLeft className="w-3.5 h-3.5" /> Back to Field Reports
             </Link>
           </div>
 
           {/* Header */}
-          <div className="mb-16 pb-8 border-b border-[#242320]">
-            <div className="font-mono text-[0.72rem] text-[#C7A24C] tracking-[0.1em] uppercase mb-4">
+          <div className="mb-16 pb-10 border-b border-black/10">
+            <span className="font-mono text-xs text-[#787878] uppercase tracking-[0.2em] block mb-3">
               {cs.industry}
-            </div>
-            <h1 className="font-serif text-[clamp(2.2rem,4.8vw,4.2rem)] font-normal leading-[1.08] tracking-tight max-w-[24ch]">
+            </span>
+            <h1 className="text-[clamp(2.2rem,4.8vw,4.2rem)] font-bold tracking-tight text-black leading-[1.08] max-w-[24ch]">
               {cs.title}
             </h1>
           </div>
 
-          {/* Stat Banner */}
-          <div className="mb-16 p-8 border border-[#242320] bg-[#0A0A09] flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
-            <div>
-              <div className="font-serif text-6xl text-[#F8F7F3]">
-                {cs.stat}<span className="text-[#C7A24C] italic text-4xl"> Impact</span>
-              </div>
-              <div className="font-mono text-xs text-[#8a877e] uppercase tracking-[0.08em] mt-1">
-                {cs.statLabel}
-              </div>
-            </div>
-            <div className="max-w-xl text-sm text-[#cfccc2] font-light leading-relaxed">
-              <strong>Client Profile:</strong> {cs.client}
-            </div>
-          </div>
-
-          {/* Challenge & Architecture */}
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 mb-20">
-            <div className="lg:col-span-5 space-y-8">
-              <div className="border border-[#242320] p-8">
-                <div className="font-mono text-[0.72rem] text-[#C7A24C] tracking-[0.1em] uppercase mb-4">
-                  THE OPERATIONAL BOTTLENECK
-                </div>
-                <p className="text-sm text-[#cfccc2] font-light leading-relaxed">
-                  {cs.challenge}
-                </p>
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
+            <div className="lg:col-span-7 space-y-8">
+              <div className="bg-white p-8 sm:p-10 rounded-3xl border border-black/10 shadow-sm space-y-6">
+                <span className="font-mono text-xs text-[#787878] uppercase tracking-widest block">CLIENT CONTEXT &amp; CHALLENGE</span>
+                <p className="text-black font-semibold text-lg">{cs.client}</p>
+                <p className="text-[#545454] text-base leading-relaxed">{cs.challenge}</p>
               </div>
 
-              {/* Measured Outcomes */}
-              <div className="border border-[#242320] p-8">
-                <div className="font-mono text-[0.72rem] text-[#8a877e] tracking-[0.1em] uppercase mb-4">
-                  MEASURED OUTCOMES
-                </div>
+              <div className="bg-white p-8 sm:p-10 rounded-3xl border border-black/10 shadow-sm space-y-6">
+                <span className="font-mono text-xs text-[#787878] uppercase tracking-widest block">ENGINEERING ARCHITECTURE</span>
                 <div className="space-y-4">
-                  {cs.results.map((r: any, i: number) => (
-                    <div key={i} className="flex justify-between items-center text-xs font-mono border-b border-[#242320] pb-2">
-                      <span className="text-[#cfccc2]">{r.label}</span>
-                      <div className="space-x-3">
-                        <span className="text-[#8a877e] line-through">{r.old}</span>
-                        <span className="text-[#C7A24C] font-bold">{r.new}</span>
-                      </div>
+                  {cs.architecture.map((arch: any, idx: number) => (
+                    <div key={idx} className="p-4 bg-[#f5f5f5] rounded-2xl border border-black/5">
+                      <h4 className="font-bold text-black text-base mb-1">{arch.name}</h4>
+                      <p className="text-[#545454] text-sm leading-relaxed">{arch.desc}</p>
                     </div>
                   ))}
                 </div>
               </div>
             </div>
 
-            <div className="lg:col-span-7 space-y-6">
-              <div className="font-mono text-[0.72rem] text-[#8a877e] tracking-[0.1em] uppercase mb-2">
-                DEPLOYED ARCHITECTURE
+            <div className="lg:col-span-5 space-y-8">
+              <div className="bg-black text-white p-8 sm:p-10 rounded-3xl shadow-xl">
+                <span className="font-mono text-xs text-white/60 uppercase tracking-widest block mb-4">PRIMARY IMPACT METRIC</span>
+                <div className="text-6xl font-bold tracking-tight text-white mb-2">{cs.stat}</div>
+                <div className="font-mono text-xs uppercase text-white/80 tracking-wider mb-6">{cs.statLabel}</div>
               </div>
-              <div className="border-t border-[#242320]">
-                {cs.architecture.map((arch: any, i: number) => (
-                  <div key={i} className="py-6 border-b border-[#242320]">
-                    <h4 className="font-serif text-2xl font-normal mb-2">{arch.name}</h4>
-                    <p className="text-sm text-[#cfccc2] font-light leading-relaxed">{arch.desc}</p>
-                  </div>
-                ))}
+
+              <div className="bg-white p-8 rounded-3xl border border-black/10 shadow-sm space-y-6">
+                <span className="font-mono text-xs text-[#787878] uppercase tracking-widest block">MEASURED DELTA</span>
+                <div className="space-y-4">
+                  {cs.results.map((res: any, idx: number) => (
+                    <div key={idx} className="flex justify-between items-center py-3 border-b border-black/5 last:border-0">
+                      <span className="text-sm font-semibold text-black">{res.label}</span>
+                      <div className="text-right font-mono text-xs">
+                        <span className="line-through text-[#787878] mr-2">{res.old}</span>
+                        <span className="text-black font-bold">{res.new}</span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
               </div>
             </div>
           </div>
 
-          {/* CTA Box */}
-          <div className="border border-[#3a382f] p-8 sm:p-14 relative flex flex-col md:flex-row justify-between items-start md:items-center gap-8">
-            <div className="absolute -top-[11px] left-10 bg-[#0A0A09] px-2.5 font-mono text-[0.68rem] tracking-[0.12em] text-[#8a877e]">
-              REPLICATE THESE RESULTS
-            </div>
+          {/* Bottom CTA */}
+          <div className="mt-20 bg-black text-white p-10 sm:p-14 rounded-3xl flex flex-col md:flex-row justify-between items-start md:items-center gap-8">
             <div>
-              <div className="font-serif text-2xl sm:text-3xl font-normal">Want results like this for your team?</div>
-              <p className="text-sm text-[#8a877e] font-light mt-2">Book a free strategy call to analyze your automation potential.</p>
+              <h3 className="text-2xl sm:text-3xl font-bold text-white">Need similar outcomes for your team?</h3>
+              <p className="text-white/70 text-sm mt-2">Book an engineering consultation to review your workflow.</p>
             </div>
             <Link 
               to="/contact" 
-              className="font-mono text-[0.78rem] tracking-[0.08em] uppercase border border-[#F8F7F3] px-7 py-3.5 hover:bg-[#F8F7F3] hover:text-[#0A0A09] transition-all whitespace-nowrap"
+              className="inline-flex items-center gap-2 px-8 py-4 bg-white text-black text-xs font-bold uppercase tracking-wider rounded-full hover:bg-white/90 transition-all whitespace-nowrap"
             >
-              Start a project →
+              Book Consultation →
             </Link>
           </div>
 
