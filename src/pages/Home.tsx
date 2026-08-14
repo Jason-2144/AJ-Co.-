@@ -3,7 +3,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Link } from 'react-router-dom';
 import { ArrowUpRight, Plus, Minus, Layers, Zap, Cpu, Sparkles, Check, ChevronRight } from 'lucide-react';
-import Spline from '@splinetool/react-spline/next';
+import Spline from '@splinetool/react-spline';
 
 export default function Home() {
   const [activeAccordion, setActiveAccordion] = useState<number | null>(0);
