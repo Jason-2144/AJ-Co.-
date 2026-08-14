@@ -1,10 +1,9 @@
 import SEO from '../components/SEO';
-import React, { useState, useEffect, useRef, Suspense, lazy } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Link } from 'react-router-dom';
 import { ArrowUpRight, Plus, Minus, Layers, Zap, Cpu, Sparkles, Check, ChevronRight } from 'lucide-react';
-
-const Spline = lazy(() => import('@splinetool/react-spline'));
+import Spline from '@splinetool/react-spline/next';
 
 export default function Home() {
   const [activeAccordion, setActiveAccordion] = useState<number | null>(0);
@@ -141,12 +140,10 @@ export default function Home() {
           
           {/* 3D Spline Stage */}
           <div className="absolute inset-0 z-0 w-full h-full pointer-events-auto flex items-center justify-center">
-            <Suspense fallback={<div className="w-full h-full flex items-center justify-center text-xs font-mono text-gray-400">Loading 3D Experience...</div>}>
-              <Spline 
-                scene="https://prod.spline.design/psWR0IHSdjlcfsjA/scene.splinecode" 
-                className="w-full h-full"
-              />
-            </Suspense>
+            <Spline 
+              scene="https://prod.spline.design/psWR0IHSdjlcfsjA/scene.splinecode" 
+              className="w-full h-full"
+            />
           </div>
           
           <div className="relative z-10">
