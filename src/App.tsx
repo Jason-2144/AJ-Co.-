@@ -24,10 +24,11 @@ import TermsOfService from './pages/TermsOfService';
 import Login from './pages/staff/Login';
 import Dashboard from './pages/staff/Dashboard';
 import GmailCallback from './pages/staff/GmailCallback';
+import DentistDashboard from './pages/staff/DentistDashboard';
 
 function AppContent() {
   const location = useLocation();
-  const isStaffRoute = location.pathname.startsWith('/staff') || location.pathname.includes('/gmail/callback');
+  const isStaffRoute = location.pathname.startsWith('/staff') || location.pathname === '/dentist' || location.pathname.includes('/gmail/callback');
 
   return (
     <div className={`font-sans min-h-screen ${isStaffRoute ? 'bg-[#0A0A0A] text-white' : 'bg-[#f5f5f5] text-black'} flex flex-col`}>
@@ -45,6 +46,9 @@ function AppContent() {
           <Route path="/privacy-policy" element={<PrivacyPolicy />} />
           <Route path="/terms-of-service" element={<TermsOfService />} />
           
+          {/* Direct Dentist Dashboard Route */}
+          <Route path="/dentist" element={<div className="p-6 md:p-10 max-w-7xl mx-auto"><DentistDashboard /></div>} />
+
           {/* Protected Staff Portal Routes & OAuth Callbacks */}
           <Route path="/api/gmail/callback" element={<GmailCallback />} />
           <Route path="/gmail/callback" element={<GmailCallback />} />
