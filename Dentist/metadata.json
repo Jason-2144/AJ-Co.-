@@ -1,0 +1,6 @@
+{
+  "name": "Practice OS",
+  "description": "A sleek, dark-mode dental practice command center dashboard showing live updates from 8 AI agents.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

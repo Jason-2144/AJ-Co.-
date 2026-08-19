@@ -1,0 +1,23 @@
+{
+  "name": "practice-os-automation",
+  "version": "1.0.0",
+  "description": "AJ & Co. dental automation service — all 8 products in one deployable Node.js service. Replaces n8n.",
+  "type": "module",
+  "main": "src/index.js",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "start": "node src/index.js",
+    "dev": "node --watch src/index.js",
+    "dry-run": "DRY_RUN=true node src/index.js",
+    "test:routes": "node scripts/smoke-test.js"
+  },
+  "dependencies": {
+    "express": "^4.21.2",
+    "express-ws": "^5.0.2",
+    "node-cron": "^3.0.3",
+    "twilio": "^5.13.1",
+    "ws": "^8.18.0"
+  }
+}

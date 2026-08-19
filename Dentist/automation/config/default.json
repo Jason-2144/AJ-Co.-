@@ -1,0 +1,70 @@
+{
+  "practiceName": "Demo Dental Clinic",
+  "timezone": "Asia/Kolkata",
+  "currency": "INR",
+
+  "_comment_channel": "'whatsapp' for India clients. 'sms' for US/Houston clients — Meta blocks WhatsApp marketing-category messages to US numbers, so proactive outbound must go over SMS there.",
+  "channel": "whatsapp",
+
+  "referralLinkBase": "https://demodental.in/refer/",
+  "educationalLinkBase": "https://demodental.in/treatments/",
+  "reviewLink": "https://g.page/r/YOUR_GOOGLE_REVIEW_LINK/review",
+
+  "products": {
+    "reengagement": {
+      "enabled": true,
+      "_comment": "Weekly campaign to patients who haven't visited in 6+ months.",
+      "schedule": "0 10 * * 1",
+      "lapsedMonths": 6,
+      "templateName": "patient_reengagement_v1",
+      "smsBody": "Hi {{firstName}}, it's been {{monthsLapsed}} months since your last visit to {{practiceName}}. We'd love to see you for a check-up — reply YES and we'll find you a slot."
+    },
+    "receptionist": {
+      "enabled": true,
+      "_comment": "AI phone receptionist. Answers calls 24/7, books appointments, escalates emergencies.",
+      "voice": "alloy",
+      "model": "gpt-realtime-mini"
+    },
+    "noShow": {
+      "enabled": true,
+      "_comment": "Appointment reminders at 72h/24h/2h, plus waitlist auto-fill on cancellation.",
+      "schedule": "0 * * * *",
+      "reminderWindows": [72, 24, 2],
+      "chronicNoShowThreshold": 2,
+      "templateName": "appointment_reminder_v1",
+      "smsBody": "Reminder: your appointment at {{practiceName}} is on {{appointmentTime}}. Reply C to confirm or R to reschedule."
+    },
+    "followUp": {
+      "enabled": true,
+      "_comment": "Chases patients who were quoted treatment but never booked it. Max 3 touches.",
+      "schedule": "0 11 * * 3",
+      "minDaysSinceRecommended": 14,
+      "maxTouches": 3,
+      "templateName": "treatment_followup_v1",
+      "smsBody": "Hi {{firstName}}, you were recommended {{treatment}} ({{currencySymbol}}{{quotedPrice}}) at {{practiceName}}. Still interested? Reply YES to book."
+    },
+    "reputation": {
+      "enabled": true,
+      "_comment": "Asks for a rating after a visit. 4-5 stars are routed to Google, 1-3 stay private as internal feedback.",
+      "schedule": "0 18 * * *",
+      "hoursAfterVisit": 3,
+      "publicReviewThreshold": 4,
+      "templateName": "rating_request_v1",
+      "smsBody": "Thanks for visiting {{practiceName}} today, {{firstName}}! How did we do? Reply with a number 1-5."
+    },
+    "billing": {
+      "enabled": true,
+      "_comment": "Monitors unpaid/stalled insurance claims and escalates by age. For India, repurpose as outstanding-balance follow-up.",
+      "schedule": "0 9 * * *",
+      "tiers": [
+        { "name": "gentle", "minDays": 30 },
+        { "name": "firm", "minDays": 60 },
+        { "name": "escalate", "minDays": 90 }
+      ]
+    },
+    "booking": {
+      "enabled": true,
+      "_comment": "Shared booking endpoint every other product calls. Single source of truth for appointments."
+    }
+  }
+}

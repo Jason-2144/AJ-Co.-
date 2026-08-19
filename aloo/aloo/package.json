@@ -1,0 +1,22 @@
+{
+  "name": "place-scout",
+  "version": "1.0.0",
+  "description": "A lead generation tool to find businesses without websites using Google Maps New Places API.",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@types/react": "^18.3.18",
+    "@types/react-dom": "^18.3.5",
+    "@vitejs/plugin-react": "^4.7.0",
+    "appwrite": "^26.2.0",
+    "lucide-react": "^0.554.0",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0",
+    "typescript": "^5.6.3",
+    "vite": "^6.0.5"
+  }
+}
