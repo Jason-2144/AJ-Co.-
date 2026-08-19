@@ -24,6 +24,7 @@ Use these same values for every n8n workflow's `APPWRITE_ENDPOINT` / `APPWRITE_P
 | `revenue_recovered` | auto-generated (append-only) | claim_id, amount (integer), recovered_at (datetime) — captured but not yet wired into a dashboard card |
 | `completed_visits` | `patient_id` | name, phone, visit_datetime, treatment, rating_requested (string: yes/no) — feeds the rating-request workflow, not read directly by the dashboard |
 | `reminder_log` | auto-generated (append-only) | appointment_id, patient_id, reminder_window, is_chronic_no_show (boolean), sent_at — audit trail, not read directly by the dashboard |
+| `practice_stats` | `"current"` (single row per deployed client) | google_place_id, display_name, rating (float), review_count (integer), review_link (string), synced_at (datetime) — written hourly by `syncGoogleRating()` via the Places API; only populated when `products.reputation.googleRatingSync: true` in the client config |
 
 ## Which dashboard card reads which collection
 
@@ -33,7 +34,7 @@ Use these same values for every n8n workflow's `APPWRITE_ENDPOINT` / `APPWRITE_P
 | AI Receptionist | `calls_log`, filter `handled_at >= today` | **new** — nothing logged calls before this integration; see Product 2 update |
 | No-Show Recovery | `appointments`, filter `appointment_datetime` today, `status` | confirmation rate = confirmed / (confirmed + pending) |
 | Treatment Follow-Up | `pending_treatments` | count pending, outreach progress = follow_up_count > 0 / total |
-| Reputation Agent | `ratings`, filter `logged_at >= 7 days ago` | this is *our own* captured ratings, not Google's live public score — see note below |
+| Reputation Agent | `ratings` (our own captured ratings, filter `logged_at >= 7 days ago`) + `practice_stats/current` (live Google rating/review count, if sync is enabled) | two different numbers, see note below |
 | Website & Booking | `appointments`, filter `source = website`, `created_at >= today` | bookings-made-today only; live visitors / traffic source are **not** covered — see note below |
 | Insurance Agent | `claims`, filter `status = pending` | sum(amount) for open claims total, count where `tier = urgent_forgotten` |
 | Practice Dashboard | — | **not covered by any of the 8 products** — see note below |
@@ -41,5 +42,5 @@ Use these same values for every n8n workflow's `APPWRITE_ENDPOINT` / `APPWRITE_P
 ## Gaps — need a separate integration beyond the 8 products built
 
 1. **Practice Dashboard card** (today's revenue, chairs occupied, avg wait time) — this is live PMS/ops data, not something any of the 8 WhatsApp/voice/web products produce. Needs a direct PMS API integration (Dentrix/Curve/OpenDental) or manual entry. Left as-is (mock) for now.
-2. **Reputation Agent's live Google star rating** ("4.7", "8 new this week", "Google • 2h ago") — this is Google's own public rating, which requires the **Google Business Profile API**, separate from our own post-visit rating capture. Our `ratings` collection tracks patient responses to *our* prompt, which is a leading indicator but not the same number Google shows publicly.
+2. ~~**Reputation Agent's live Google star rating**~~ — **solved**, without Google Business Profile API (which requires the client to grant OAuth ownership access to their listing — too much friction to ask of every dentist we onboard). Instead `syncGoogleRating()` uses the **Places API (New)** — same Google Maps Platform key as Place Scout — which reads any public place's rating/review count with no ownership verification needed. Runs hourly, writes to `practice_stats/current`. Enable per client via `products.reputation.googleRatingSync: true` + `GOOGLE_MAPS_API_KEY` env var. Our `ratings` collection is still a separate, complementary number: patient responses to *our own* post-visit prompt (a leading indicator), not Google's public score.
 3. **Website & Booking's live visitors / top traffic source** — needs a real analytics tool (Plausible, GA4) wired into the website from Product 7. Bookings-made-today is covered; visitor counts are not.

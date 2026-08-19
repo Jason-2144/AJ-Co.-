@@ -50,7 +50,17 @@
       "hoursAfterVisit": 3,
       "publicReviewThreshold": 4,
       "templateName": "rating_request_v1",
-      "smsBody": "Thanks for visiting {{practiceName}} today, {{firstName}}! How did we do? Reply with a number 1-5."
+      "smsBody": "Thanks for visiting {{practiceName}} today, {{firstName}}! How did we do? Reply with a number 1-5.",
+
+      "_comment_managerAlert": "1-3 star ratings page the practice manager/dentist over WhatsApp in real time. Requires an approved WhatsApp template (business-initiated, not a reply). Leave managerPhone blank to disable and just log to the dashboard instead.",
+      "managerPhone": "",
+      "managerAlertTemplate": "low_rating_alert_v1",
+
+      "_comment_googleRatingSync": "When true, hourly job pulls the practice's live Google rating + review count via Places API and writes a real write-review link, replacing the static reviewLink placeholder above. Requires GOOGLE_MAPS_API_KEY env var.",
+      "googleRatingSync": false,
+      "googleRatingSyncSchedule": "0 * * * *",
+      "googlePlaceQuery": "",
+      "googlePlaceId": ""
     },
     "billing": {
       "enabled": true,

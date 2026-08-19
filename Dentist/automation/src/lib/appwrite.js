@@ -116,4 +116,5 @@ export const TABLES = {
   REVENUE_RECOVERED: 'revenue_recovered',
   COMPLETED_VISITS: 'completed_visits',
   REMINDER_LOG: 'reminder_log',
+  PRACTICE_STATS: 'practice_stats',
 };

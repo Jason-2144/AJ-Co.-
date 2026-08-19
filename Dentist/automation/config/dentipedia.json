@@ -1,0 +1,41 @@
+{
+  "practiceName": "Dr Cynthia's DENTIPEDIA — Pediatric & Family Dental Clinic",
+  "timezone": "Asia/Kolkata",
+  "currency": "INR",
+
+  "channel": "whatsapp",
+
+  "referralLinkBase": "https://TODO-dentipedia-website.in/refer/",
+  "educationalLinkBase": "https://TODO-dentipedia-website.in/treatments/",
+  "reviewLink": "https://g.page/r/YOUR_GOOGLE_REVIEW_LINK/review",
+
+  "products": {
+    "reengagement": { "enabled": false },
+    "receptionist": { "enabled": false },
+    "noShow": { "enabled": false },
+    "followUp": { "enabled": false },
+
+    "reputation": {
+      "enabled": true,
+      "_comment": "Reputation Agent only, for now — this is the friends-and-family pilot with Cynthia. Other products can be turned on later by flipping enabled: true above.",
+      "schedule": "0 18 * * *",
+      "hoursAfterVisit": 3,
+      "publicReviewThreshold": 4,
+      "templateName": "rating_request_v1",
+      "smsBody": "Thanks for visiting {{practiceName}} today, {{firstName}}! How did we do? Reply with a number 1-5.",
+
+      "_comment_managerAlert": "TODO: set managerPhone to Cynthia's (or her front desk's) WhatsApp number in E.164 format, e.g. +9198XXXXXXXX. Until then low ratings only show up on the dashboard, no real-time ping.",
+      "managerPhone": "",
+      "managerAlertTemplate": "low_rating_alert_v1",
+
+      "_comment_googleRatingSync": "Resolves via Places API text search on first run and logs the place_id — worth copying that into googlePlaceId below afterward so future syncs skip the text search.",
+      "googleRatingSync": true,
+      "googleRatingSyncSchedule": "0 * * * *",
+      "googlePlaceQuery": "Dr Cynthia's DENTIPEDIA Pediatric & Family Dental Clinic, Chennai",
+      "googlePlaceId": ""
+    },
+
+    "billing": { "enabled": false },
+    "booking": { "enabled": false }
+  }
+}

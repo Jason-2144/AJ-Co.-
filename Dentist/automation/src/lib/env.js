@@ -44,6 +44,10 @@ export const env = {
   PUBLIC_HOSTNAME: process.env.PUBLIC_HOSTNAME,
 
   FRONT_DESK_WHATSAPP_NUMBER: process.env.FRONT_DESK_WHATSAPP_NUMBER,
+
+  // Google Maps Platform (Places API) — same key used by Place Scout.
+  // Only required if products.reputation.googleRatingSync is enabled.
+  GOOGLE_MAPS_API_KEY: process.env.GOOGLE_MAPS_API_KEY,
 };
 
 function loadClientConfig() {
@@ -80,6 +84,9 @@ export function validateEnv() {
     if (p.receptionist?.enabled) {
       need('OPENAI_API_KEY');
       need('PUBLIC_HOSTNAME');
+    }
+    if (p.reputation?.googleRatingSync) {
+      need('GOOGLE_MAPS_API_KEY');
     }
   }
 

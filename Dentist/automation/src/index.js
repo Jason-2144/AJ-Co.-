@@ -4,7 +4,7 @@
  * Replaces the n8n instance entirely. Deploy this one repo to Railway/Render
  * and it runs every scheduled campaign and answers every inbound webhook.
  *
- *   Cron jobs      -> outbound campaigns (re-engagement, reminders, follow-up, ratings, claims)
+ *   Cron jobs      -> outbound campaigns (re-engagement, reminders, follow-up, ratings, claims, google-rating sync)
  *   POST /webhook/whatsapp  -> inbound WhatsApp replies (Meta)
  *   POST /webhook/sms       -> inbound SMS replies (Twilio)
  *   POST /webhook/booking   -> shared booking endpoint (website form, etc.)
@@ -163,6 +163,7 @@ app.post('/run/:job', async (req, res) => {
     reminders: noshow.runReminders,
     followup: followup.runCampaign,
     ratings: reputation.runRatingRequests,
+    'google-rating': reputation.syncGoogleRating,
     claims: billing.runClaimMonitor,
   };
   const job = jobs[req.params.job];
@@ -206,6 +207,26 @@ schedule('noShow', noshow.runReminders, 'appointment reminders');
 schedule('followUp', followup.runCampaign, 'treatment follow-up');
 schedule('reputation', reputation.runRatingRequests, 'rating requests');
 schedule('billing', billing.runClaimMonitor, 'claim monitor');
+
+// Google rating sync runs on its own schedule (default: hourly), separate
+// from the rating-request campaign above. Config: products.reputation.googleRatingSync
+// (bool, turns it on) + products.reputation.googleRatingSyncSchedule (cron expr).
+if (enabled('reputation') && config?.products?.reputation?.googleRatingSync) {
+  const expr = config.products.reputation.googleRatingSyncSchedule || '0 * * * *';
+  if (cron.validate(expr)) {
+    cron.schedule(expr, async () => {
+      console.log('[cron] running Google rating sync');
+      try {
+        await reputation.syncGoogleRating();
+      } catch (err) {
+        console.error(`[cron:google-rating-sync] ${err.message}`);
+      }
+    }, { timezone: config?.timezone || 'UTC' });
+    console.log(`[cron] Google rating sync scheduled: ${expr} (${config?.timezone})`);
+  } else {
+    console.error(`[cron] invalid googleRatingSyncSchedule "${expr}" — skipping`);
+  }
+}
 
 validateEnv();
 
