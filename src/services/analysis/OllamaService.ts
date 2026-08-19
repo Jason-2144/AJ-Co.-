@@ -76,15 +76,17 @@ export class OllamaService {
    * Sends a free-form prompt to Ollama and returns the raw text response.
    * Used by ResearchAggregator for pre-processing summaries (not JSON mode).
    */
-  async runPrompt(prompt: string): Promise<string> {
+  async runPrompt(prompt: string, opts?: { maxTokens?: number; json?: boolean }): Promise<string> {
     const url = `${ANALYSIS_CONFIG.ollamaUrl}/api/generate`;
     const payload = {
       model: ANALYSIS_CONFIG.modelName,
       prompt,
       stream: false,
+      think: false, // Reasoning models (e.g. qwen3) can burn the whole token budget "thinking" and return nothing
+      ...(opts?.json ? { format: 'json' } : {}),
       options: {
         temperature: ANALYSIS_CONFIG.temperature,
-        num_predict: ANALYSIS_CONFIG.maxTokens,
+        num_predict: opts?.maxTokens ?? ANALYSIS_CONFIG.maxTokens,
       },
     };
 

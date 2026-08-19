@@ -1,3 +1,4 @@
+import 'dotenv/config';
 import express from 'express';
 import path from 'path';
 import { createServer as createViteServer } from 'vite';
@@ -15,12 +16,17 @@ import { campaignRepository } from './src/services/campaign/CampaignRepository';
 import { researchCrawler } from './src/services/research/ResearchCrawler';
 import { researchVersionManager } from './src/services/research/ResearchVersionManager';
 import { researchAggregator } from './src/services/research/ResearchAggregator';
+import { whatsAppSender } from './src/services/whatsapp/WhatsAppSender';
+import { geminiService } from './src/services/whatsapp/GeminiService';
+import { buildReengagementPrompt, fillReengagementTemplate } from './src/prompts/whatsapp/reengagementTemplate';
+import { supabase } from './src/lib/supabase';
 
 async function startServer() {
   const app = express();
   const PORT = 3000;
 
   app.use(express.json());
+  app.use(express.urlencoded({ extended: true })); // Twilio webhooks post form-urlencoded payloads
 
   app.post("/api/research", async (req, res) => {
     const { prospectId, url } = req.body;
@@ -286,7 +292,105 @@ async function startServer() {
       res.status(500).send(err?.message || "Internal server error.");
     }
   });
-app.get("/test-scraper", async (req, res) => {
+app.post("/api/whatsapp/generate", async (req, res) => {
+    const { patient } = req.body;
+    if (!patient || !patient.name || !patient.phone) {
+      return res.status(400).send("Missing patient name or phone.");
+    }
+    try {
+      const prompt = buildReengagementPrompt(patient);
+      // Gemini is cloud-hosted and preferred when configured (works from a deployed server);
+      // local Ollama is the fallback for offline/no-API-key development.
+      const rawResponse = geminiService.isConfigured()
+        ? await geminiService.generateJSON(prompt)
+        : await ollamaService.runPrompt(prompt, { maxTokens: 512, json: true });
+
+      // Strip any stray <think>...</think> reasoning, then extract the {"sentence": "..."} object
+      const cleaned = rawResponse.replace(/<think>[\s\S]*?<\/think>/i, '').trim();
+      const jsonStart = cleaned.indexOf('{');
+      const jsonEnd = cleaned.lastIndexOf('}');
+      if (jsonStart === -1 || jsonEnd === -1) {
+        throw new Error('The AI model did not return a usable message. Try again.');
+      }
+      const parsed = JSON.parse(cleaned.substring(jsonStart, jsonEnd + 1));
+      const nudgeSentence = String(parsed.sentence || '').trim();
+      if (!nudgeSentence) {
+        throw new Error('The AI model returned an empty message. Try again.');
+      }
+
+      const firstName = patient.name.trim().split(/\s+/)[0];
+      const message = fillReengagementTemplate(firstName, nudgeSentence);
+      res.json({ message, variables: { '1': firstName, '2': nudgeSentence.trim() } });
+    } catch (err: any) {
+      console.error(`WhatsApp message generation failed for patient ${patient.id}:`, err);
+      res.status(500).send(err?.message || "An unexpected error occurred during WhatsApp message generation.");
+    }
+  });
+
+  app.post("/api/whatsapp/send", async (req, res) => {
+    const { to, variables } = req.body;
+    if (!to || !variables) {
+      return res.status(400).send("Missing to or variables parameters.");
+    }
+    try {
+      const result = await whatsAppSender.sendMessage(to, variables);
+      res.json(result);
+    } catch (err: any) {
+      console.error(`WhatsApp send failed for ${to}:`, err);
+      res.status(500).send(err?.message || "An unexpected error occurred while sending the WhatsApp message.");
+    }
+  });
+
+  app.post("/api/whatsapp/test-ping", async (req, res) => {
+    const { to } = req.body;
+    if (!to) {
+      return res.status(400).send("Missing to parameter.");
+    }
+    try {
+      const result = await whatsAppSender.sendTestPing(to);
+      res.json(result);
+    } catch (err: any) {
+      console.error(`WhatsApp test ping failed for ${to}:`, err);
+      res.status(500).send(err?.message || "An unexpected error occurred while sending the test message.");
+    }
+  });
+
+  app.get("/api/whatsapp/status", (req, res) => {
+    res.json({
+      provider: whatsAppSender.getProvider(),
+      mockMode: whatsAppSender.isMockMode(),
+      fromNumber: whatsAppSender.getFromNumber(),
+      hasApprovedTemplate: whatsAppSender.hasApprovedTemplate(),
+    });
+  });
+
+  app.post("/api/whatsapp/webhook", async (req, res) => {
+    try {
+      const { MessageSid, MessageStatus, From, Body } = req.body;
+
+      if (MessageStatus) {
+        // Delivery/read status callback for a message we sent
+        await supabase.from('whatsapp_messages').update({ status: MessageStatus }).eq('message_sid', MessageSid);
+      } else if (Body && From) {
+        // Inbound reply from a patient
+        const fromPhone = String(From).replace(/^whatsapp:/, '');
+        console.log(`WhatsApp reply from ${fromPhone}: ${Body}`);
+
+        const { data: patientRows } = await supabase.from('patients').select('id').eq('phone', fromPhone).limit(1);
+        const patientId = patientRows?.[0]?.id;
+        if (patientId) {
+          await supabase.from('whatsapp_messages').update({ status: 'replied' }).eq('patient_id', patientId);
+        }
+      }
+
+      res.sendStatus(200);
+    } catch (err: any) {
+      console.error("WhatsApp webhook processing failed:", err);
+      res.sendStatus(200); // Always acknowledge to prevent Twilio retry storms
+    }
+  });
+
+  app.get("/test-scraper", async (req, res) => {
   console.log("Route hit");
   try {
     const text = await scrapeWebsite("https://ajandco.site");
