@@ -6,7 +6,7 @@ import Footer from './components/Footer';
 import ScrollToTop from './components/ScrollToTop';
 
 // Context
-import { AuthProvider } from './contexts/AuthContext';
+import { AuthProvider, useAuth } from './contexts/AuthContext';
 
 // Pages
 import Home from './pages/Home';
@@ -24,6 +24,24 @@ import TermsOfService from './pages/TermsOfService';
 import Login from './pages/staff/Login';
 import Dashboard from './pages/staff/Dashboard';
 import GmailCallback from './pages/staff/GmailCallback';
+
+function ProtectedStaffRoute({ children }: { children: React.ReactNode }) {
+  const { user, loading } = useAuth();
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-[#0A0A0A] flex items-center justify-center text-white/60 text-sm">
+        Loading...
+      </div>
+    );
+  }
+
+  if (!user) {
+    return <Navigate to="/staff/login" replace />;
+  }
+
+  return <>{children}</>;
+}
 
 function AppContent() {
   const location = useLocation();
@@ -49,8 +67,8 @@ function AppContent() {
           <Route path="/api/gmail/callback" element={<GmailCallback />} />
           <Route path="/gmail/callback" element={<GmailCallback />} />
           <Route path="/staff/login" element={<Login />} />
-          <Route path="/staff" element={<Dashboard />} />
-          <Route path="/staff/*" element={<Dashboard />} />
+          <Route path="/staff" element={<ProtectedStaffRoute><Dashboard /></ProtectedStaffRoute>} />
+          <Route path="/staff/*" element={<ProtectedStaffRoute><Dashboard /></ProtectedStaffRoute>} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </main>
