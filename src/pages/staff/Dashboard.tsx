@@ -16,7 +16,6 @@ import AIOutreach from './AIOutreach';
 import Campaigns from './Campaigns';
 import MailboxManager from './MailboxManager';
 import PlaceScoutTool from './PlaceScoutTool';
-import DentistDashboard from './DentistDashboard';
 
 export default function Dashboard() {
   const { user, loading } = useAuth();
@@ -56,7 +55,6 @@ export default function Dashboard() {
       {/* Primary content pane */}
       <main className="flex-grow p-6 md:p-10 overflow-y-auto h-screen max-w-7xl mx-auto space-y-8">
         {activeTab === 'dashboard' && <DashboardOverview setActiveTab={setActiveTab} />}
-        {activeTab === 'dentist' && <DentistDashboard />}
         {activeTab === 'aloo' && <PlaceScoutTool />}
         {activeTab === 'outreach' && <AIOutreach />}
         {activeTab === 'mailboxes' && <MailboxManager />}
