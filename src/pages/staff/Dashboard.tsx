@@ -18,6 +18,7 @@ import MailboxManager from './MailboxManager';
 import PlaceScoutTool from './PlaceScoutTool';
 import DentistDashboard from './DentistDashboard';
 import PatientReengagement from './PatientReengagement';
+import BeautifulPostman from './BeautifulPostman';
 
 export default function Dashboard() {
   const { user, loading } = useAuth();
@@ -47,11 +48,11 @@ export default function Dashboard() {
   return (
     <div className="min-h-screen bg-[#0A0A0A] text-white flex font-sans">
       {/* Sidebar navigation */}
-      <Sidebar 
-        collapsed={collapsed} 
-        setCollapsed={setCollapsed} 
-        activeTab={activeTab} 
-        setActiveTab={setActiveTab} 
+      <Sidebar
+        collapsed={collapsed}
+        setCollapsed={setCollapsed}
+        activeTab={activeTab}
+        setActiveTab={setActiveTab}
       />
 
       {/* Primary content pane */}
@@ -62,6 +63,7 @@ export default function Dashboard() {
         {activeTab === 'aloo' && <PlaceScoutTool />}
         {activeTab === 'outreach' && <AIOutreach />}
         {activeTab === 'mailboxes' && <MailboxManager />}
+        {activeTab === 'beautiful-postman' && <BeautifulPostman />}
         {activeTab === 'crm' && <CRM />}
         {activeTab === 'projects' && <Projects />}
         {activeTab === 'tasks' && <Tasks />}

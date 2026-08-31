@@ -1,22 +1,23 @@
 import React from 'react';
 import { useAuth } from '../../contexts/AuthContext';
-import { 
-  LayoutDashboard, 
-  Users, 
-  FolderGit2, 
-  CheckSquare, 
-  DollarSign, 
-  Globe, 
-  Settings, 
-  LogOut, 
-  ChevronLeft, 
+import {
+  LayoutDashboard,
+  Users,
+  FolderGit2,
+  CheckSquare,
+  DollarSign,
+  Globe,
+  Settings,
+  LogOut,
+  ChevronLeft,
   ChevronRight,
   ShieldAlert,
   Sparkles,
   Mail,
   MapPin,
   Stethoscope,
-  MessageCircle
+  MessageCircle,
+  Send
 } from 'lucide-react';
 
 interface SidebarProps {
@@ -36,6 +37,7 @@ export default function Sidebar({ collapsed, setCollapsed, activeTab, setActiveT
     { id: 'aloo', label: 'Place Scout (Maps)', icon: MapPin },
     { id: 'outreach', label: 'AI Outreach', icon: Sparkles },
     { id: 'mailboxes', label: 'Mailbox Manager', icon: Mail },
+    { id: 'beautiful-postman', label: 'Beautiful Postman', icon: Send },
     { id: 'crm', label: 'CRM', icon: Users },
     { id: 'projects', label: 'Projects', icon: FolderGit2 },
     { id: 'tasks', label: 'Tasks', icon: CheckSquare },
@@ -59,7 +61,7 @@ export default function Sidebar({ collapsed, setCollapsed, activeTab, setActiveT
   };
 
   return (
-    <aside 
+    <aside
       className={`bg-[#121212] border-r border-white/5 flex flex-col transition-all duration-300 h-screen sticky top-0 z-20 ${
         collapsed ? 'w-20' : 'w-64'
       }`}
@@ -95,8 +97,8 @@ export default function Sidebar({ collapsed, setCollapsed, activeTab, setActiveT
               className={`w-full flex items-center gap-4 py-3 rounded-xl transition-all font-medium text-sm group ${
                 collapsed ? 'justify-center px-0' : 'px-4'
               } ${
-                isActive 
-                  ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/10' 
+                isActive
+                  ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/10'
                   : 'text-gray-400 hover:text-white hover:bg-white/[0.02] border border-transparent'
               }`}
               title={collapsed ? item.label : undefined}

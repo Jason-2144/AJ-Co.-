@@ -20,6 +20,7 @@ import { whatsAppSender } from './src/services/whatsapp/WhatsAppSender';
 import { geminiService } from './src/services/whatsapp/GeminiService';
 import { buildReengagementPrompt, fillReengagementTemplate } from './src/prompts/whatsapp/reengagementTemplate';
 import { supabase } from './src/lib/supabase';
+import { bpRouter, startBpBackgroundJobs } from './src/services/beautifulPostman/bpRoutes';
 
 async function startServer() {
   const app = express();
@@ -35,13 +36,13 @@ async function startServer() {
     }
     try {
       const startTime = Date.now();
-      
+
       // 1. Run crawl loop
       const pages = await researchCrawler.crawl(prospectId, url);
-      
+
       // 2. Increment crawl session version
       const version = await researchVersionManager.incrementVersion(prospectId);
-      
+
       // 3. Build AI aggregate pre-processed summary
       const { summary, confidence } = await researchAggregator.buildSummary(pages);
 
@@ -63,7 +64,7 @@ async function startServer() {
         images: [],
         extractedAt: new Date().toISOString(),
         duration: Date.now() - startTime,
-        
+
         pagesCrawled: pages.length,
         totalSizeBytes: totalSize,
         version,
@@ -103,7 +104,7 @@ async function startServer() {
     try {
       const { system, prompt } = buildEmailPrompt(analysis, prospect);
       const url = `${EMAIL_CONFIG.ollamaUrl}/api/generate`;
-      
+
       const startTime = Date.now();
       const response = await axios.post(url, {
         model: EMAIL_CONFIG.modelName,
@@ -130,7 +131,7 @@ async function startServer() {
 
       const duration = Date.now() - startTime;
       const parsedEmail = EmailValidator.cleanAndParse(rawResponseText);
-      
+
       res.json({
         ...parsedEmail,
         duration,
@@ -292,30 +293,45 @@ async function startServer() {
       res.status(500).send(err?.message || "Internal server error.");
     }
   });
-app.post("/api/whatsapp/generate", async (req, res) => {
+  async function generateNudgeSentence(prompt: string): Promise<string> {
+    // Gemini is cloud-hosted and preferred when configured (works from a deployed server);
+    // local Ollama is the fallback for offline/no-API-key development.
+    const rawResponse = geminiService.isConfigured()
+      ? await geminiService.generateJSON(prompt)
+      : await ollamaService.runPrompt(prompt, { maxTokens: 512, json: true });
+
+    // Strip any stray <think>...</think> reasoning, then extract the {"sentence": "..."} object
+    const cleaned = rawResponse.replace(/<think>[\s\S]*?<\/think>/i, '').trim();
+    const jsonStart = cleaned.indexOf('{');
+    const jsonEnd = cleaned.lastIndexOf('}');
+    if (jsonStart === -1 || jsonEnd === -1) {
+      throw new Error(`AI response wasn't valid JSON: ${cleaned.slice(0, 200)}`);
+    }
+    const parsed = JSON.parse(cleaned.substring(jsonStart, jsonEnd + 1));
+    const nudgeSentence = String(parsed.sentence || '').trim();
+    if (!nudgeSentence) {
+      throw new Error('AI response had no "sentence" field.');
+    }
+    return nudgeSentence;
+  }
+
+  app.post("/api/whatsapp/generate", async (req, res) => {
     const { patient } = req.body;
     if (!patient || !patient.name || !patient.phone) {
       return res.status(400).send("Missing patient name or phone.");
     }
     try {
       const prompt = buildReengagementPrompt(patient);
-      // Gemini is cloud-hosted and preferred when configured (works from a deployed server);
-      // local Ollama is the fallback for offline/no-API-key development.
-      const rawResponse = geminiService.isConfigured()
-        ? await geminiService.generateJSON(prompt)
-        : await ollamaService.runPrompt(prompt, { maxTokens: 512, json: true });
 
-      // Strip any stray <think>...</think> reasoning, then extract the {"sentence": "..."} object
-      const cleaned = rawResponse.replace(/<think>[\s\S]*?<\/think>/i, '').trim();
-      const jsonStart = cleaned.indexOf('{');
-      const jsonEnd = cleaned.lastIndexOf('}');
-      if (jsonStart === -1 || jsonEnd === -1) {
-        throw new Error('The AI model did not return a usable message. Try again.');
-      }
-      const parsed = JSON.parse(cleaned.substring(jsonStart, jsonEnd + 1));
-      const nudgeSentence = String(parsed.sentence || '').trim();
-      if (!nudgeSentence) {
-        throw new Error('The AI model returned an empty message. Try again.');
+      // The model occasionally returns malformed JSON — retry once before giving up,
+      // since a second attempt usually succeeds and this avoids surfacing a
+      // transient blip as a failure the user has to manually retry.
+      let nudgeSentence: string;
+      try {
+        nudgeSentence = await generateNudgeSentence(prompt);
+      } catch (firstErr: any) {
+        console.warn(`WhatsApp message generation retrying after malformed response: ${firstErr.message}`);
+        nudgeSentence = await generateNudgeSentence(prompt);
       }
 
       const firstName = patient.name.trim().split(/\s+/)[0];
@@ -400,6 +416,10 @@ app.post("/api/whatsapp/generate", async (req, res) => {
     res.status(500).send("Scraping failed");
   }
 });
+
+  // Beautiful Postman — fully isolated outbound agent (see src/services/beautifulPostman/)
+  app.use("/api/bp", bpRouter);
+  startBpBackgroundJobs();
 
   // Enforce canonical domain redirects in production
   if (process.env.NODE_ENV === "production") {
