@@ -14,7 +14,8 @@ import {
   ShieldAlert,
   Sparkles,
   Mail,
-  MapPin
+  MapPin,
+  Send
 } from 'lucide-react';
 
 interface SidebarProps {
@@ -32,6 +33,7 @@ export default function Sidebar({ collapsed, setCollapsed, activeTab, setActiveT
     { id: 'aloo', label: 'Place Scout (Maps)', icon: MapPin },
     { id: 'outreach', label: 'AI Outreach', icon: Sparkles },
     { id: 'mailboxes', label: 'Mailbox Manager', icon: Mail },
+    { id: 'beautiful-postman', label: 'Beautiful Postman', icon: Send },
     { id: 'crm', label: 'CRM', icon: Users },
     { id: 'projects', label: 'Projects', icon: FolderGit2 },
     { id: 'tasks', label: 'Tasks', icon: CheckSquare },

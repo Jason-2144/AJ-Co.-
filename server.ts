@@ -15,6 +15,7 @@ import { campaignRepository } from './src/services/campaign/CampaignRepository';
 import { researchCrawler } from './src/services/research/ResearchCrawler';
 import { researchVersionManager } from './src/services/research/ResearchVersionManager';
 import { researchAggregator } from './src/services/research/ResearchAggregator';
+import { bpRouter, startBpBackgroundJobs } from './src/services/beautifulPostman/bpRoutes';
 
 async function startServer() {
   const app = express();
@@ -286,6 +287,10 @@ async function startServer() {
       res.status(500).send(err?.message || "Internal server error.");
     }
   });
+
+  app.use("/api/bp", bpRouter);
+  startBpBackgroundJobs();
+
 app.get("/test-scraper", async (req, res) => {
   console.log("Route hit");
   try {

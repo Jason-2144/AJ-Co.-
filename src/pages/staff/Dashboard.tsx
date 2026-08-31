@@ -16,6 +16,7 @@ import AIOutreach from './AIOutreach';
 import Campaigns from './Campaigns';
 import MailboxManager from './MailboxManager';
 import PlaceScoutTool from './PlaceScoutTool';
+import BeautifulPostman from './BeautifulPostman';
 
 export default function Dashboard() {
   const { user, loading } = useAuth();
@@ -58,6 +59,7 @@ export default function Dashboard() {
         {activeTab === 'aloo' && <PlaceScoutTool />}
         {activeTab === 'outreach' && <AIOutreach />}
         {activeTab === 'mailboxes' && <MailboxManager />}
+        {activeTab === 'beautiful-postman' && <BeautifulPostman />}
         {activeTab === 'crm' && <CRM />}
         {activeTab === 'projects' && <Projects />}
         {activeTab === 'tasks' && <Tasks />}
