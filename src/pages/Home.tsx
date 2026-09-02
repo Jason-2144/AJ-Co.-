@@ -1,14 +1,30 @@
 import SEO from '../components/SEO';
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, Suspense, lazy } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Link } from 'react-router-dom';
 import { ArrowUpRight, Plus, Minus, Layers, Zap, Cpu, Sparkles, Check, ChevronRight } from 'lucide-react';
-import Spline from '@splinetool/react-spline';
+
+// Lazy-loaded so mobile visitors never download/execute the WebGL runtime at all — importing
+// this eagerly (even when unrendered) was enough to stall the hero's entrance animation on
+// touch devices, leaving the headline/subtext stuck at opacity 0 indefinitely.
+const Spline = lazy(() => import('@splinetool/react-spline'));
 
 export default function Home() {
   const [activeAccordion, setActiveAccordion] = useState<number | null>(0);
   const [selectedFilter, setSelectedFilter] = useState<string>('All');
   const cursorDotRef = useRef<HTMLDivElement>(null);
+  // The Spline 3D scene is heavy enough on mobile GPUs that it can stall the hero's
+  // entrance animation indefinitely (headline/subtext stuck at opacity 0). Skip it
+  // below the md breakpoint rather than risk the pitch never rendering.
+  const [showSpline, setShowSpline] = useState(false);
+
+  useEffect(() => {
+    const mq = window.matchMedia('(min-width: 768px)');
+    setShowSpline(mq.matches);
+    const handleChange = (e: MediaQueryListEvent) => setShowSpline(e.matches);
+    mq.addEventListener('change', handleChange);
+    return () => mq.removeEventListener('change', handleChange);
+  }, []);
 
   useEffect(() => {
     // Mutate the dot's position directly instead of via setState
@@ -138,41 +154,45 @@ export default function Home() {
         {/* ================= HERO SECTION ================= */}
         <section className="relative pt-36 pb-24 px-6 sm:px-10 max-w-[1280px] mx-auto min-h-[85vh] flex flex-col justify-between z-10 overflow-hidden">
           
-          {/* 3D Spline Stage */}
-          <div className="absolute inset-0 z-0 w-full h-full pointer-events-auto flex items-center justify-center">
-            <Spline 
-              scene="https://prod.spline.design/psWR0IHSdjlcfsjA/scene.splinecode" 
-              className="w-full h-full"
-            />
-          </div>
+          {/* 3D Spline Stage — desktop only, see showSpline above */}
+          {showSpline && (
+            <div className="absolute inset-0 z-0 w-full h-full pointer-events-auto flex items-center justify-center">
+              <Suspense fallback={null}>
+                <Spline
+                  scene="https://prod.spline.design/psWR0IHSdjlcfsjA/scene.splinecode"
+                  className="w-full h-full"
+                />
+              </Suspense>
+            </div>
+          )}
           
           <div className="relative z-10">
-            <motion.div 
-              initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}
+            <motion.div
+              initial={false} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}
               className="inline-flex items-center gap-2.5 px-3.5 py-1.5 rounded-full bg-black/5 border border-black/10 text-xs font-mono tracking-wider uppercase text-black/70 mb-8 backdrop-blur-sm"
             >
               <span className="w-2 h-2 rounded-full bg-black animate-pulse" />
               AJ &amp; CO. STUDIO · AI &amp; AUTOMATION
             </motion.div>
 
-            <motion.h1 
-              initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, delay: 0.1 }}
+            <motion.h1
+              initial={false} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, delay: 0.1 }}
               className="text-[clamp(2.8rem,7vw,6.5rem)] font-bold tracking-[-0.04em] leading-[0.98] text-[#000000] max-w-[16ch]"
             >
               We build the staff <br />
               that never <span className="italic font-serif font-normal text-[#545454]">clocks out.</span>
             </motion.h1>
 
-            <motion.p 
-              initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, delay: 0.2 }}
+            <motion.p
+              initial={false} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, delay: 0.2 }}
               className="mt-8 max-w-[48ch] text-[1.15rem] leading-[1.6] text-[#545454] font-normal backdrop-blur-[2px] bg-white/40 p-2 rounded-xl border border-black/5"
             >
               AJ &amp; Co. designs AI agents, chatbots, and automation pipelines for founders who are tired of doing the same task twice — plus the websites that make the case for you while you sleep.
             </motion.p>
           </div>
 
-          <motion.div 
-            initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, delay: 0.3 }}
+          <motion.div
+            initial={false} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, delay: 0.3 }}
             className="flex flex-wrap items-center justify-between gap-6 pt-16 border-b border-black/10 pb-10"
           >
             <div className="flex items-center gap-4">
