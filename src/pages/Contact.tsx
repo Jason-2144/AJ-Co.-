@@ -105,7 +105,7 @@ export default function Contact() {
               <div className="bg-white p-8 rounded-3xl border border-black/10">
                 <span className="font-mono text-xs uppercase tracking-widest text-[#787878] block mb-2">DIRECT CORRESPONDENCE</span>
                 <p className="text-xl font-bold text-black mb-1">info@ajandco.site</p>
-                <p className="text-xs text-[#787878] font-mono">Chennai, IN — Austin, TX</p>
+                <p className="text-xs text-[#787878] font-mono">Houston, TX</p>
               </div>
             </div>
 

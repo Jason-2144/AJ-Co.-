@@ -8,7 +8,7 @@ export default function About() {
     <>
       <SEO 
         title="About Us — AJ & Co." 
-        description="Two operators, one low-overhead studio — built to earn in dollars while running on Indian cost structures."
+        description="A Houston, Texas-based AI studio building custom agents and automation for founders who need adoption, not just a demo."
         canonicalUrl="/about" 
       />
 
@@ -26,7 +26,7 @@ export default function About() {
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
             <div className="lg:col-span-7 space-y-6">
               <h2 className="text-2xl sm:text-3xl font-bold text-black leading-snug">
-                Two operators, one <span className="italic font-serif font-normal text-[#545454]">low-overhead studio</span> — built to earn in dollars while running on Indian cost structures.
+                A lean, <span className="italic font-serif font-normal text-[#545454]">founder-led studio</span> based in Houston, Texas — built to move fast without the agency overhead.
               </h2>
               
               <div className="space-y-6 text-[#545454] text-base leading-relaxed font-normal pt-2">
@@ -34,7 +34,7 @@ export default function About() {
                   The promise of AI is obvious. The gap between that promise and what most businesses actually experience is enormous. We've seen it from every angle — the vendor selling platforms without understanding the problem, the consultant producing strategy documents with no one to build anything, the developer shipping a system nobody trained their team to use.
                 </p>
                 <p>
-                  AJ &amp; Co. started because client acquisition was the hard part, not the building. Jason leads product and delivery from Chennai; Amaan runs execution and outreach; a Texas-based partner handles the US-facing conversations that a cold email alone can't close. Every engagement is scoped by someone who's felt the operational pain being automated.
+                  AJ &amp; Co. is a Houston, Texas-based studio. Jason leads product and delivery, Amaan runs execution and outreach, and every US-facing engagement is scoped and run by our Houston team. Every engagement is scoped by someone who's felt the operational pain being automated.
                 </p>
               </div>
             </div>
@@ -44,9 +44,9 @@ export default function About() {
                 <span className="font-mono text-xs uppercase tracking-widest text-[#787878] block mb-4">TEAM &amp; LOCATIONS</span>
                 <div className="space-y-4">
                   {[
-                    { name: "Jason", role: "Product & Delivery — Chennai" },
-                    { name: "Amaan", role: "Execution & Outreach" },
-                    { name: "US Desk", role: "Client Acquisition — Austin, TX" },
+                    { name: "Jason", role: "Product & Delivery — Houston, TX" },
+                    { name: "Amaan", role: "Execution & Outreach — Houston, TX" },
+                    { name: "US Desk", role: "Client Acquisition — Houston, TX" },
                     { name: "Ideal client", role: "Seed–early growth, <30 people" },
                     { name: "Focus Area", role: "Custom Agents & Workflow Pipelines" }
                   ].map((r, idx) => (

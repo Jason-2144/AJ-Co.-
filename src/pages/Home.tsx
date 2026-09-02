@@ -193,7 +193,7 @@ export default function Home() {
             </div>
 
             <div className="flex items-center gap-8 font-mono text-xs text-[#787878] uppercase tracking-widest">
-              <div>CHENNAI — AUSTIN</div>
+              <div>HOUSTON, TX</div>
               <div>·</div>
               <div>ISSUE NO. 004</div>
             </div>
