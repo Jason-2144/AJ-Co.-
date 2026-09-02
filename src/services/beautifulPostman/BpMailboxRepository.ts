@@ -1,4 +1,4 @@
-import { supabase } from '../../lib/supabase';
+import { supabaseAdmin as supabase } from '../../lib/supabaseAdmin';
 import { BpMailbox } from './types';
 
 function rowToMailbox(r: any): BpMailbox {

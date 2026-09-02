@@ -1,4 +1,4 @@
-import { supabase } from '../../lib/supabase';
+import { supabaseAdmin as supabase } from '../../lib/supabaseAdmin';
 import { BpProspect, BpGeneratedEmail, BpSentEmail, BpSettings } from './types';
 
 function rowToProspect(r: any): BpProspect {
