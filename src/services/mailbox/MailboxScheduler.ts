@@ -1,7 +1,7 @@
-import { ScheduledEmailJob } from './MailboxTypes';
-import { rotationEngine } from './RotationEngine';
-import { mailboxRepository } from './MailboxRepository';
-import { DraftFormatter } from '../gmail/DraftFormatter';
+import { ScheduledEmailJob } from './MailboxTypes.js';
+import { rotationEngine } from './RotationEngine.js';
+import { mailboxRepository } from './MailboxRepository.js';
+import { DraftFormatter } from '../gmail/DraftFormatter.js';
 
 export interface ScheduleOptions {
   workingHoursStart: number; // e.g. 9 for 9 AM

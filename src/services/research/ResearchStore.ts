@@ -1,5 +1,5 @@
-import { WebsiteResearch, VisitedPage } from './ResearchTypes';
-import { supabase } from '../../lib/supabase';
+import { WebsiteResearch, VisitedPage } from './ResearchTypes.js';
+import { supabase } from '../../lib/supabase.js';
 
 export class ResearchStore {
   private results: Map<string, WebsiteResearch> = new Map();

@@ -1,9 +1,9 @@
-import { ReengagementStatus } from '../patients/PatientTypes';
-import { ReengagementItem } from '../patients/PatientTypes';
-import { reengagementStore } from './ReengagementStore';
-import { ReengagementEventEmitter } from './ReengagementEvents';
-import { whatsAppService } from '../whatsapp/WhatsAppService';
-import { whatsAppStore } from '../whatsapp/WhatsAppStore';
+import { ReengagementStatus } from '../patients/PatientTypes.js';
+import { ReengagementItem } from '../patients/PatientTypes.js';
+import { reengagementStore } from './ReengagementStore.js';
+import { ReengagementEventEmitter } from './ReengagementEvents.js';
+import { whatsAppService } from '../whatsapp/WhatsAppService.js';
+import { whatsAppStore } from '../whatsapp/WhatsAppStore.js';
 
 export class ReengagementWorker {
   private eventEmitter: ReengagementEventEmitter;

@@ -1,6 +1,6 @@
-import { geminiService } from '../whatsapp/GeminiService';
-import { bpRepository } from './BpRepository';
-import { BpProspect, BpGeneratedEmail } from './types';
+import { geminiService } from '../whatsapp/GeminiService.js';
+import { bpRepository } from './BpRepository.js';
+import { BpProspect, BpGeneratedEmail } from './types.js';
 
 const PLACEHOLDER_PATTERNS = [
   /\[[^\]]{1,40}\]/g,        // [First Name], [Company], [insert X]

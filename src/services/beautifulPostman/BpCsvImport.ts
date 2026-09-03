@@ -1,4 +1,4 @@
-import { parseCSV } from '../parsing/csvParser';
+import { parseCSV } from '../parsing/csvParser.js';
 
 export interface BpCsvRow {
   firstName?: string;

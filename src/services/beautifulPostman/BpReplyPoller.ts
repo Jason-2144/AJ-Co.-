@@ -1,7 +1,7 @@
 import axios from 'axios';
-import { bpMailboxRepository } from './BpMailboxRepository';
-import { bpRepository } from './BpRepository';
-import { getValidAccessToken } from './BpGmailAuth';
+import { bpMailboxRepository } from './BpMailboxRepository.js';
+import { bpRepository } from './BpRepository.js';
+import { getValidAccessToken } from './BpGmailAuth.js';
 
 const BOUNCE_SENDER_HINTS = ['mailer-daemon', 'postmaster', 'mail delivery subsystem'];
 const BOUNCE_SUBJECT_HINTS = ['delivery status notification', 'undelivered mail', 'delivery has failed', 'returned to sender'];

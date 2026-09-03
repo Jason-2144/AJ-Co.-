@@ -1,18 +1,18 @@
 import express from 'express';
 import axios from 'axios';
-import { scrapeWebsite } from '../../services/scraper';
-import { buildAnalysisPrompt } from '../services/analysis/PromptBuilder';
-import { ollamaService } from '../services/analysis/OllamaService';
-import { EMAIL_CONFIG } from '../services/email/EmailConfig';
-import { buildEmailPrompt } from '../services/email/EmailPromptBuilder';
-import { EmailValidator } from '../services/email/EmailValidator';
-import { gmailAuth } from '../services/gmail/GmailAuth';
-import { DraftFormatter } from '../services/gmail/DraftFormatter';
-import { campaignRepository } from '../services/campaign/CampaignRepository';
-import { researchCrawler } from '../services/research/ResearchCrawler';
-import { researchVersionManager } from '../services/research/ResearchVersionManager';
-import { researchAggregator } from '../services/research/ResearchAggregator';
-import { bpRouter } from '../services/beautifulPostman/bpRoutes';
+import { scrapeWebsite } from '../../services/scraper.js';
+import { buildAnalysisPrompt } from '../services/analysis/PromptBuilder.js';
+import { ollamaService } from '../services/analysis/OllamaService.js';
+import { EMAIL_CONFIG } from '../services/email/EmailConfig.js';
+import { buildEmailPrompt } from '../services/email/EmailPromptBuilder.js';
+import { EmailValidator } from '../services/email/EmailValidator.js';
+import { gmailAuth } from '../services/gmail/GmailAuth.js';
+import { DraftFormatter } from '../services/gmail/DraftFormatter.js';
+import { campaignRepository } from '../services/campaign/CampaignRepository.js';
+import { researchCrawler } from '../services/research/ResearchCrawler.js';
+import { researchVersionManager } from '../services/research/ResearchVersionManager.js';
+import { researchAggregator } from '../services/research/ResearchAggregator.js';
+import { bpRouter } from '../services/beautifulPostman/bpRoutes.js';
 
 // All /api/* routes live here, shared between the local dev/persistent-host entry
 // (server.ts, which also serves the SPA and calls app.listen) and the Vercel

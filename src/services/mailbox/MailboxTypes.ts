@@ -1,4 +1,4 @@
-import { Prospect } from '../types/prospect';
+import { Prospect } from '../types/prospect.js';
 
 export type MailboxStatus = 'healthy' | 'warming' | 'paused' | 'disabled';
 export type WarmupStage = 'stage_1' | 'stage_2' | 'stage_3' | 'stage_4' | 'stage_5' | 'graduated';

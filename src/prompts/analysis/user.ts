@@ -1,4 +1,4 @@
-import { WebsiteResearch } from '../../services/research/ResearchTypes';
+import { WebsiteResearch } from '../../services/research/ResearchTypes.js';
 
 /**
  * Dynamically constructs the user prompt, injecting the structured WebsiteResearch data.

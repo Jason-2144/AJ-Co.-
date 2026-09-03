@@ -1,5 +1,5 @@
 import 'dotenv/config';
-import { createApp } from '../src/server/app';
+import { createApp } from '../src/server/app.js';
 
 // Vercel serverless entry — every /api/* request is rewritten here (see vercel.json).
 // No app.listen(): Vercel invokes this as a request handler per call. Background

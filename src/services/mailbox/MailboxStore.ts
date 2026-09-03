@@ -1,4 +1,4 @@
-import { MailboxRecord, WarmupProfile } from './MailboxTypes';
+import { MailboxRecord, WarmupProfile } from './MailboxTypes.js';
 
 export const DEFAULT_WARMUP_PROFILE: WarmupProfile = {
   id: 'default_google_workspace_gradual',

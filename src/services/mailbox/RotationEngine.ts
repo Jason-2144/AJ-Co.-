@@ -1,6 +1,6 @@
-import { MailboxRecord } from './MailboxTypes';
-import { mailboxRepository } from './MailboxRepository';
-import { warmupEngine } from './WarmupEngine';
+import { MailboxRecord } from './MailboxTypes.js';
+import { mailboxRepository } from './MailboxRepository.js';
+import { warmupEngine } from './WarmupEngine.js';
 
 export class RotationEngine {
   /**

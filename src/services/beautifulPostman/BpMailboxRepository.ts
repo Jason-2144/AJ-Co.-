@@ -1,5 +1,5 @@
-import { supabaseAdmin as supabase } from '../../lib/supabaseAdmin';
-import { BpMailbox } from './types';
+import { supabaseAdmin as supabase } from '../../lib/supabaseAdmin.js';
+import { BpMailbox } from './types.js';
 
 function rowToMailbox(r: any): BpMailbox {
   return {

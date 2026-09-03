@@ -1,6 +1,6 @@
-import { supabase } from '../../lib/supabase';
-import { Campaign, CampaignStatus, CampaignStats } from './CampaignTypes';
-import { campaignStore } from './CampaignStore';
+import { supabase } from '../../lib/supabase.js';
+import { Campaign, CampaignStatus, CampaignStats } from './CampaignTypes.js';
+import { campaignStore } from './CampaignStore.js';
 
 export class CampaignRepository {
   async list(): Promise<Campaign[]> {

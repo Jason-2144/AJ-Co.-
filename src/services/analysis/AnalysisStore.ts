@@ -1,5 +1,5 @@
-import { CompanyAnalysis } from './AnalysisTypes';
-import { supabase } from '../../lib/supabase';
+import { CompanyAnalysis } from './AnalysisTypes.js';
+import { supabase } from '../../lib/supabase.js';
 
 export class AnalysisStore {
   private results: Map<string, CompanyAnalysis> = new Map();

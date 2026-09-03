@@ -1,8 +1,8 @@
-import { Prospect, ProspectStatus } from '../../types/prospect';
-import { QueueItem } from './QueueTypes';
-import { queueStore } from './QueueStore';
-import { QueueEventEmitter, QueueListener } from './QueueEvents';
-import { QueueWorker } from './QueueWorker';
+import { Prospect, ProspectStatus } from '../../types/prospect.js';
+import { QueueItem } from './QueueTypes.js';
+import { queueStore } from './QueueStore.js';
+import { QueueEventEmitter, QueueListener } from './QueueEvents.js';
+import { QueueWorker } from './QueueWorker.js';
 
 export class QueueManager {
   private static instance: QueueManager | null = null;

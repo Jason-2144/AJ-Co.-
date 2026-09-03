@@ -1,4 +1,4 @@
-import { Campaign } from './CampaignTypes';
+import { Campaign } from './CampaignTypes.js';
 
 export class CampaignStore {
   private campaigns: Map<string, Campaign> = new Map();

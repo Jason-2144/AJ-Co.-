@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { ANALYSIS_CONFIG } from './AnalysisConfig';
+import { ANALYSIS_CONFIG } from './AnalysisConfig.js';
 
 export class OllamaService {
   private static instance: OllamaService | null = null;

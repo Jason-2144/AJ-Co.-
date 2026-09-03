@@ -1,7 +1,7 @@
-import { Patient, ReengagementItem, ReengagementStatus } from '../patients/PatientTypes';
-import { reengagementStore } from './ReengagementStore';
-import { ReengagementEventEmitter, ReengagementListener } from './ReengagementEvents';
-import { ReengagementWorker } from './ReengagementWorker';
+import { Patient, ReengagementItem, ReengagementStatus } from '../patients/PatientTypes.js';
+import { reengagementStore } from './ReengagementStore.js';
+import { ReengagementEventEmitter, ReengagementListener } from './ReengagementEvents.js';
+import { ReengagementWorker } from './ReengagementWorker.js';
 
 export class ReengagementManager {
   private static instance: ReengagementManager | null = null;

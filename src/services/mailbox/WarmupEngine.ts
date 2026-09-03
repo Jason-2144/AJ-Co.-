@@ -1,6 +1,6 @@
-import { MailboxRecord, WarmupProfile } from './MailboxTypes';
-import { DEFAULT_WARMUP_PROFILE } from './MailboxStore';
-import { mailboxRepository } from './MailboxRepository';
+import { MailboxRecord, WarmupProfile } from './MailboxTypes.js';
+import { DEFAULT_WARMUP_PROFILE } from './MailboxStore.js';
+import { mailboxRepository } from './MailboxRepository.js';
 
 export class WarmupEngine {
   /**

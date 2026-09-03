@@ -1,4 +1,4 @@
-import { emailSchema } from './schema';
+import { emailSchema } from './schema.js';
 
 export const systemPrompt = `You are rewriting the email generation system for AJ & Co.
 

@@ -1,5 +1,5 @@
 import { Page } from 'playwright';
-import { RESEARCH_CONFIG } from './ResearchConfig';
+import { RESEARCH_CONFIG } from './ResearchConfig.js';
 
 export class ContentExtractor {
   /**

@@ -1,4 +1,4 @@
-import { VerificationResult } from './MailboxTypes';
+import { VerificationResult } from './MailboxTypes.js';
 
 export class EmailVerificationService {
   private DISPOSABLE_DOMAINS = new Set([

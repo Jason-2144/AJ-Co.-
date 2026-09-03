@@ -1,4 +1,4 @@
-import { Patient, PatientParseResult } from './PatientTypes';
+import { Patient, PatientParseResult } from './PatientTypes.js';
 
 // Reuses the same UUID generation approach as prospectParser.ts
 export const generateUUID = (): string => {

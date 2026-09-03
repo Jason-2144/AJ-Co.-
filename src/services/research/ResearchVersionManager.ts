@@ -1,5 +1,5 @@
-import { supabase } from '../../lib/supabase';
-import { VisitedPage } from './ResearchTypes';
+import { supabase } from '../../lib/supabase.js';
+import { VisitedPage } from './ResearchTypes.js';
 
 export interface CrawlDiff {
   newUrls: string[];

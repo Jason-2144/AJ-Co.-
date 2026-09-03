@@ -1,5 +1,5 @@
-import { supabase } from '../lib/supabase';
-import { aiProviderService } from './ai_provider';
+import { supabase } from '../lib/supabase.js';
+import { aiProviderService } from './ai_provider.js';
 
 // Campaign type definitions
 export interface OutreachCampaign {

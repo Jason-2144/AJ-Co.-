@@ -1,6 +1,6 @@
-import { scrapeWebsite } from '../../../services/scraper';
-import { bpRepository } from './BpRepository';
-import { BpProspect } from './types';
+import { scrapeWebsite } from '../../../services/scraper.js';
+import { bpRepository } from './BpRepository.js';
+import { BpProspect } from './types.js';
 
 /**
  * Reuses the existing Playwright-based scraper already in this repo (services/scraper.ts) —

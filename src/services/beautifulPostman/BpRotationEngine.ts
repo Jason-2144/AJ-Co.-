@@ -1,6 +1,6 @@
-import { BpMailbox } from './types';
-import { bpMailboxRepository } from './BpMailboxRepository';
-import { bpWarmupEngine } from './BpWarmupEngine';
+import { BpMailbox } from './types.js';
+import { bpMailboxRepository } from './BpMailboxRepository.js';
+import { bpWarmupEngine } from './BpWarmupEngine.js';
 
 export class BpRotationEngine {
   /**

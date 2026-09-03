@@ -1,10 +1,10 @@
-import { playwrightService } from './PlaywrightService';
-import { PageScorer } from './PageScorer';
-import { ContentExtractor } from './ContentExtractor';
-import { researchVersionManager } from './ResearchVersionManager';
-import { RESEARCH_CONFIG } from './ResearchConfig';
-import { VisitedPage, WebsiteResearch } from './ResearchTypes';
-import { supabase } from '../../lib/supabase';
+import { playwrightService } from './PlaywrightService.js';
+import { PageScorer } from './PageScorer.js';
+import { ContentExtractor } from './ContentExtractor.js';
+import { researchVersionManager } from './ResearchVersionManager.js';
+import { RESEARCH_CONFIG } from './ResearchConfig.js';
+import { VisitedPage, WebsiteResearch } from './ResearchTypes.js';
+import { supabase } from '../../lib/supabase.js';
 
 export class ResearchCrawler {
   /**

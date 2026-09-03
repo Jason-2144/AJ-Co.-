@@ -1,5 +1,5 @@
-import { supabase } from '../lib/supabase';
-import { UserProfile } from './auth';
+import { supabase } from '../lib/supabase.js';
+import { UserProfile } from './auth.js';
 
 export interface CompanySettings {
   id?: string;

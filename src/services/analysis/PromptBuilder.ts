@@ -1,6 +1,6 @@
-import { systemPrompt } from '../../prompts/analysis/system';
-import { buildUserPrompt } from '../../prompts/analysis/user';
-import { WebsiteResearch } from '../research/ResearchTypes';
+import { systemPrompt } from '../../prompts/analysis/system.js';
+import { buildUserPrompt } from '../../prompts/analysis/user.js';
+import { WebsiteResearch } from '../research/ResearchTypes.js';
 
 /**
  * Builds the system and user prompt configuration object for the AI.

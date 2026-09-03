@@ -1,4 +1,4 @@
-import { RESEARCH_CONFIG } from './ResearchConfig';
+import { RESEARCH_CONFIG } from './ResearchConfig.js';
 
 export class PageScorer {
   /**

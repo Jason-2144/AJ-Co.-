@@ -1,6 +1,6 @@
-import { QueueItem } from './QueueTypes';
-import { supabase } from '../../lib/supabase';
-import { ProspectStatus } from '../../types/prospect';
+import { QueueItem } from './QueueTypes.js';
+import { supabase } from '../../lib/supabase.js';
+import { ProspectStatus } from '../../types/prospect.js';
 
 const QUEUE_LOCAL_KEY = 'ajco_queue_items_v2';
 

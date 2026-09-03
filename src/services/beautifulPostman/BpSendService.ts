@@ -1,11 +1,11 @@
 import axios from 'axios';
-import { DraftFormatter } from '../gmail/DraftFormatter';
-import { getValidAccessToken } from './BpGmailAuth';
-import { bpRotationEngine } from './BpRotationEngine';
-import { bpMailboxRepository } from './BpMailboxRepository';
-import { bpRepository } from './BpRepository';
-import { emailVerificationService } from '../mailbox/EmailVerificationService';
-import { BpProspect, BpGeneratedEmail } from './types';
+import { DraftFormatter } from '../gmail/DraftFormatter.js';
+import { getValidAccessToken } from './BpGmailAuth.js';
+import { bpRotationEngine } from './BpRotationEngine.js';
+import { bpMailboxRepository } from './BpMailboxRepository.js';
+import { bpRepository } from './BpRepository.js';
+import { emailVerificationService } from '../mailbox/EmailVerificationService.js';
+import { BpProspect, BpGeneratedEmail } from './types.js';
 
 export const bpSendService = {
   /**

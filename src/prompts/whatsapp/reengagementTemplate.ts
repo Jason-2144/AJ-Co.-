@@ -1,4 +1,4 @@
-import { Patient } from '../../services/patients/PatientTypes';
+import { Patient } from '../../services/patients/PatientTypes.js';
 
 /**
  * WhatsApp requires business-initiated messages to use a pre-approved template

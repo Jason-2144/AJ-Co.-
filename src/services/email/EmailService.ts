@@ -1,7 +1,7 @@
-import { CompanyAnalysis } from '../analysis/AnalysisTypes';
-import { Prospect } from '../../types/prospect';
-import { GeneratedEmail } from './EmailTypes';
-import { emailStore } from './EmailStore';
+import { CompanyAnalysis } from '../analysis/AnalysisTypes.js';
+import { Prospect } from '../../types/prospect.js';
+import { GeneratedEmail } from './EmailTypes.js';
+import { emailStore } from './EmailStore.js';
 
 export class EmailService {
   /**

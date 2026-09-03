@@ -1,5 +1,5 @@
-import { GeneratedEmail } from './EmailTypes';
-import { supabase } from '../../lib/supabase';
+import { GeneratedEmail } from './EmailTypes.js';
+import { supabase } from '../../lib/supabase.js';
 
 export class EmailStore {
   private results: Map<string, GeneratedEmail> = new Map();

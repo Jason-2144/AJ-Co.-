@@ -1,4 +1,4 @@
-import { Prospect, ProspectStatus } from '../../types/prospect';
+import { Prospect, ProspectStatus } from '../../types/prospect.js';
 
 export interface QueueItem {
   id: string; // Same as prospect.id

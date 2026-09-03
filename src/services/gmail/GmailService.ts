@@ -1,11 +1,11 @@
-import { Prospect } from '../../types/prospect';
-import { GeneratedEmail } from '../email/EmailTypes';
-import { GmailDraftRecord } from './GmailTypes';
-import { gmailStore } from './GmailStore';
-import { DraftFormatter } from './DraftFormatter';
-import { multiGmailAuthManager } from './MultiGmailAuthManager';
-import { mailboxRepository } from '../mailbox/MailboxRepository';
-import { rotationEngine } from '../mailbox/RotationEngine';
+import { Prospect } from '../../types/prospect.js';
+import { GeneratedEmail } from '../email/EmailTypes.js';
+import { GmailDraftRecord } from './GmailTypes.js';
+import { gmailStore } from './GmailStore.js';
+import { DraftFormatter } from './DraftFormatter.js';
+import { multiGmailAuthManager } from './MultiGmailAuthManager.js';
+import { mailboxRepository } from '../mailbox/MailboxRepository.js';
+import { rotationEngine } from '../mailbox/RotationEngine.js';
 
 export class GmailService {
   /**

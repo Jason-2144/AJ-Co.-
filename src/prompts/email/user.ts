@@ -1,5 +1,5 @@
-import { CompanyAnalysis } from '../../services/analysis/AnalysisTypes';
-import { Prospect } from '../../types/prospect';
+import { CompanyAnalysis } from '../../services/analysis/AnalysisTypes.js';
+import { Prospect } from '../../types/prospect.js';
 
 /**
  * Dynamically constructs the user prompt, injecting the CompanyAnalysis and Prospect details.

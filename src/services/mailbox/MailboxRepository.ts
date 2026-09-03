@@ -1,6 +1,6 @@
-import { MailboxRecord, MailboxStatus } from './MailboxTypes';
-import { DEFAULT_WARMUP_PROFILE } from './MailboxStore';
-import { multiGmailAuthManager } from '../gmail/MultiGmailAuthManager';
+import { MailboxRecord, MailboxStatus } from './MailboxTypes.js';
+import { DEFAULT_WARMUP_PROFILE } from './MailboxStore.js';
+import { multiGmailAuthManager } from '../gmail/MultiGmailAuthManager.js';
 
 class MailboxRepository {
   private STORAGE_KEY = 'aj_co_mailboxes_v4_clean';

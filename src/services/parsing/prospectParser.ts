@@ -1,4 +1,4 @@
-import { Prospect, ProspectStatus, ParsingError, ParseResult } from '../../types/prospect';
+import { Prospect, ProspectStatus, ParsingError, ParseResult } from '../../types/prospect.js';
 
 // Helper to generate a browser-safe UUID
 export const generateUUID = (): string => {

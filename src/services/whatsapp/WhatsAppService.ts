@@ -1,5 +1,5 @@
-import { Patient } from '../patients/PatientTypes';
-import { WhatsAppStatusResponse } from './WhatsAppTypes';
+import { Patient } from '../patients/PatientTypes.js';
+import { WhatsAppStatusResponse } from './WhatsAppTypes.js';
 
 export class WhatsAppService {
   /**

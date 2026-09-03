@@ -1,6 +1,6 @@
-import { WebsiteResearch } from '../research/ResearchTypes';
-import { CompanyAnalysis } from './AnalysisTypes';
-import { analysisStore } from './AnalysisStore';
+import { WebsiteResearch } from '../research/ResearchTypes.js';
+import { CompanyAnalysis } from './AnalysisTypes.js';
+import { analysisStore } from './AnalysisStore.js';
 
 export class AnalysisService {
   /**

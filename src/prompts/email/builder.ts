@@ -1,8 +1,8 @@
-import { systemPrompt } from './system';
-import { emailExamples } from './examples';
-import { buildUserPrompt } from './user';
-import { CompanyAnalysis } from '../../services/analysis/AnalysisTypes';
-import { Prospect } from '../../types/prospect';
+import { systemPrompt } from './system.js';
+import { emailExamples } from './examples.js';
+import { buildUserPrompt } from './user.js';
+import { CompanyAnalysis } from '../../services/analysis/AnalysisTypes.js';
+import { Prospect } from '../../types/prospect.js';
 
 /**
  * Builds the system and user prompt configuration object for generating the email.

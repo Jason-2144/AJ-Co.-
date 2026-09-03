@@ -1,5 +1,5 @@
-import { supabase } from '../lib/supabase';
-import { Client } from './clients';
+import { supabase } from '../lib/supabase.js';
+import { Client } from './clients.js';
 
 export interface Project {
   id?: string;

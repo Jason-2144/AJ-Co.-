@@ -1,5 +1,5 @@
-import { VisitedPage } from './ResearchTypes';
-import { ollamaService } from '../analysis/OllamaService';
+import { VisitedPage } from './ResearchTypes.js';
+import { ollamaService } from '../analysis/OllamaService.js';
 
 export class ResearchAggregator {
   /**

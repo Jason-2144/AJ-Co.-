@@ -1,6 +1,6 @@
 import axios from 'axios';
-import { bpMailboxRepository } from './BpMailboxRepository';
-import { bpWarmupEngine } from './BpWarmupEngine';
+import { bpMailboxRepository } from './BpMailboxRepository.js';
+import { bpWarmupEngine } from './BpWarmupEngine.js';
 
 // Server-side only. Client secret NEVER ships to the frontend (unlike the legacy
 // MultiGmailAuthManager.ts, which has a real secret hardcoded in client JS — do not

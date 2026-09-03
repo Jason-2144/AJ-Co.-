@@ -1,5 +1,5 @@
-import { WhatsAppMessageRecord } from './WhatsAppTypes';
-import { supabase } from '../../lib/supabase';
+import { WhatsAppMessageRecord } from './WhatsAppTypes.js';
+import { supabase } from '../../lib/supabase.js';
 
 export class WhatsAppStore {
   private messages: Map<string, WhatsAppMessageRecord> = new Map();

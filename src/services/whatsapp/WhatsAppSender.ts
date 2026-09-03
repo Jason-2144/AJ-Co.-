@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { WHATSAPP_CONFIG } from './WhatsAppConfig';
+import { WHATSAPP_CONFIG } from './WhatsAppConfig.js';
 
 interface SendResult {
   sid: string;

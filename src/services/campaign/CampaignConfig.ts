@@ -1,4 +1,4 @@
-import { CampaignStatus } from './CampaignTypes';
+import { CampaignStatus } from './CampaignTypes.js';
 
 export const CAMPAIGN_CONFIG = {
   statuses: ['Draft', 'Active', 'Paused', 'Completed', 'Archived'] as CampaignStatus[],

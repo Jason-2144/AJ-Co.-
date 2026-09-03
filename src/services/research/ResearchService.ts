@@ -1,5 +1,5 @@
-import { WebsiteResearch } from './ResearchTypes';
-import { researchStore } from './ResearchStore';
+import { WebsiteResearch } from './ResearchTypes.js';
+import { researchStore } from './ResearchStore.js';
 
 export class ResearchService {
   /**

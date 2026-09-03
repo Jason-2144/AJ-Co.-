@@ -1,13 +1,13 @@
 import express from 'express';
-import { bpRepository } from './BpRepository';
-import { bpMailboxRepository } from './BpMailboxRepository';
-import { bpWarmupEngine } from './BpWarmupEngine';
-import { bpResearchService } from './BpResearchService';
-import { bpEmailService } from './BpEmailService';
-import { bpSendService } from './BpSendService';
-import { bpReplyPoller } from './BpReplyPoller';
-import { parseApolloCsv } from './BpCsvImport';
-import { isBpGoogleConfigured, getBpAuthUrl, handleBpCallback } from './BpGmailAuth';
+import { bpRepository } from './BpRepository.js';
+import { bpMailboxRepository } from './BpMailboxRepository.js';
+import { bpWarmupEngine } from './BpWarmupEngine.js';
+import { bpResearchService } from './BpResearchService.js';
+import { bpEmailService } from './BpEmailService.js';
+import { bpSendService } from './BpSendService.js';
+import { bpReplyPoller } from './BpReplyPoller.js';
+import { parseApolloCsv } from './BpCsvImport.js';
+import { isBpGoogleConfigured, getBpAuthUrl, handleBpCallback } from './BpGmailAuth.js';
 
 export const bpRouter = express.Router();
 

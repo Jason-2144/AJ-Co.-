@@ -1,5 +1,5 @@
-import { Campaign, CampaignStats } from './CampaignTypes';
-import { campaignStore } from './CampaignStore';
+import { Campaign, CampaignStats } from './CampaignTypes.js';
+import { campaignStore } from './CampaignStore.js';
 
 export class CampaignService {
   async list(): Promise<Campaign[]> {

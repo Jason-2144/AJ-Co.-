@@ -1,5 +1,5 @@
-import { BpMailbox } from './types';
-import { bpMailboxRepository } from './BpMailboxRepository';
+import { BpMailbox } from './types.js';
+import { bpMailboxRepository } from './BpMailboxRepository.js';
 
 // Conservative ramp: real warmup network (Mailivery/TrulyInbox etc, set up separately by you)
 // builds reputation via engagement signals; this just enforces a safe, slowly-rising volume

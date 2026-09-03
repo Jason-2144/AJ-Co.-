@@ -1,5 +1,5 @@
-import { ReengagementItem, ReengagementStatus } from '../patients/PatientTypes';
-import { supabase } from '../../lib/supabase';
+import { ReengagementItem, ReengagementStatus } from '../patients/PatientTypes.js';
+import { supabase } from '../../lib/supabase.js';
 
 const LOCAL_KEY = 'ajco_reengagement_items_v1';
 

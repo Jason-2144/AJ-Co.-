@@ -1,5 +1,5 @@
 import { chromium, Browser } from 'playwright';
-import { RESEARCH_CONFIG } from './ResearchConfig';
+import { RESEARCH_CONFIG } from './ResearchConfig.js';
 
 export class PlaywrightService {
   private static instance: PlaywrightService | null = null;

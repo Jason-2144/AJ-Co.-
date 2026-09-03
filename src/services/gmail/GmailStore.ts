@@ -1,5 +1,5 @@
-import { GmailDraftRecord } from './GmailTypes';
-import { supabase } from '../../lib/supabase';
+import { GmailDraftRecord } from './GmailTypes.js';
+import { supabase } from '../../lib/supabase.js';
 
 export class GmailStore {
   private drafts: Map<string, GmailDraftRecord> = new Map();

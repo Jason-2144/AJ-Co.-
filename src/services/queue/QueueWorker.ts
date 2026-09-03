@@ -1,15 +1,15 @@
-import { ProspectStatus } from '../../types/prospect';
-import { QueueItem } from './QueueTypes';
-import { queueStore } from './QueueStore';
-import { QueueEventEmitter } from './QueueEvents';
-import { researchService } from '../research/ResearchService';
-import { researchStore } from '../research/ResearchStore';
-import { analysisService } from '../analysis/AnalysisService';
-import { analysisStore } from '../analysis/AnalysisStore';
-import { emailService } from '../email/EmailService';
-import { emailStore } from '../email/EmailStore';
-import { gmailStore } from '../gmail/GmailStore';
-import { gmailService } from '../gmail/GmailService';
+import { ProspectStatus } from '../../types/prospect.js';
+import { QueueItem } from './QueueTypes.js';
+import { queueStore } from './QueueStore.js';
+import { QueueEventEmitter } from './QueueEvents.js';
+import { researchService } from '../research/ResearchService.js';
+import { researchStore } from '../research/ResearchStore.js';
+import { analysisService } from '../analysis/AnalysisService.js';
+import { analysisStore } from '../analysis/AnalysisStore.js';
+import { emailService } from '../email/EmailService.js';
+import { emailStore } from '../email/EmailStore.js';
+import { gmailStore } from '../gmail/GmailStore.js';
+import { gmailService } from '../gmail/GmailService.js';
 
 export class QueueWorker {
   private eventEmitter: QueueEventEmitter;
