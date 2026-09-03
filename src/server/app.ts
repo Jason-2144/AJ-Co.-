@@ -21,6 +21,12 @@ import { bpRouter } from '../services/beautifulPostman/bpRoutes.js';
 // serving, or Vite middleware here; those are host-specific and belong in server.ts.
 export function createApp() {
   const app = express();
+  // Vercel terminates TLS at the edge and proxies to this function over plain HTTP,
+  // setting X-Forwarded-Proto: https. Without trusting the proxy, req.protocol always
+  // reports 'http', which broke the Google OAuth redirect_uri (built from req.protocol
+  // + req.headers.host) and got rejected as a mismatch against the https URI registered
+  // in Google Cloud Console.
+  app.set('trust proxy', true);
   app.use(express.json());
 
   app.post('/api/research', async (req, res) => {
